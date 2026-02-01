@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAIProvider } from "@cyberfaith/ai-provider";
 import { getFourPillarsPrompt } from "@/lib/prompts";
 import type { FourPillarsResult } from "@/lib/four-pillars";
+import { errorResponse, withRateLimitHeaders, parseBody } from "@/lib/api-utils";
 
 const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
+const VALID_GENDERS = new Set(["male", "female", "other"]);
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const { data: body, error } = await parseBody(request, 10_000);
+    if (error) return withRateLimitHeaders(error);
+
     const { pillars, gender, locale } = body as {
       pillars: FourPillarsResult;
       gender?: string;
@@ -15,23 +19,26 @@ export async function POST(request: NextRequest) {
     };
 
     if (!pillars || !pillars.year || !pillars.month || !pillars.day || !pillars.hour) {
-      return NextResponse.json(
-        { error: "Valid pillars object with year, month, day, hour is required" },
-        { status: 400 }
+      return withRateLimitHeaders(
+        errorResponse("Invalid pillars", 400, "Valid pillars object with year, month, day, hour is required")
       );
     }
 
+    if (gender && !VALID_GENDERS.has(gender)) {
+      return withRateLimitHeaders(errorResponse("Invalid gender", 400, "Must be male, female, or other"));
+    }
+
     if (locale && !VALID_LOCALES.has(locale)) {
-      return NextResponse.json({ error: "Invalid locale" }, { status: 400 });
+      return withRateLimitHeaders(errorResponse("Invalid locale", 400, "Must be one of: en, zh, zh-CN, zh-TW"));
     }
 
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({
+      return withRateLimitHeaders(NextResponse.json({
         interpretation: null,
         message: "AI analysis unavailable — set OPENAI_API_KEY for BaZi interpretations",
         pillars,
-      });
+      }));
     }
 
     const ai = createAIProvider({ provider: "openai", apiKey });
@@ -51,9 +58,9 @@ export async function POST(request: NextRequest) {
       interpretation = { reading: result };
     }
 
-    return NextResponse.json({ interpretation, pillars });
+    return withRateLimitHeaders(NextResponse.json({ interpretation, pillars }));
   } catch (error: unknown) {
     console.error("Four Pillars analyze error:", error);
-    return NextResponse.json({ error: "Failed to analyze Four Pillars" }, { status: 500 });
+    return withRateLimitHeaders(errorResponse("Failed to analyze Four Pillars", 500));
   }
 }

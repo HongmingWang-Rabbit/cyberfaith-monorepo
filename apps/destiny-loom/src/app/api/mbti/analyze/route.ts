@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAIProvider } from "@cyberfaith/ai-provider";
+import { errorResponse, withRateLimitHeaders, parseBody } from "@/lib/api-utils";
 
 interface MBTIAnswer {
   questionId: number;
   dimension: "EI" | "SN" | "TF" | "JP";
-  value: string; // E/I, S/N, T/F, J/P
+  value: string;
 }
+
+const VALID_VALUES = new Set(["E", "I", "S", "N", "T", "F", "J", "P"]);
+const VALID_DIMENSIONS = new Set(["EI", "SN", "TF", "JP"]);
 
 function computeMBTIType(answers: MBTIAnswer[]): string {
   const scores: Record<string, number> = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
@@ -24,31 +28,34 @@ function computeMBTIType(answers: MBTIAnswer[]): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const { data: body, error } = await parseBody(request, 20_000);
+    if (error) return withRateLimitHeaders(error);
+
     const { answers } = body as { answers: MBTIAnswer[] };
 
     if (!answers || !Array.isArray(answers) || answers.length === 0) {
-      return NextResponse.json({ error: "Answers are required" }, { status: 400 });
+      return withRateLimitHeaders(errorResponse("Answers are required", 400));
     }
 
-    const validValues = new Set(["E", "I", "S", "N", "T", "F", "J", "P"]);
-    const validDimensions = new Set(["EI", "SN", "TF", "JP"]);
+    if (answers.length > 50) {
+      return withRateLimitHeaders(errorResponse("Too many answers", 400, "Maximum 50 answers allowed"));
+    }
+
     for (const answer of answers) {
-      if (!validValues.has(answer.value) || !validDimensions.has(answer.dimension)) {
-        return NextResponse.json({ error: "Invalid answer format" }, { status: 400 });
+      if (!VALID_VALUES.has(answer.value) || !VALID_DIMENSIONS.has(answer.dimension)) {
+        return withRateLimitHeaders(errorResponse("Invalid answer format", 400, "Each answer must have a valid value (E/I/S/N/T/F/J/P) and dimension (EI/SN/TF/JP)"));
       }
     }
 
     const mbtiType = computeMBTIType(answers);
 
-    // If no API key, return type without AI analysis
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({
+      return withRateLimitHeaders(NextResponse.json({
         type: mbtiType,
         analysis: null,
         message: "AI analysis unavailable — set OPENAI_API_KEY for personality insights",
-      });
+      }));
     }
 
     const ai = createAIProvider({ provider: "openai", apiKey });
@@ -81,9 +88,9 @@ Respond ONLY with valid JSON, no markdown.`;
       analysis = { raw: result };
     }
 
-    return NextResponse.json({ type: mbtiType, analysis });
+    return withRateLimitHeaders(NextResponse.json({ type: mbtiType, analysis }));
   } catch (error: unknown) {
     console.error("MBTI analyze error:", error);
-    return NextResponse.json({ error: "Failed to analyze personality" }, { status: 500 });
+    return withRateLimitHeaders(errorResponse("Failed to analyze personality", 500));
   }
 }

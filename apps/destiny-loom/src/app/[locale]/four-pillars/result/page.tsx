@@ -10,6 +10,8 @@ import {
   type FourPillarsResult,
   type Pillar,
 } from "@/lib/four-pillars";
+import { ShareButtons } from "@/components/ui/share-buttons";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 const ELEMENT_COLORS: Record<string, string> = {
   Wood: "text-green-400 border-green-400/30 bg-green-400/10",

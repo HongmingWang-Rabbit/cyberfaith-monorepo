@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { withRateLimitHeaders } from "@/lib/api-utils";
 
 interface MBTIQuestion {
   id: number;
@@ -36,5 +37,5 @@ const questions: MBTIQuestion[] = [
 ];
 
 export function GET() {
-  return NextResponse.json({ questions });
+  return withRateLimitHeaders(NextResponse.json({ questions }));
 }

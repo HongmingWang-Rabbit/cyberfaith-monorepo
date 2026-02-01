@@ -1,12 +1,14 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button, Card, CardContent } from "@cyberfaith/ui";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function MbtiLanding() {
   const t = useTranslations("mbti");
 
   return (
     <div className="max-w-2xl mx-auto py-12 space-y-8 text-center">
+      <Breadcrumb current="MBTI" />
       <div className="space-y-4">
         <span className="text-6xl block">🧠</span>
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">

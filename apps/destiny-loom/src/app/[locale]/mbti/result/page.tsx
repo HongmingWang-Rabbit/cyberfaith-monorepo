@@ -6,6 +6,9 @@ import { useTranslations } from "next-intl";
 import { Button, Card, CardContent, CardHeader, CardTitle, Badge, Divider } from "@cyberfaith/ui";
 import { Link } from "@/i18n/navigation";
 import { useToast } from "@/components/ui/toast";
+import { ShareButtons } from "@/components/ui/share-buttons";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { PageSkeleton } from "@/components/ui/skeleton";
 
 const dimensionKeys = ["EI", "SN", "TF", "JP"] as const;
 const dimensionLabels: Record<string, [string, string]> = {
@@ -58,6 +61,7 @@ function MbtiResultContent() {
 
   return (
     <div className="max-w-2xl mx-auto py-8 space-y-8 pb-24">
+      <Breadcrumb current={`MBTI — ${type}`} />
       {/* Type display */}
       <div className="text-center space-y-3">
         <h1 className="text-5xl md:text-7xl font-black tracking-wider bg-gradient-to-r from-primary via-accent to-highlight bg-clip-text text-transparent drop-shadow-lg"
@@ -125,11 +129,11 @@ function MbtiResultContent() {
         </CardContent>
       </Card>
 
+      {/* Share */}
+      <ShareButtons title={`My MBTI type is ${type} — ${typeName}`} description="Discover your personality type on Destiny Loom" />
+
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
-        <Button variant="neon" onClick={handleShare}>
-          {t("common.actions.share")}
-        </Button>
         <Button variant="outline" onClick={handleSave}>
           {t("common.actions.save")}
         </Button>
@@ -143,14 +147,7 @@ function MbtiResultContent() {
 
 export default function MbtiResult() {
   return (
-    <Suspense fallback={
-      <div className="max-w-2xl mx-auto py-8 text-center">
-        <div className="animate-pulse space-y-4">
-          <div className="h-16 bg-muted rounded-lg mx-auto w-48" />
-          <div className="h-4 bg-muted rounded w-32 mx-auto" />
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<PageSkeleton />}>
       <MbtiResultContent />
     </Suspense>
   );

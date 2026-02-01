@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Card, CardContent } from "@cyberfaith/ui";
 import { useState } from "react";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function FourPillarsPage() {
   const t = useTranslations("fourPillars");
@@ -34,6 +35,7 @@ export default function FourPillarsPage() {
 
   return (
     <div className="max-w-xl mx-auto py-8 space-y-8 pb-24">
+      <Breadcrumb current={t("title")} />
       <div className="text-center space-y-3">
         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-highlight bg-clip-text text-transparent">
           {t("title")}

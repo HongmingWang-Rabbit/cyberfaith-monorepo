@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAIProvider } from "@cyberfaith/ai-provider";
 import { getZodiacReadingPrompt } from "@/lib/prompts";
+import { errorResponse, withRateLimitHeaders, parseBody } from "@/lib/api-utils";
 
 const VALID_SIGNS = new Set([
   "aries", "taurus", "gemini", "cancer", "leo", "virgo",
@@ -10,25 +11,31 @@ const VALID_PERIODS = new Set(["daily", "weekly", "monthly"]);
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const { data: body, error } = await parseBody(request, 5_000);
+    if (error) return withRateLimitHeaders(error);
+
     const { sign, period, locale } = body as { sign: string; period: string; locale?: string };
 
     if (!sign || !VALID_SIGNS.has(sign.toLowerCase())) {
-      return NextResponse.json({ error: "Invalid zodiac sign" }, { status: 400 });
+      return withRateLimitHeaders(
+        errorResponse("Invalid zodiac sign", 400, `Must be one of: ${[...VALID_SIGNS].join(", ")}`)
+      );
     }
 
     if (!period || !VALID_PERIODS.has(period)) {
-      return NextResponse.json({ error: "Invalid period. Must be: daily, weekly, or monthly" }, { status: 400 });
+      return withRateLimitHeaders(
+        errorResponse("Invalid period", 400, "Must be one of: daily, weekly, monthly")
+      );
     }
 
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({
+      return withRateLimitHeaders(NextResponse.json({
         reading: null,
         message: "AI analysis unavailable — set OPENAI_API_KEY for zodiac readings",
         sign: sign.toLowerCase(),
         period,
-      });
+      }));
     }
 
     const ai = createAIProvider({ provider: "openai", apiKey });
@@ -47,9 +54,9 @@ export async function POST(request: NextRequest) {
       reading = { horoscope: result };
     }
 
-    return NextResponse.json({ reading, sign: sign.toLowerCase(), period });
+    return withRateLimitHeaders(NextResponse.json({ reading, sign: sign.toLowerCase(), period }));
   } catch (error: unknown) {
     console.error("Zodiac reading error:", error);
-    return NextResponse.json({ error: "Failed to generate zodiac reading" }, { status: 500 });
+    return withRateLimitHeaders(errorResponse("Failed to generate zodiac reading", 500));
   }
 }

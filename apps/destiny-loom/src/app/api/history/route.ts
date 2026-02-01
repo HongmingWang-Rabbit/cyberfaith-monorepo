@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-// TODO: Replace with real database integration (Drizzle + PostgreSQL)
-// For now, return mock data structures so the frontend can integrate
+import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString } from "@/lib/api-utils";
 
 interface ReadingHistoryItem {
   id: string;
@@ -35,50 +33,56 @@ const MOCK_HISTORY: ReadingHistoryItem[] = [
   },
 ];
 
+const VALID_TYPES = new Set(["mbti", "tarot", "zodiac"]);
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get("userId") || "demo-user";
 
-    // TODO: Query database by userId
     const history = MOCK_HISTORY.filter((item) => item.userId === userId);
 
-    return NextResponse.json({ history, userId });
+    return withRateLimitHeaders(NextResponse.json({ history, userId }));
   } catch (error: unknown) {
     console.error("History GET error:", error);
-    return NextResponse.json({ error: "Failed to fetch history" }, { status: 500 });
+    return withRateLimitHeaders(errorResponse("Failed to fetch history", 500));
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const { data: body, error } = await parseBody(request, 50_000);
+    if (error) return withRateLimitHeaders(error);
+
     const { type, result, userId } = body as {
       type: string;
       result: Record<string, unknown>;
       userId?: string;
     };
 
-    if (!type || !["mbti", "tarot", "zodiac"].includes(type)) {
-      return NextResponse.json({ error: "Invalid type. Must be: mbti, tarot, or zodiac" }, { status: 400 });
+    if (!type || !VALID_TYPES.has(type)) {
+      return withRateLimitHeaders(
+        errorResponse("Invalid type", 400, "Must be one of: mbti, tarot, zodiac")
+      );
     }
 
     if (!result || typeof result !== "object") {
-      return NextResponse.json({ error: "Result object is required" }, { status: 400 });
+      return withRateLimitHeaders(errorResponse("Result object is required", 400));
     }
 
-    // TODO: Save to database
     const savedItem: ReadingHistoryItem = {
       id: `mock-${Date.now()}`,
       type: type as "mbti" | "tarot" | "zodiac",
       result,
       createdAt: new Date().toISOString(),
-      userId: userId || "anonymous",
+      userId: userId ? sanitizeString(userId, 100) : "anonymous",
     };
 
-    return NextResponse.json({ saved: savedItem, message: "Mock save — DB integration pending" }, { status: 201 });
+    return withRateLimitHeaders(
+      NextResponse.json({ saved: savedItem, message: "Mock save — DB integration pending" }, { status: 201 })
+    );
   } catch (error: unknown) {
     console.error("History POST error:", error);
-    return NextResponse.json({ error: "Failed to save reading" }, { status: 500 });
+    return withRateLimitHeaders(errorResponse("Failed to save reading", 500));
   }
 }

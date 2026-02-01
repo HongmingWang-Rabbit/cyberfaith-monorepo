@@ -8,6 +8,9 @@ import { Link } from "@/i18n/navigation";
 import { useToast } from "@/components/ui/toast";
 import { TarotSpread } from "@/components/tarot/TarotSpread";
 import { tarotDeck, type SpreadType, type DrawnCard } from "@/data/tarot-deck";
+import { ShareButtons } from "@/components/ui/share-buttons";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { PageSkeleton } from "@/components/ui/skeleton";
 
 function ResultContent() {
   const t = useTranslations();
@@ -67,6 +70,7 @@ function ResultContent() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 space-y-8 pb-24">
+      <Breadcrumb current={t("tarot.result.title")} />
       <div className="text-center space-y-2">
         <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-accent via-primary to-highlight bg-clip-text text-transparent">
           {t("tarot.result.title")}
@@ -121,8 +125,9 @@ function ResultContent() {
         </CardContent>
       </Card>
 
+      <ShareButtons title="My Tarot Reading" description="Interactive Tarot reading on Destiny Loom" />
+
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
-        <Button variant="neon" onClick={handleShare}>{t("common.actions.share")}</Button>
         <Button variant="outline" onClick={handleSave}>{t("common.actions.save")}</Button>
         <Link href="/tarot"><Button variant="ghost">{t("common.actions.back")}</Button></Link>
       </div>
@@ -132,7 +137,7 @@ function ResultContent() {
 
 export default function TarotResultPage() {
   return (
-    <Suspense fallback={<div className="text-center py-16 animate-pulse text-muted-foreground">Loading...</div>}>
+    <Suspense fallback={<PageSkeleton />}>
       <ResultContent />
     </Suspense>
   );

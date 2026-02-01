@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAIProvider } from "@cyberfaith/ai-provider";
-import { getTarotReadingPrompt, sanitizeUserInput } from "@/lib/prompts";
+import { getTarotReadingPrompt } from "@/lib/prompts";
 import { TAROT_DECK, SPREAD_POSITIONS } from "@/lib/tarot-deck";
+import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString } from "@/lib/api-utils";
 
 const VALID_CARD_NAMES = new Set(TAROT_DECK.map((c) => c.name));
 const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
+const VALID_SPREAD_TYPES = new Set(["single", "three", "celtic"]);
 
 interface CardInput {
   name: string;
@@ -14,7 +16,9 @@ interface CardInput {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const { data: body, error } = await parseBody(request, 20_000);
+    if (error) return withRateLimitHeaders(error);
+
     const { cards, spreadType, question, locale } = body as {
       cards: CardInput[];
       spreadType: string;
@@ -23,53 +27,52 @@ export async function POST(request: NextRequest) {
     };
 
     if (!cards || !Array.isArray(cards) || cards.length === 0) {
-      return NextResponse.json({ error: "Cards array is required" }, { status: 400 });
+      return withRateLimitHeaders(errorResponse("Cards array is required", 400));
     }
 
-    if (!spreadType || !["single", "three", "celtic"].includes(spreadType)) {
-      return NextResponse.json({ error: "Invalid spreadType" }, { status: 400 });
+    if (!spreadType || !VALID_SPREAD_TYPES.has(spreadType)) {
+      return withRateLimitHeaders(
+        errorResponse("Invalid spreadType", 400, "Must be one of: single, three, celtic")
+      );
     }
 
-    // Validate card count matches spread type
     const expectedCount = SPREAD_POSITIONS[spreadType].length;
     if (cards.length !== expectedCount) {
-      return NextResponse.json(
-        { error: `Spread type "${spreadType}" requires exactly ${expectedCount} cards, got ${cards.length}` },
-        { status: 400 }
+      return withRateLimitHeaders(
+        errorResponse("Card count mismatch", 400, `Spread type "${spreadType}" requires exactly ${expectedCount} cards, got ${cards.length}`)
       );
     }
 
     if (locale && !VALID_LOCALES.has(locale)) {
-      return NextResponse.json({ error: "Invalid locale" }, { status: 400 });
+      return withRateLimitHeaders(errorResponse("Invalid locale", 400, "Must be one of: en, zh, zh-CN, zh-TW"));
     }
 
     for (const card of cards) {
       if (!card.name || !card.position || typeof card.reversed !== "boolean") {
-        return NextResponse.json({ error: "Each card must have name, position, and reversed fields" }, { status: 400 });
+        return withRateLimitHeaders(errorResponse("Invalid card format", 400, "Each card must have name, position, and reversed fields"));
       }
       if (!VALID_CARD_NAMES.has(card.name)) {
-        return NextResponse.json({ error: `Unknown card: "${card.name}"` }, { status: 400 });
+        return withRateLimitHeaders(errorResponse(`Unknown card: "${card.name}"`, 400));
       }
     }
 
-    // Check for duplicate cards
     const cardNames = cards.map((c) => c.name);
     if (new Set(cardNames).size !== cardNames.length) {
-      return NextResponse.json({ error: "Duplicate cards are not allowed" }, { status: 400 });
+      return withRateLimitHeaders(errorResponse("Duplicate cards are not allowed", 400));
     }
 
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({
+      return withRateLimitHeaders(NextResponse.json({
         interpretation: null,
         message: "AI analysis unavailable — set OPENAI_API_KEY for tarot interpretations",
         cards,
         spreadType,
-      });
+      }));
     }
 
     const ai = createAIProvider({ provider: "openai", apiKey });
-    const sanitizedQuestion = question ? sanitizeUserInput(question, 500) : undefined;
+    const sanitizedQuestion = question ? sanitizeString(question, 500) : undefined;
     const prompt = getTarotReadingPrompt(cards, spreadType, sanitizedQuestion, locale);
 
     const result = await ai.generateCompletion(prompt, {
@@ -85,9 +88,9 @@ export async function POST(request: NextRequest) {
       interpretation = { reading: result };
     }
 
-    return NextResponse.json({ interpretation, cards, spreadType });
+    return withRateLimitHeaders(NextResponse.json({ interpretation, cards, spreadType }));
   } catch (error: unknown) {
     console.error("Tarot analyze error:", error);
-    return NextResponse.json({ error: "Failed to analyze tarot spread" }, { status: 500 });
+    return withRateLimitHeaders(errorResponse("Failed to analyze tarot spread", 500));
   }
 }

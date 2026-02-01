@@ -5,6 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { Card, CardContent } from "@cyberfaith/ui";
 import { useState } from "react";
 import { castHexagram } from "@/lib/i-ching";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function IChingPage() {
   const t = useTranslations("iching");
@@ -23,6 +24,7 @@ export default function IChingPage() {
 
   return (
     <div className="max-w-3xl mx-auto py-8 space-y-10 pb-24">
+      <Breadcrumb current={t("title")} />
       <div className="text-center space-y-3">
         <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-accent via-primary to-highlight bg-clip-text text-transparent">
           {t("title")}

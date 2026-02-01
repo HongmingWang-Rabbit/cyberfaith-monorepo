@@ -5,6 +5,8 @@ import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@cyberfaith/ui";
 import { useEffect, useState } from "react";
 import type { CastResult, HexagramLine } from "@/lib/i-ching";
+import { ShareButtons } from "@/components/ui/share-buttons";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 function HexagramDisplay({
   lines,
@@ -117,6 +119,7 @@ export default function IChingResultPage() {
 
   return (
     <div className="max-w-3xl mx-auto py-8 space-y-8 pb-24">
+      <Breadcrumb current={t("resultTitle")} />
       <div className="text-center space-y-2">
         <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-accent via-primary to-highlight bg-clip-text text-transparent">
           {t("resultTitle")}
@@ -215,6 +218,11 @@ export default function IChingResultPage() {
           <p className="text-muted-foreground italic">{t("aiPlaceholder")}</p>
         </CardContent>
       </Card>
+
+      <ShareButtons
+        title={`I Ching — ${hexagram.chinese} · ${hexagram.name}`}
+        description="I Ching divination on Destiny Loom"
+      />
 
       <div className="text-center">
         <Link
