@@ -13,12 +13,12 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type");
     const limit = searchParams.get("limit") || "50";
-    const offset = searchParams.get("offset") || "0";
+    const page = searchParams.get("page") || "1";
 
     const url = new URL(`${CORE_API_URL}/readings`);
     if (type) url.searchParams.set("type", type);
     url.searchParams.set("limit", limit);
-    url.searchParams.set("offset", offset);
+    url.searchParams.set("page", page);
 
     const res = await fetch(url.toString(), {
       headers: { Authorization: auth },

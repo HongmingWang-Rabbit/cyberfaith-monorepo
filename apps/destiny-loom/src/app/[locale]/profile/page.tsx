@@ -244,7 +244,7 @@ export default function ProfilePage() {
           {[
             { label: t("stats.totalReadings"), value: readings.length },
             { label: t("stats.streak"), value: streak },
-            { label: t("stats.points"), value: readings.length * 10 },
+            { label: t("stats.points"), value: readings.length * 10 }, /* TODO: fetch from /api/points/me */
             { label: t("stats.achievements"), value: achievements.length },
           ].map((stat) => (
             <Card key={stat.label}>

@@ -92,7 +92,7 @@ export class ReadingsController {
       throw new NotFoundException("Reading not found");
     }
 
-    await this.db.delete(readings).where(eq(readings.id, id));
+    await this.db.delete(readings).where(and(eq(readings.id, id), eq(readings.userId, req.user.id)));
 
     return { success: true };
   }
