@@ -174,3 +174,71 @@ Produce a JSON response:
 Be specific to these two signs. Use cyberpunk metaphors. Be honest but encouraging.
 Respond ONLY with valid JSON.${langSuffix(locale)}`;
 }
+
+// ─── FOUR PILLARS (BAZI) ──────────────────────────────────
+
+export function getFourPillarsPrompt(
+  pillars: { year: unknown; month: unknown; day: unknown; hour: unknown },
+  gender: string,
+  locale?: string
+): string {
+  return `You are CyberFaith's BaZi (四柱命理) master, weaving fate analysis through neon-lit digital threads.
+
+Analyze the following Four Pillars chart for a ${gender} individual:
+
+${JSON.stringify(pillars, null, 2)}
+
+Produce a JSON response:
+{
+  "overview": "2-3 sentence holistic overview of this chart",
+  "dayMaster": { "element": "Wood/Fire/Earth/Metal/Water", "strength": "strong/weak/balanced", "description": "2 sentences" },
+  "elementBalance": { "wood": 2, "fire": 1, "earth": 3, "metal": 1, "water": 1, "analysis": "2-3 sentences about elemental balance" },
+  "personality": "2-3 sentences about personality traits from this chart",
+  "career": "2-3 sentences about career tendencies",
+  "relationships": "2-3 sentences about relationship dynamics",
+  "luckyElements": ["element1", "element2"],
+  "advice": "2-3 sentences of personalized guidance"
+}
+
+Use cyberpunk metaphors. Be insightful and specific to this chart.
+Respond ONLY with valid JSON.${langSuffix(locale)}`;
+}
+
+// ─── I CHING ─────────────────────────────────────────────
+
+export function getIChingPrompt(
+  hexagram: { number: number; name: string; chinese: string; trigrams: { upper: string; lower: string }; description: string },
+  changingLines: number[],
+  question?: string,
+  locale?: string
+): string {
+  const questionLine = question
+    ? `\nThe seeker's question: "${question}"`
+    : "\nNo specific question — give a general life reading.";
+
+  const changingInfo = changingLines.length > 0
+    ? `\nChanging lines at positions: ${changingLines.join(", ")} (bottom=1, top=6)`
+    : "\nNo changing lines — the situation is stable.";
+
+  return `You are CyberFaith's I Ching oracle, channeling 3,000 years of wisdom through digital streams.
+
+Hexagram #${hexagram.number}: **${hexagram.name}** (${hexagram.chinese})
+Trigrams: Upper=${hexagram.trigrams.upper}, Lower=${hexagram.trigrams.lower}
+${hexagram.description}
+${changingInfo}
+${questionLine}
+
+Produce a JSON response:
+{
+  "hexagramMeaning": "2-3 sentences on the core meaning of this hexagram",
+  "situation": "2-3 sentences applying the hexagram to the seeker's current situation",
+  "changingLinesInterpretation": ${changingLines.length > 0 ? '"2-3 sentences about how the changing lines affect the reading"' : 'null'},
+  "guidance": "2-3 sentences of practical advice drawn from the hexagram",
+  "warning": "1 sentence — what to avoid or be cautious of",
+  "outlook": "positive/neutral/challenging",
+  "cosmicInsight": "One sentence of neon-lit ancient wisdom"
+}
+
+Be vivid, specific, and blend ancient Chinese philosophy with cyberpunk aesthetics.
+Respond ONLY with valid JSON.${langSuffix(locale)}`;
+}
