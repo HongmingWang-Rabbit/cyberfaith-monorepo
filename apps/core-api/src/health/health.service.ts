@@ -2,7 +2,7 @@ import { Injectable, Inject } from "@nestjs/common";
 import { DRIZZLE } from "../db/drizzle.provider";
 import { sql } from "drizzle-orm";
 
-interface HealthReport {
+export interface HealthReport {
   status: "ok" | "degraded" | "down";
   uptime: number;
   version: string;
