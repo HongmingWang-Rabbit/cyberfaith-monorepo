@@ -31,6 +31,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Answers are required" }, { status: 400 });
     }
 
+    const validValues = new Set(["E", "I", "S", "N", "T", "F", "J", "P"]);
+    const validDimensions = new Set(["EI", "SN", "TF", "JP"]);
+    for (const answer of answers) {
+      if (!validValues.has(answer.value) || !validDimensions.has(answer.dimension)) {
+        return NextResponse.json({ error: "Invalid answer format" }, { status: 400 });
+      }
+    }
+
     const mbtiType = computeMBTIType(answers);
 
     // If no API key, return type without AI analysis
@@ -74,7 +82,7 @@ Respond ONLY with valid JSON, no markdown.`;
     }
 
     return NextResponse.json({ type: mbtiType, analysis });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("MBTI analyze error:", error);
     return NextResponse.json({ error: "Failed to analyze personality" }, { status: 500 });
   }

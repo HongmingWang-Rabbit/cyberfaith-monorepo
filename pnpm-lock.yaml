@@ -68,7 +68,7 @@ importers:
         version: link:../../packages/config-typescript
       '@nestjs/cli':
         specifier: ^10.4.9
-        version: 10.4.9(@swc/core@1.15.11)
+        version: 10.4.9(@swc/core@1.15.11)(esbuild@0.19.12)
       '@nestjs/schematics':
         specifier: ^10.2.3
         version: 10.2.3(chokidar@3.6.0)(typescript@5.9.3)
@@ -123,67 +123,6 @@ importers:
       next-intl:
         specifier: ^4.8.1
         version: 4.8.1(next@15.5.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
-      postgres:
-        specifier: ^3.4.5
-        version: 3.4.8
-      react:
-        specifier: ^19.0.0
-        version: 19.2.4
-      react-dom:
-        specifier: ^19.0.0
-        version: 19.2.4(react@19.2.4)
-    devDependencies:
-      '@cyberfaith/config-typescript':
-        specifier: workspace:*
-        version: link:../../packages/config-typescript
-      '@tailwindcss/postcss':
-        specifier: ^4.0.0
-        version: 4.1.18
-      '@types/react':
-        specifier: ^19.0.2
-        version: 19.2.10
-      '@types/react-dom':
-        specifier: ^19.0.2
-        version: 19.2.3(@types/react@19.2.10)
-      drizzle-kit:
-        specifier: ^0.30.1
-        version: 0.30.6
-      postcss:
-        specifier: ^8.4.49
-        version: 8.5.6
-      tailwindcss:
-        specifier: ^4.0.0
-        version: 4.1.18
-      typescript:
-        specifier: ^5.7.2
-        version: 5.9.3
-
-  apps/sanctuary:
-    dependencies:
-      '@cyberfaith/auth-client':
-        specifier: workspace:*
-        version: link:../../packages/auth-client
-      '@cyberfaith/config-tailwind':
-        specifier: workspace:*
-        version: link:../../packages/config-tailwind
-      '@cyberfaith/db-utils':
-        specifier: workspace:*
-        version: link:../../packages/db-utils
-      '@cyberfaith/types':
-        specifier: workspace:*
-        version: link:../../packages/types
-      '@cyberfaith/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      '@cyberfaith/utils':
-        specifier: workspace:*
-        version: link:../../packages/utils
-      drizzle-orm:
-        specifier: ^0.38.3
-        version: 0.38.4(@types/react@19.2.10)(postgres@3.4.8)(react@19.2.4)
-      next:
-        specifier: ^15.1.3
-        version: 15.5.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       postgres:
         specifier: ^3.4.5
         version: 3.4.8
@@ -412,6 +351,9 @@ importers:
       '@types/react':
         specifier: ^19.0.2
         version: 19.2.10
+      next:
+        specifier: ^15.0.0
+        version: 15.5.11(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
@@ -4818,7 +4760,7 @@ snapshots:
 
   '@lukeed/csprng@1.1.0': {}
 
-  '@nestjs/cli@10.4.9(@swc/core@1.15.11)':
+  '@nestjs/cli@10.4.9(@swc/core@1.15.11)(esbuild@0.19.12)':
     dependencies:
       '@angular-devkit/core': 17.3.11(chokidar@3.6.0)
       '@angular-devkit/schematics': 17.3.11(chokidar@3.6.0)
@@ -4828,7 +4770,7 @@ snapshots:
       chokidar: 3.6.0
       cli-table3: 0.6.5
       commander: 4.1.1
-      fork-ts-checker-webpack-plugin: 9.0.2(typescript@5.7.2)(webpack@5.97.1(@swc/core@1.15.11))
+      fork-ts-checker-webpack-plugin: 9.0.2(typescript@5.7.2)(webpack@5.97.1(@swc/core@1.15.11)(esbuild@0.19.12))
       glob: 10.4.5
       inquirer: 8.2.6
       node-emoji: 1.11.0
@@ -4837,7 +4779,7 @@ snapshots:
       tsconfig-paths: 4.2.0
       tsconfig-paths-webpack-plugin: 4.2.0
       typescript: 5.7.2
-      webpack: 5.97.1(@swc/core@1.15.11)
+      webpack: 5.97.1(@swc/core@1.15.11)(esbuild@0.19.12)
       webpack-node-externals: 3.0.0
     optionalDependencies:
       '@swc/core': 1.15.11
@@ -6349,7 +6291,7 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
-  fork-ts-checker-webpack-plugin@9.0.2(typescript@5.7.2)(webpack@5.97.1(@swc/core@1.15.11)):
+  fork-ts-checker-webpack-plugin@9.0.2(typescript@5.7.2)(webpack@5.97.1(@swc/core@1.15.11)(esbuild@0.19.12)):
     dependencies:
       '@babel/code-frame': 7.29.0
       chalk: 4.1.2
@@ -6364,7 +6306,7 @@ snapshots:
       semver: 7.7.3
       tapable: 2.3.0
       typescript: 5.7.2
-      webpack: 5.97.1(@swc/core@1.15.11)
+      webpack: 5.97.1(@swc/core@1.15.11)(esbuild@0.19.12)
 
   form-data-encoder@1.7.2: {}
 
@@ -7441,16 +7383,17 @@ snapshots:
 
   tapable@2.3.0: {}
 
-  terser-webpack-plugin@5.3.16(@swc/core@1.15.11)(webpack@5.97.1(@swc/core@1.15.11)):
+  terser-webpack-plugin@5.3.16(@swc/core@1.15.11)(esbuild@0.19.12)(webpack@5.97.1(@swc/core@1.15.11)(esbuild@0.19.12)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 4.3.3
       serialize-javascript: 6.0.2
       terser: 5.46.0
-      webpack: 5.97.1(@swc/core@1.15.11)
+      webpack: 5.97.1(@swc/core@1.15.11)(esbuild@0.19.12)
     optionalDependencies:
       '@swc/core': 1.15.11
+      esbuild: 0.19.12
 
   terser@5.46.0:
     dependencies:
@@ -7725,7 +7668,7 @@ snapshots:
 
   webpack-sources@3.3.3: {}
 
-  webpack@5.97.1(@swc/core@1.15.11):
+  webpack@5.97.1(@swc/core@1.15.11)(esbuild@0.19.12):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.8
@@ -7747,7 +7690,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.3.0
-      terser-webpack-plugin: 5.3.16(@swc/core@1.15.11)(webpack@5.97.1(@swc/core@1.15.11))
+      terser-webpack-plugin: 5.3.16(@swc/core@1.15.11)(esbuild@0.19.12)(webpack@5.97.1(@swc/core@1.15.11)(esbuild@0.19.12))
       watchpack: 2.5.1
       webpack-sources: 3.3.3
     transitivePeerDependencies:

@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards } from "@nestjs/common";
+import { Controller, Get, NotFoundException, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "./auth.service";
 
@@ -27,7 +27,7 @@ export class AuthController {
   async getMe(@Req() req: any) {
     const user = await this.authService.getUserById(req.user.id);
     if (!user) {
-      return { error: "User not found" };
+      throw new NotFoundException("User not found");
     }
     const { passwordHash, ...safeUser } = user;
     return safeUser;

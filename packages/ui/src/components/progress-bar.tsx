@@ -13,6 +13,10 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
     return (
       <div
         ref={ref}
+        role="progressbar"
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={max}
         className={cn("h-2 w-full overflow-hidden rounded-full bg-muted", className)}
         {...props}
       >

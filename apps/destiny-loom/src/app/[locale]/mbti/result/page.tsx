@@ -18,9 +18,14 @@ export default function MbtiResult() {
   const searchParams = useSearchParams();
   const type = searchParams.get("type") || "INTJ";
   const scoresRaw = searchParams.get("scores");
-  const scores = scoresRaw
-    ? JSON.parse(decodeURIComponent(scoresRaw))
-    : { EI: 0, SN: 0, TF: 0, JP: 0 };
+  let scores = { EI: 0, SN: 0, TF: 0, JP: 0 };
+  if (scoresRaw) {
+    try {
+      scores = JSON.parse(decodeURIComponent(scoresRaw));
+    } catch {
+      // Invalid scores param, use defaults
+    }
+  }
 
   const typeName = t(`results.typeNames.${type}`);
   const typeDesc = t(`results.typeDescriptions.${type}`);

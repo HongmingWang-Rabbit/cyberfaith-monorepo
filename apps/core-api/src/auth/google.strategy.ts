@@ -20,10 +20,15 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
     done: VerifyCallback,
   ): Promise<any> {
     const { id, name, emails, photos } = profile;
+
+    if (!emails?.length) {
+      return done(new Error("No email returned from Google"), false);
+    }
+
     const user = {
       googleId: id,
       email: emails[0].value,
-      name: `${name.givenName} ${name.familyName}`,
+      name: name ? `${name.givenName ?? ""} ${name.familyName ?? ""}`.trim() : "Unknown",
       avatarUrl: photos?.[0]?.value || null,
     };
     done(null, user);
