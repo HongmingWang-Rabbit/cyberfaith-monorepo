@@ -1,15 +1,93 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CyberFaith",
-  description: "Digital faith platform for the modern age",
+  title: {
+    default: "CyberFaith — Digital Spirituality for the Modern Age",
+    template: "%s | CyberFaith",
+  },
+  description:
+    "Explore MBTI, Tarot, Zodiac, Four Pillars, and I Ching through a cyberpunk lens. Casual spirituality for the digital generation.",
+  openGraph: {
+    title: "CyberFaith",
+    description: "Digital spirituality for the modern age",
+    type: "website",
+  },
 };
+
+function Navbar() {
+  return (
+    <nav className="fixed top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+        <Link href="/" className="text-xl font-bold tracking-tight">
+          Cyber<span className="text-primary">Faith</span>
+        </Link>
+        <div className="flex items-center gap-6 text-sm">
+          <Link href="/products" className="text-muted-foreground hover:text-primary transition-colors">
+            Products
+          </Link>
+          <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
+            About
+          </Link>
+          <a
+            href="https://destiny-loom.cyberfaith.app"
+            className="rounded-md bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-medium text-white hover:shadow-[var(--glow-purple)] transition-all"
+          >
+            Launch App
+          </a>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-border/50 bg-secondary/50">
+      <div className="mx-auto max-w-6xl px-4 py-12">
+        <div className="grid gap-8 sm:grid-cols-3">
+          <div>
+            <h3 className="text-lg font-bold mb-3">
+              Cyber<span className="text-primary">Faith</span>
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Digital spirituality for the modern age. Explore your inner world through technology.
+            </p>
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold text-foreground mb-3">Products</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link href="/products" className="hover:text-primary transition-colors">Destiny Loom</Link></li>
+              <li><Link href="/products" className="hover:text-primary transition-colors">Spirit Arcade</Link></li>
+              <li><Link href="/products" className="hover:text-primary transition-colors">Sanctum</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold text-foreground mb-3">Connect</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><a href="#" className="hover:text-primary transition-colors">Twitter / X</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Discord</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">WeChat</a></li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-10 border-t border-border/50 pt-6 text-center text-xs text-muted-foreground">
+          © {new Date().getFullYear()} CyberFaith. All rights reserved.
+        </div>
+      </div>
+    </footer>
+  );
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-background text-foreground min-h-screen">{children}</body>
+      <body className="bg-background text-foreground min-h-screen">
+        <Navbar />
+        <div className="pt-16">{children}</div>
+        <Footer />
+      </body>
     </html>
   );
 }
