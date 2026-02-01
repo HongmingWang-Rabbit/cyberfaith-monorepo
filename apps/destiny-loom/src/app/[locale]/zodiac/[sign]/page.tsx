@@ -7,6 +7,8 @@ import { useParams } from "next/navigation";
 import { zodiacSigns, getZodiacSign } from "@/data/zodiac-signs";
 import { useState } from "react";
 import { notFound } from "next/navigation";
+import { ShareButtons } from "@/components/ui/share-buttons";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 type Period = "daily" | "weekly" | "monthly";
 
@@ -42,6 +44,7 @@ export default function ZodiacSignPage() {
 
   return (
     <div className="max-w-3xl mx-auto py-8 space-y-8 pb-24">
+      <Breadcrumb current={`${sign.symbol} ${isZh ? sign.nameZh : sign.name}`} />
       {/* Hero Card */}
       <Card className="overflow-hidden border-primary/30 shadow-[0_0_40px_rgba(168,85,247,0.15)]">
         <CardContent className="p-8 text-center space-y-4">
@@ -130,15 +133,11 @@ export default function ZodiacSignPage() {
         </CardContent>
       </Card>
 
-      {/* Share Button */}
-      <div className="text-center">
-        <button
-          onClick={handleShare}
-          className="px-6 py-3 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors font-medium"
-        >
-          {tc("actions.share")} {sign.symbol}
-        </button>
-      </div>
+      {/* Share */}
+      <ShareButtons
+        title={`${sign.symbol} ${isZh ? sign.nameZh : sign.name} — ${sign.dateRange}`}
+        description="Zodiac reading on Destiny Loom"
+      />
     </div>
   );
 }

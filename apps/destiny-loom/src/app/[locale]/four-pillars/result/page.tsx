@@ -118,6 +118,7 @@ export default function FourPillarsResultPage() {
 
   return (
     <div className="max-w-3xl mx-auto py-8 space-y-8 pb-24">
+      <Breadcrumb current={t("resultTitle")} />
       <div className="text-center space-y-3">
         <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-accent to-highlight bg-clip-text text-transparent">
           {t("resultTitle")}
@@ -179,6 +180,11 @@ export default function FourPillarsResultPage() {
           <p className="text-muted-foreground italic">{t("aiPlaceholder")}</p>
         </CardContent>
       </Card>
+
+      <ShareButtons
+        title="My Four Pillars of Destiny"
+        description="Four Pillars (BaZi) analysis on Destiny Loom"
+      />
 
       <div className="text-center">
         <Link
