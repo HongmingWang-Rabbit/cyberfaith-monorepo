@@ -65,13 +65,13 @@ export function MbtiAnalysisContent({ data }: { data: Record<string, unknown> })
 
   return (
     <div className="space-y-4">
-      {analysis.title && (
+      {typeof analysis.title === "string" && (
         <h3 className="text-lg font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-          {analysis.title as string}
+          {analysis.title}
         </h3>
       )}
-      {analysis.summary && (
-        <p className="text-muted-foreground leading-relaxed">{analysis.summary as string}</p>
+      {typeof analysis.summary === "string" && (
+        <p className="text-muted-foreground leading-relaxed">{analysis.summary}</p>
       )}
       {analysis.strengths && Array.isArray(analysis.strengths) && (
         <div>
@@ -93,17 +93,16 @@ export function MbtiAnalysisContent({ data }: { data: Record<string, unknown> })
           </div>
         </div>
       )}
-      {analysis.spiritAnimal && (
+      {typeof analysis.spiritAnimal === "string" && (
         <p className="text-sm text-muted-foreground">
-          🐉 Spirit Creature: <span className="text-foreground font-medium">{analysis.spiritAnimal as string}</span>
+          🐉 Spirit Creature: <span className="text-foreground font-medium">{analysis.spiritAnimal}</span>
         </p>
       )}
-      {analysis.advice && (
-        <p className="text-sm italic text-accent border-l-2 border-accent/30 pl-3">{analysis.advice as string}</p>
+      {typeof analysis.advice === "string" && (
+        <p className="text-sm italic text-accent border-l-2 border-accent/30 pl-3">{analysis.advice}</p>
       )}
-      {/* Fallback for raw text */}
-      {analysis.raw && (
-        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{analysis.raw as string}</p>
+      {typeof analysis.raw === "string" && (
+        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{analysis.raw}</p>
       )}
     </div>
   );
@@ -134,27 +133,27 @@ export function ReadingContent({ data, messageKey }: { data: Record<string, unkn
   // Render known fields
   return (
     <div className="space-y-4">
-      {obj.title && (
+      {typeof obj.title === "string" && (
         <h3 className="text-lg font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-          {obj.title as string}
+          {obj.title}
         </h3>
       )}
-      {obj.overview && <p className="text-muted-foreground leading-relaxed">{obj.overview as string}</p>}
-      {obj.summary && <p className="text-muted-foreground leading-relaxed">{obj.summary as string}</p>}
-      {obj.reading && typeof obj.reading === "string" && (
+      {typeof obj.overview === "string" && <p className="text-muted-foreground leading-relaxed">{obj.overview}</p>}
+      {typeof obj.summary === "string" && <p className="text-muted-foreground leading-relaxed">{obj.summary}</p>}
+      {typeof obj.reading === "string" && (
         <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{obj.reading}</p>
       )}
-      {obj.horoscope && typeof obj.horoscope === "string" && (
+      {typeof obj.horoscope === "string" && (
         <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{obj.horoscope}</p>
       )}
-      {obj.interpretation && typeof obj.interpretation === "string" && (
+      {typeof obj.interpretation === "string" && (
         <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{obj.interpretation}</p>
       )}
-      {obj.advice && (
-        <p className="text-sm italic text-accent border-l-2 border-accent/30 pl-3">{obj.advice as string}</p>
+      {typeof obj.advice === "string" && (
+        <p className="text-sm italic text-accent border-l-2 border-accent/30 pl-3">{obj.advice}</p>
       )}
-      {obj.guidance && (
-        <p className="text-sm italic text-accent border-l-2 border-accent/30 pl-3">{obj.guidance as string}</p>
+      {typeof obj.guidance === "string" && (
+        <p className="text-sm italic text-accent border-l-2 border-accent/30 pl-3">{obj.guidance}</p>
       )}
       {/* Render any remaining string fields */}
       {Object.entries(obj).map(([key, val]) => {
