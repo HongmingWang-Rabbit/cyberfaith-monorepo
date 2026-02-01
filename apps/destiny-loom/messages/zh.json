@@ -139,5 +139,81 @@
       "ESTP": "聪明、精力充沛的行动派。你热爱冒险和解决问题。",
       "ESFP": "自发、热情的表演者。生活是舞台，你享受聚光灯下的时刻。"
     }
+  },
+  "tarot": {
+    "title": "塔罗占卜",
+    "subtitle": "从宇宙牌组中抽取卡牌，获取神秘的人生指引。",
+    "cards": "张牌",
+    "selectCards": "已选择 {selected} / {total} 张牌",
+    "viewReading": "查看占卜结果",
+    "spreads": {
+      "single": {
+        "title": "单张牌",
+        "description": "快速洞察——抽取一张牌获取即时指引。"
+      },
+      "threeCard": {
+        "title": "三张牌阵",
+        "description": "过去、现在、未来——理解你旅程的脉络。"
+      },
+      "celticCross": {
+        "title": "凯尔特十字",
+        "description": "深度解读——10张牌的全面占卜，适合复杂问题。"
+      }
+    },
+    "reading": {
+      "title": "选择你的牌",
+      "instruction": "专注于你的问题，然后点击呼唤你的牌。"
+    },
+    "result": {
+      "title": "你的塔罗占卜",
+      "saved": "占卜结果已保存！",
+      "noCards": "未找到卡牌，请重新开始占卜。",
+      "aiAnalysis": "AI塔罗解读",
+      "aiPlaceholder": "AI驱动的塔罗解读即将上线！我们的神秘AI将为你编织一个个性化的牌意叙事。"
+    }
+  },
+  "zodiac": {
+    "title": "星座洞察",
+    "subtitle": "探索你的星座和宇宙能量排列。",
+    "selectSign": "选择你的星座",
+    "element": "元素",
+    "rulingPlanet": "守护星",
+    "dateRange": "日期范围",
+    "traits": "关键特质",
+    "compatibility": "配对指数",
+    "readings": {
+      "daily": "每日",
+      "weekly": "每周",
+      "monthly": "每月"
+    },
+    "readingPlaceholder": "你的{period}宇宙解读将在连接AI预言机后显示。星星有很多要告诉你的...",
+    "compatibleWith": "最佳配对星座",
+    "aiAnalysis": "AI星座分析",
+    "aiPlaceholder": "AI驱动的星座洞察即将上线！连接后即可获取个性化的天体指引。",
+    "elements": {
+      "fire": "火",
+      "earth": "土",
+      "air": "风",
+      "water": "水"
+    }
+  },
+  "profile": {
+    "title": "个人中心",
+    "guest": "宇宙旅者",
+    "guestSub": "登录以跨设备保存你的旅程",
+    "stats": {
+      "title": "你的数据",
+      "testsCompleted": "完成测试",
+      "readingsDone": "完成占卜",
+      "signsExplored": "探索星座"
+    },
+    "history": {
+      "title": "占卜历史",
+      "empty": "暂无记录。开始探索吧！",
+      "mbti": "MBTI结果",
+      "tarot": "塔罗占卜",
+      "zodiac": "星座解读",
+      "clearAll": "清除历史"
+    }
   }
 }

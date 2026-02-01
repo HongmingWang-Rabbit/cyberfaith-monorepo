@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAIProvider } from "@cyberfaith/ai-provider";
-import { getTarotReadingPrompt } from "@/lib/prompts";
+import { getTarotReadingPrompt, sanitizeUserInput } from "@/lib/prompts";
+import { TAROT_DECK, SPREAD_POSITIONS } from "@/lib/tarot-deck";
+
+const VALID_CARD_NAMES = new Set(TAROT_DECK.map((c) => c.name));
+const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
 
 interface CardInput {
   name: string;
@@ -26,10 +30,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid spreadType" }, { status: 400 });
     }
 
+    // Validate card count matches spread type
+    const expectedCount = SPREAD_POSITIONS[spreadType].length;
+    if (cards.length !== expectedCount) {
+      return NextResponse.json(
+        { error: `Spread type "${spreadType}" requires exactly ${expectedCount} cards, got ${cards.length}` },
+        { status: 400 }
+      );
+    }
+
+    if (locale && !VALID_LOCALES.has(locale)) {
+      return NextResponse.json({ error: "Invalid locale" }, { status: 400 });
+    }
+
     for (const card of cards) {
       if (!card.name || !card.position || typeof card.reversed !== "boolean") {
         return NextResponse.json({ error: "Each card must have name, position, and reversed fields" }, { status: 400 });
       }
+      if (!VALID_CARD_NAMES.has(card.name)) {
+        return NextResponse.json({ error: `Unknown card: "${card.name}"` }, { status: 400 });
+      }
+    }
+
+    // Check for duplicate cards
+    const cardNames = cards.map((c) => c.name);
+    if (new Set(cardNames).size !== cardNames.length) {
+      return NextResponse.json({ error: "Duplicate cards are not allowed" }, { status: 400 });
     }
 
     const apiKey = process.env.OPENAI_API_KEY;
@@ -43,7 +69,8 @@ export async function POST(request: NextRequest) {
     }
 
     const ai = createAIProvider({ provider: "openai", apiKey });
-    const prompt = getTarotReadingPrompt(cards, spreadType, question, locale);
+    const sanitizedQuestion = question ? sanitizeUserInput(question, 500) : undefined;
+    const prompt = getTarotReadingPrompt(cards, spreadType, sanitizedQuestion, locale);
 
     const result = await ai.generateCompletion(prompt, {
       temperature: 0.9,

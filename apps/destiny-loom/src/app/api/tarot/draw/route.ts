@@ -15,11 +15,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (question && (typeof question !== "string" || question.length > 500)) {
+      return NextResponse.json(
+        { error: "Question must be a string of 500 characters or less" },
+        { status: 400 }
+      );
+    }
+
     const cards = drawCards(spreadType as "single" | "three" | "celtic");
 
     return NextResponse.json({
       spreadType,
-      question: question || null,
+      question: question ? question.slice(0, 500) : null,
       cards,
       drawnAt: new Date().toISOString(),
     });

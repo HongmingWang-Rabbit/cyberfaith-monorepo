@@ -1,9 +1,11 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button, Card, CardContent, CardHeader, CardTitle, Badge, Divider } from "@cyberfaith/ui";
 import { Link } from "@/i18n/navigation";
+import { useToast } from "@/components/ui/toast";
 
 const dimensionKeys = ["EI", "SN", "TF", "JP"] as const;
 const dimensionLabels: Record<string, [string, string]> = {
@@ -13,8 +15,9 @@ const dimensionLabels: Record<string, [string, string]> = {
   JP: ["J", "P"],
 };
 
-export default function MbtiResult() {
+function MbtiResultContent() {
   const t = useTranslations();
+  const { showToast } = useToast();
   const searchParams = useSearchParams();
   const type = searchParams.get("type") || "INTJ";
   const scoresRaw = searchParams.get("scores");
@@ -33,11 +36,24 @@ export default function MbtiResult() {
   function handleShare() {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
-    alert(t("common.actions.copy") + " ✓");
+    showToast(t("common.actions.copy") + " ✓");
   }
 
   function handleSave() {
-    alert(t("results.saved"));
+    // Save to localStorage
+    try {
+      const history = JSON.parse(localStorage.getItem("cyberfaith-history") || "[]");
+      history.unshift({
+        type: "mbti",
+        result: type,
+        scores,
+        date: new Date().toISOString(),
+      });
+      localStorage.setItem("cyberfaith-history", JSON.stringify(history.slice(0, 50)));
+      showToast(t("results.saved"));
+    } catch {
+      showToast(t("results.saved"));
+    }
   }
 
   return (
@@ -122,5 +138,20 @@ export default function MbtiResult() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function MbtiResult() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-2xl mx-auto py-8 text-center">
+        <div className="animate-pulse space-y-4">
+          <div className="h-16 bg-muted rounded-lg mx-auto w-48" />
+          <div className="h-4 bg-muted rounded w-32 mx-auto" />
+        </div>
+      </div>
+    }>
+      <MbtiResultContent />
+    </Suspense>
   );
 }

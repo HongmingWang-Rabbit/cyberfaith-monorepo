@@ -139,5 +139,81 @@
       "ESTP": "Smart, energetic, and perceptive people who live on the edge. You love action and solving problems.",
       "ESFP": "Spontaneous, energetic, and enthusiastic entertainers. Life is a stage and you love the spotlight."
     }
+  },
+  "tarot": {
+    "title": "Tarot Reading",
+    "subtitle": "Draw cards from the cosmic deck and receive mystical guidance for your journey.",
+    "cards": "cards",
+    "selectCards": "Select {selected} of {total} cards",
+    "viewReading": "View Your Reading",
+    "spreads": {
+      "single": {
+        "title": "Single Card",
+        "description": "Quick insight — draw one card for immediate guidance."
+      },
+      "threeCard": {
+        "title": "Three Card Spread",
+        "description": "Past, Present, Future — understand the flow of your journey."
+      },
+      "celticCross": {
+        "title": "Celtic Cross",
+        "description": "Deep dive — a comprehensive 10-card reading for complex questions."
+      }
+    },
+    "reading": {
+      "title": "Choose Your Cards",
+      "instruction": "Focus on your question, then tap the cards that call to you."
+    },
+    "result": {
+      "title": "Your Tarot Reading",
+      "saved": "Reading saved to profile!",
+      "noCards": "No cards found. Please start a new reading.",
+      "aiAnalysis": "AI Tarot Analysis",
+      "aiPlaceholder": "AI-powered tarot interpretation coming soon! Our mystic AI will weave the meanings of your cards into a personalized narrative."
+    }
+  },
+  "zodiac": {
+    "title": "Zodiac Insights",
+    "subtitle": "Explore your star sign and cosmic alignment.",
+    "selectSign": "Choose your zodiac sign",
+    "element": "Element",
+    "rulingPlanet": "Ruling Planet",
+    "dateRange": "Date Range",
+    "traits": "Key Traits",
+    "compatibility": "Compatibility",
+    "readings": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    },
+    "readingPlaceholder": "Your {period} cosmic reading will appear here once connected to our AI oracle. The stars have much to reveal...",
+    "compatibleWith": "Most compatible with",
+    "aiAnalysis": "AI Zodiac Analysis",
+    "aiPlaceholder": "AI-powered zodiac insights coming soon! Connect to receive personalized celestial guidance.",
+    "elements": {
+      "fire": "Fire",
+      "earth": "Earth",
+      "air": "Air",
+      "water": "Water"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "guest": "Cosmic Traveler",
+    "guestSub": "Sign in to save your journey across devices",
+    "stats": {
+      "title": "Your Stats",
+      "testsCompleted": "Tests Completed",
+      "readingsDone": "Readings Done",
+      "signsExplored": "Signs Explored"
+    },
+    "history": {
+      "title": "Reading History",
+      "empty": "No readings yet. Start exploring!",
+      "mbti": "MBTI Result",
+      "tarot": "Tarot Reading",
+      "zodiac": "Zodiac Reading",
+      "clearAll": "Clear History"
+    }
   }
 }

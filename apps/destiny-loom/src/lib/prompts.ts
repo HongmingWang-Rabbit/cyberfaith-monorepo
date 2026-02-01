@@ -3,6 +3,18 @@
  * All prompts support EN/ZH via locale parameter
  */
 
+/**
+ * Sanitize user-supplied text before embedding in AI prompts.
+ * Strips characters that could be used for prompt injection.
+ */
+export function sanitizeUserInput(input: string, maxLength = 500): string {
+  return input
+    .slice(0, maxLength)
+    .replace(/[<>{}[\]\\]/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 const LANG_INSTRUCTION: Record<string, string> = {
   zh: "\n\nIMPORTANT: Respond entirely in Chinese (简体中文). Keep the mystical cyberpunk tone.",
   en: "",

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 import { AppShell } from "@/components/layout/app-shell";
+import { ToastProvider } from "@/components/ui/toast";
 
 export const metadata: Metadata = {
   title: "Destiny Loom — CyberFaith",
@@ -28,7 +29,9 @@ export default async function LocaleLayout({ children, params }: Props) {
     <html lang={locale}>
       <body className="bg-background text-foreground min-h-screen">
         <NextIntlClientProvider messages={messages}>
-          <AppShell>{children}</AppShell>
+          <ToastProvider>
+            <AppShell>{children}</AppShell>
+          </ToastProvider>
         </NextIntlClientProvider>
       </body>
     </html>
