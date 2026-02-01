@@ -213,7 +213,56 @@
       "mbti": "MBTI Result",
       "tarot": "Tarot Reading",
       "zodiac": "Zodiac Reading",
-      "clearAll": "Clear History"
+      "clearAll": "Clear History",
+      "fourPillars": "Four Pillars",
+      "iching": "I Ching Reading"
     }
+  },
+  "fourPillars": {
+    "title": "Four Pillars of Destiny",
+    "subtitle": "Decode your fate through the ancient art of BaZi (八字) analysis.",
+    "instruction": "Enter your birth date and time to calculate your Four Pillars chart.",
+    "year": "Year",
+    "month": "Month",
+    "day": "Day",
+    "hour": "Hour",
+    "gender": "Gender",
+    "genders": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other"
+    },
+    "calculate": "Calculate My Destiny",
+    "resultTitle": "Your Four Pillars Chart",
+    "pillars": {
+      "year": "Year Pillar",
+      "month": "Month Pillar",
+      "day": "Day Pillar",
+      "hour": "Hour Pillar"
+    },
+    "elementsTitle": "Five Elements Analysis",
+    "dominantElement": "Dominant Element",
+    "aiAnalysis": "AI BaZi Analysis",
+    "aiPlaceholder": "AI-powered BaZi interpretation coming soon! Connect to receive a deep analysis of your destiny chart.",
+    "noData": "No chart data found. Please enter your birth details."
+  },
+  "iching": {
+    "title": "I Ching Divination",
+    "subtitle": "Consult the ancient Book of Changes for wisdom and guidance.",
+    "description": "The I Ching (易经) is an ancient Chinese divination text dating back over 3,000 years. Through the casting of hexagrams, it reveals insights into your current situation and offers guidance for the path ahead.",
+    "castButton": "Cast Hexagram",
+    "casting": "Casting...",
+    "method": "The oracle generates six lines — each either solid (Yang ━━━) or broken (Yin ━ ━). Some lines may be \"changing,\" indicating transformation. Together they form a hexagram with profound meaning.",
+    "resultTitle": "Your Hexagram",
+    "hexagram": "Hexagram",
+    "judgment": "The Judgment",
+    "image": "The Image",
+    "changingLines": "Changing Lines",
+    "noChangingLines": "No changing lines — the situation is stable.",
+    "question": "Your Question (optional)",
+    "questionPlaceholder": "What would you like to ask the oracle?",
+    "aiAnalysis": "AI I Ching Interpretation",
+    "aiPlaceholder": "AI-powered I Ching interpretation coming soon! The ancient oracle will speak through digital streams.",
+    "noData": "No hexagram data found. Please cast a new hexagram."
   }
 }

@@ -110,7 +110,7 @@ export function dayPillar(year: number, month: number, day: number): Pillar {
   // jdn=2451545. stemIdx=(2451545+offset)%10=0 → offset=5 → (jdn+5)%10? 2451550%10=0 ✓
   // branchIdx=(2451545+offset2)%12=6 → 2451545%12=1, 1+5=6 → offset2=5
   const stemIdx = (jdn + 5) % 10;
-  const branchIdx = (jdn + 5) % 12;
+  const branchIdx = (jdn + 1) % 12;
   return makePillar(stemIdx, branchIdx);
 }
 

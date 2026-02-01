@@ -213,7 +213,56 @@
       "mbti": "MBTI结果",
       "tarot": "塔罗占卜",
       "zodiac": "星座解读",
-      "clearAll": "清除历史"
+      "clearAll": "清除历史",
+      "fourPillars": "四柱八字",
+      "iching": "易经占卜"
     }
+  },
+  "fourPillars": {
+    "title": "四柱八字",
+    "subtitle": "通过古老的八字分析，解读你的命运密码。",
+    "instruction": "输入你的出生日期和时间，计算你的四柱命盘。",
+    "year": "年",
+    "month": "月",
+    "day": "日",
+    "hour": "时",
+    "gender": "性别",
+    "genders": {
+      "male": "男",
+      "female": "女",
+      "other": "其他"
+    },
+    "calculate": "推算我的命运",
+    "resultTitle": "你的四柱命盘",
+    "pillars": {
+      "year": "年柱",
+      "month": "月柱",
+      "day": "日柱",
+      "hour": "时柱"
+    },
+    "elementsTitle": "五行分析",
+    "dominantElement": "主要元素",
+    "aiAnalysis": "AI八字分析",
+    "aiPlaceholder": "AI驱动的八字解读即将上线！连接后即可获取命盘深度分析。",
+    "noData": "未找到命盘数据，请输入你的出生信息。"
+  },
+  "iching": {
+    "title": "易经占卜",
+    "subtitle": "咨询古老的《易经》，获取智慧与指引。",
+    "description": "《易经》是一部超过三千年历史的中国古代占卜经典。通过卦象的推演，揭示你当前处境的洞见，并为前路提供指引。",
+    "castButton": "起卦",
+    "casting": "起卦中...",
+    "method": "神谕生成六爻——每一爻为阳爻（━━━）或阴爻（━ ━）。部分爻可能为「变爻」，象征转化。六爻组合成卦，蕴含深意。",
+    "resultTitle": "你的卦象",
+    "hexagram": "卦",
+    "judgment": "卦辞",
+    "image": "象辞",
+    "changingLines": "变爻",
+    "noChangingLines": "无变爻——局势稳定。",
+    "question": "你的问题（选填）",
+    "questionPlaceholder": "你想问神谕什么？",
+    "aiAnalysis": "AI易经解读",
+    "aiPlaceholder": "AI驱动的易经解读即将上线！古老的神谕将通过数字之流开口。",
+    "noData": "未找到卦象数据，请重新起卦。"
   }
 }
