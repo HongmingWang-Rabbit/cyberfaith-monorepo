@@ -1,6 +1,15 @@
 import { Controller, Get, NotFoundException, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
+import type { Request, Response } from "express";
 import { AuthService } from "./auth.service";
+
+interface AuthRequest extends Request {
+  user: { id: string; email: string };
+}
+
+interface GoogleAuthRequest extends Request {
+  user: { email: string; name: string; googleId: string; avatarUrl: string | null };
+}
 
 @Controller("auth")
 export class AuthController {
@@ -14,7 +23,7 @@ export class AuthController {
 
   @Get("google/callback")
   @UseGuards(AuthGuard("google"))
-  async googleCallback(@Req() req: any, @Res() res: any) {
+  async googleCallback(@Req() req: GoogleAuthRequest, @Res() res: Response) {
     const user = await this.authService.findOrCreateGoogleUser(req.user);
     const token = await this.authService.issueToken(user);
     // Redirect to frontend with token
@@ -24,7 +33,7 @@ export class AuthController {
 
   @Get("me")
   @UseGuards(AuthGuard("jwt"))
-  async getMe(@Req() req: any) {
+  async getMe(@Req() req: AuthRequest) {
     const user = await this.authService.getUserById(req.user.id);
     if (!user) {
       throw new NotFoundException("User not found");

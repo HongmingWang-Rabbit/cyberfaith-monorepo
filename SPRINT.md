@@ -52,35 +52,67 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 
 ---
 
-## Sprint 2: Polish & Deploy (NEXT)
+## Sprint 2: Polish & Backend ✅ COMPLETE
 
 ### Deployment
-- [ ] Deploy website to Vercel
-- [ ] Deploy Destiny Loom to Vercel
-- [ ] Deploy Core API to Railway + Postgres
-- [ ] Connect real OpenAI API key
-- [ ] Configure Google OAuth for production
-- [ ] Set up custom domains
+- [x] Deploy website to Vercel
+- [x] Deploy Destiny Loom to Vercel
+- [x] Deploy Core API to Railway + Postgres
+- [x] Connect real OpenAI API key
+- [x] Configure Google OAuth for production
+- [x] Set up custom domains
 
 ### Production Hardening
-- [ ] Real rate limiting (Redis-backed)
-- [ ] JWT refresh token flow
-- [ ] Token in httpOnly cookie (not URL param)
-- [ ] Error tracking (Sentry or similar)
-- [ ] Analytics (Plausible or similar)
+- [x] Real rate limiting (Redis-backed)
+- [x] JWT refresh token flow
+- [x] Token in httpOnly cookie (not URL param)
+- [x] Error tracking (Sentry or similar)
+- [x] Analytics (Plausible or similar)
 
 ### Features
-- [ ] Save readings to database (not just localStorage)
-- [ ] Reading history API (CRUD with auth)
-- [ ] Points/XP system — earn points per reading
-- [ ] Achievements — unlock badges (First Reading, MBTI Explorer, etc.)
-- [ ] Streak tracking — daily reading streak
-- [ ] Premium features stub (Stripe integration)
-- [ ] Push notifications for daily readings
+- [x] Save readings to database (not just localStorage)
+- [x] Reading history API (CRUD with auth)
+- [x] Points/XP system — earn points per reading
+- [x] Achievements — unlock badges (First Reading, MBTI Explorer, etc.)
+- [x] Streak tracking — daily reading streak
+- [x] Premium features stub (Stripe integration)
+- [x] Push notifications for daily readings
 
 ### Design
-- [ ] Animated tarot card art (CSS illustrations)
-- [ ] Custom zodiac sign illustrations
-- [ ] Hexagram visual art
-- [ ] Dark/light mode toggle
-- [ ] Onboarding flow for new users
+- [x] Animated tarot card art (CSS illustrations)
+- [x] Custom zodiac sign illustrations
+- [x] Hexagram visual art
+- [x] Dark/light mode toggle
+- [x] Onboarding flow for new users
+
+### Code Quality
+- [x] Remove dead `/api/history` mock route
+- [x] Fix `any` types in core-api controllers/services
+- [x] Leaderboard privacy — display names instead of UUIDs
+
+---
+
+## Sprint 3: Growth & Community (NEXT)
+
+### Social Features
+- [ ] Share readings to social media (deep links)
+- [ ] Friend system — add friends, view their public readings
+- [ ] Community feed — opt-in public reading stream
+- [ ] Comments/reactions on shared readings
+
+### Monetization
+- [ ] Stripe subscription integration
+- [ ] Premium reading types (detailed reports)
+- [ ] Premium AI models for paying users
+- [ ] Usage limits for free tier
+
+### Spirit Arcade (v1)
+- [ ] Game framework scaffolding
+- [ ] First mini-game prototype
+- [ ] Points integration with arcade
+
+### Platform
+- [ ] PWA support (installable, offline shell)
+- [ ] Email notifications (weekly digest)
+- [ ] Admin dashboard (user stats, moderation)
+- [ ] API versioning (v1 prefix)

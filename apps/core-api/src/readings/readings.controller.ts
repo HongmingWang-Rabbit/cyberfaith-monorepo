@@ -16,14 +16,20 @@ import { AuthGuard } from "@nestjs/passport";
 import { DRIZZLE } from "../db/drizzle.provider";
 import { readings } from "../db/schema";
 import { eq, and, desc } from "drizzle-orm";
+import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { Request } from "express";
+
+interface AuthRequest extends Request {
+  user: { id: string; email: string };
+}
 
 @Controller("readings")
 @UseGuards(AuthGuard("jwt"))
 export class ReadingsController {
-  constructor(@Inject(DRIZZLE) private db: any) {}
+  constructor(@Inject(DRIZZLE) private db: PostgresJsDatabase) {}
 
   @Post()
-  async create(@Req() req: any, @Body() body: any) {
+  async create(@Req() req: AuthRequest, @Body() body: any) {
     const { type, input, result, locale } = body;
 
     const validTypes = ["mbti", "tarot", "i-ching", "four-pillars", "zodiac"];
@@ -46,7 +52,7 @@ export class ReadingsController {
   }
 
   @Get()
-  async findAll(@Req() req: any, @Query("type") type?: string, @Query("page") page?: string, @Query("limit") limit?: string) {
+  async findAll(@Req() req: AuthRequest, @Query("type") type?: string, @Query("page") page?: string, @Query("limit") limit?: string) {
     const pageNum = Math.max(1, parseInt(page || "1", 10) || 1);
     const limitNum = Math.min(100, Math.max(1, parseInt(limit || "20", 10) || 20));
     const offset = (pageNum - 1) * limitNum;
@@ -68,7 +74,7 @@ export class ReadingsController {
   }
 
   @Get(":id")
-  async findOne(@Req() req: any, @Param("id") id: string) {
+  async findOne(@Req() req: AuthRequest, @Param("id") id: string) {
     const [reading] = await this.db
       .select()
       .from(readings)
@@ -82,7 +88,7 @@ export class ReadingsController {
   }
 
   @Delete(":id")
-  async remove(@Req() req: any, @Param("id") id: string) {
+  async remove(@Req() req: AuthRequest, @Param("id") id: string) {
     const [reading] = await this.db
       .select()
       .from(readings)

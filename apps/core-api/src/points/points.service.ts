@@ -1,11 +1,12 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { eq, desc, sql } from "drizzle-orm";
+import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { DRIZZLE } from "../db/db.module";
-import { pointsTransactions } from "../db/schema";
+import { pointsTransactions, users } from "../db/schema";
 
 @Injectable()
 export class PointsService {
-  constructor(@Inject(DRIZZLE) private db: any) {}
+  constructor(@Inject(DRIZZLE) private db: PostgresJsDatabase) {}
 
   async awardPoints(
     userId: string,
@@ -43,13 +44,19 @@ export class PointsService {
     const rows = await this.db
       .select({
         userId: pointsTransactions.userId,
+        name: users.name,
         total: sql<number>`coalesce(sum(${pointsTransactions.amount}), 0)`,
       })
       .from(pointsTransactions)
-      .groupBy(pointsTransactions.userId)
+      .leftJoin(users, eq(pointsTransactions.userId, users.id))
+      .groupBy(pointsTransactions.userId, users.name)
       .orderBy(sql`sum(${pointsTransactions.amount}) desc`)
       .limit(limit);
 
-    return rows.map((r: any) => ({ userId: r.userId, total: Number(r.total) }));
+    return rows.map((r, index) => ({
+      rank: index + 1,
+      displayName: r.name || `User #${r.userId.slice(0, 4).toUpperCase()}`,
+      total: Number(r.total),
+    }));
   }
 }

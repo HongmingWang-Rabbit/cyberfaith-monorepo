@@ -1,6 +1,11 @@
 import { Controller, Get, Req, UseGuards, Query } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
+import { Request } from "express";
 import { PointsService } from "./points.service";
+
+interface AuthRequest extends Request {
+  user: { id: string; email: string };
+}
 
 @Controller("points")
 export class PointsController {
@@ -8,7 +13,7 @@ export class PointsController {
 
   @Get("me")
   @UseGuards(AuthGuard("jwt"))
-  async getMyPoints(@Req() req: any) {
+  async getMyPoints(@Req() req: AuthRequest) {
     const data = await this.pointsService.getUserPoints(req.user.id);
     return { success: true, data };
   }

@@ -15,6 +15,7 @@ describe("PointsService", () => {
       chain.offset = vi.fn().mockReturnValue(chain);
       chain.orderBy = vi.fn().mockReturnValue(chain);
       chain.groupBy = vi.fn().mockReturnValue(chain);
+      chain.leftJoin = vi.fn().mockReturnValue(chain);
       chain.insert = vi.fn().mockReturnValue(chain);
       chain.values = vi.fn().mockReturnValue(chain);
       chain.returning = vi.fn().mockResolvedValue([]);
@@ -72,15 +73,15 @@ describe("PointsService", () => {
   describe("getLeaderboard", () => {
     it("returns sorted users by total points", async () => {
       const rows = [
-        { userId: "u1", total: 100 },
-        { userId: "u2", total: 50 },
+        { userId: "u1", name: "Alice", total: 100 },
+        { userId: "u2", name: null, total: 50 },
       ];
       mockDb.limit.mockResolvedValueOnce(rows);
 
       const result = await service.getLeaderboard(10);
       expect(result).toEqual([
-        { userId: "u1", total: 100 },
-        { userId: "u2", total: 50 },
+        { rank: 1, displayName: "Alice", total: 100 },
+        { rank: 2, displayName: "User #U2", total: 50 },
       ]);
     });
 

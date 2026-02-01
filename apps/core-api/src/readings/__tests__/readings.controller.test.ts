@@ -35,7 +35,7 @@ describe("ReadingsController", () => {
     controller = new ReadingsController(mockDb);
   });
 
-  const req = { user: { id: "user-1" } };
+  const req = { user: { id: "user-1" } } as any;
 
   describe("create", () => {
     it("creates a reading successfully", async () => {

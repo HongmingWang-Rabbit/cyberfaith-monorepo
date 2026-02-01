@@ -29,8 +29,8 @@ describe("AuthController", () => {
       mockAuthService.findOrCreateGoogleUser.mockResolvedValue(mockUser);
       mockAuthService.issueToken.mockResolvedValue({ access_token: "jwt-token" });
 
-      const req = { user: { googleId: "g1", email: "test@test.com", name: "Test", avatarUrl: null } };
-      const res = { redirect: vi.fn() };
+      const req = { user: { googleId: "g1", email: "test@test.com", name: "Test", avatarUrl: null } } as any;
+      const res = { redirect: vi.fn() } as any;
 
       await controller.googleCallback(req, res);
       expect(res.redirect).toHaveBeenCalledWith(expect.stringContaining("token=jwt-token"));
@@ -46,7 +46,7 @@ describe("AuthController", () => {
         passwordHash: "secret",
       });
 
-      const req = { user: { id: "1" } };
+      const req = { user: { id: "1" } } as any;
       const result = await controller.getMe(req);
       expect(result).not.toHaveProperty("passwordHash");
       expect(result).toHaveProperty("email", "test@test.com");
@@ -54,7 +54,7 @@ describe("AuthController", () => {
 
     it("throws NotFoundException when user not found", async () => {
       mockAuthService.getUserById.mockResolvedValue(null);
-      const req = { user: { id: "nonexistent" } };
+      const req = { user: { id: "nonexistent" } } as any;
       await expect(controller.getMe(req)).rejects.toThrow(NotFoundException);
     });
   });
