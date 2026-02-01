@@ -1,0 +1,20 @@
+{
+  "name": "@cyberfaith/utils",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0"
+  },
+  "devDependencies": {
+    "@cyberfaith/config-typescript": "workspace:*",
+    "typescript": "^5.7.2"
+  }
+}

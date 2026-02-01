@@ -1,0 +1,20 @@
+{
+  "name": "@cyberfaith/auth-client",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cyberfaith/types": "workspace:*",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@cyberfaith/config-typescript": "workspace:*",
+    "@types/react": "^19.0.2",
+    "typescript": "^5.7.2"
+  }
+}
