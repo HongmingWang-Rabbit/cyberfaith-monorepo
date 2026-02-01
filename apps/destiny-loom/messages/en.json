@@ -1,0 +1,143 @@
+{
+  "common": {
+    "title": "Destiny Loom",
+    "subtitle": "Weave your spiritual path with divine insights",
+    "nav": {
+      "home": "Home",
+      "mbti": "MBTI",
+      "tarot": "Tarot",
+      "zodiac": "Zodiac",
+      "iching": "I Ching",
+      "fourPillars": "Four Pillars",
+      "profile": "Profile"
+    },
+    "auth": {
+      "signIn": "Sign In",
+      "signOut": "Sign Out"
+    },
+    "locale": {
+      "en": "English",
+      "zh": "中文"
+    },
+    "actions": {
+      "start": "Get Started",
+      "share": "Share",
+      "save": "Save to Profile",
+      "back": "Back",
+      "next": "Next",
+      "copy": "Copy Link"
+    }
+  },
+  "home": {
+    "hero": "Discover Your Cosmic Blueprint",
+    "heroSub": "Explore personality tests, tarot readings, zodiac insights, and ancient wisdom — all powered by AI.",
+    "features": {
+      "mbti": {
+        "title": "MBTI Personality",
+        "description": "Discover your personality type through 20 carefully crafted questions with AI-powered analysis."
+      },
+      "tarot": {
+        "title": "Tarot Reading",
+        "description": "Draw cards and receive mystical guidance for your life's journey."
+      },
+      "zodiac": {
+        "title": "Zodiac Insights",
+        "description": "Explore your star sign and cosmic alignment for today and beyond."
+      },
+      "iching": {
+        "title": "I Ching Oracle",
+        "description": "Consult the ancient Book of Changes for wisdom and guidance."
+      },
+      "fourPillars": {
+        "title": "Four Pillars",
+        "description": "Decode your destiny through the ancient art of BaZi analysis."
+      }
+    }
+  },
+  "mbti": {
+    "title": "MBTI Personality Test",
+    "subtitle": "Discover your unique personality type",
+    "description": "Answer 20 questions to uncover your Myers-Briggs personality type. Our AI will provide a deep, personalized analysis of your results.",
+    "startTest": "Start the Test",
+    "question": "Question {current} of {total}",
+    "choices": {
+      "stronglyAgree": "Strongly Agree",
+      "agree": "Agree",
+      "disagree": "Disagree",
+      "stronglyDisagree": "Strongly Disagree"
+    },
+    "questions": [
+      "I feel energized after spending time with a large group of people.",
+      "I prefer to plan things out in advance rather than be spontaneous.",
+      "I trust my gut feelings more than logical analysis.",
+      "I often initiate conversations with strangers.",
+      "I pay more attention to details than the big picture.",
+      "I make decisions based on how they affect people's feelings.",
+      "I prefer having a structured daily routine.",
+      "I enjoy being the center of attention at social events.",
+      "I'm more interested in abstract theories than practical applications.",
+      "I value fairness and logic over harmony and compassion.",
+      "I like to keep my options open rather than commit to a plan.",
+      "I recharge by spending time alone.",
+      "I focus more on future possibilities than present realities.",
+      "I often prioritize others' needs over objective truth.",
+      "I prefer to finish one project before starting another.",
+      "I think out loud and process ideas through discussion.",
+      "I'm drawn to imaginative and creative ideas.",
+      "I tend to analyze problems objectively rather than empathetically.",
+      "I feel uncomfortable when things are left undecided.",
+      "I prefer deep one-on-one conversations over group activities."
+    ],
+    "dimensions": {
+      "EI": "Extraversion / Introversion",
+      "SN": "Sensing / Intuition",
+      "TF": "Thinking / Feeling",
+      "JP": "Judging / Perceiving"
+    }
+  },
+  "results": {
+    "title": "Your Personality Type",
+    "type": "You are: {type}",
+    "breakdown": "Dimension Breakdown",
+    "aiAnalysis": "AI Personality Analysis",
+    "aiPlaceholder": "AI-powered analysis coming soon! Connect to the backend to receive a personalized deep-dive into your personality type.",
+    "shareTitle": "My MBTI Result — {type}",
+    "saved": "Result saved to profile!",
+    "typeNames": {
+      "INTJ": "The Architect",
+      "INTP": "The Logician",
+      "ENTJ": "The Commander",
+      "ENTP": "The Debater",
+      "INFJ": "The Advocate",
+      "INFP": "The Mediator",
+      "ENFJ": "The Protagonist",
+      "ENFP": "The Campaigner",
+      "ISTJ": "The Logistician",
+      "ISFJ": "The Defender",
+      "ESTJ": "The Executive",
+      "ESFJ": "The Consul",
+      "ISTP": "The Virtuoso",
+      "ISFP": "The Adventurer",
+      "ESTP": "The Entrepreneur",
+      "ESFP": "The Entertainer"
+    },
+    "typeDescriptions": {
+      "INTJ": "Strategic and independent thinkers with a plan for everything. You see the world as a giant chess board, always thinking several moves ahead.",
+      "INTP": "Innovative inventors with an unquenchable thirst for knowledge. You love exploring ideas and finding logical patterns.",
+      "ENTJ": "Bold, imaginative leaders who always find a way. You're driven to organize and lead with strategic vision.",
+      "ENTP": "Smart and curious thinkers who love intellectual challenges. You thrive on debates and exploring new possibilities.",
+      "INFJ": "Quiet and mystical idealists who inspire others. You have a deep sense of purpose and seek meaning in everything.",
+      "INFP": "Poetic, kind, and altruistic souls guided by values. You see the best in people and strive for harmony.",
+      "ENFJ": "Charismatic and inspiring leaders who mesmerize others. You bring people together with warmth and vision.",
+      "ENFP": "Enthusiastic, creative free spirits who find reason to smile. You see life as full of possibilities.",
+      "ISTJ": "Practical and fact-minded individuals with reliability. You value tradition and are dedicated to duty.",
+      "ISFJ": "Dedicated and warm protectors who are always ready to defend. You're loyal, considerate, and hardworking.",
+      "ESTJ": "Excellent administrators with an unsurpassed ability to manage. You value order, structure, and tradition.",
+      "ESFJ": "Extraordinarily caring, social, and popular people. You're attentive to others' feelings and eager to help.",
+      "ISTP": "Bold and practical experimenters and masters of tools. You approach life with cool rationalism.",
+      "ISFP": "Flexible and charming artists who explore with curiosity. You live in the moment with quiet enthusiasm.",
+      "ESTP": "Smart, energetic, and perceptive people who live on the edge. You love action and solving problems.",
+      "ESFP": "Spontaneous, energetic, and enthusiastic entertainers. Life is a stage and you love the spotlight."
+    }
+  }
+}

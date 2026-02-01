@@ -1,0 +1,15 @@
+{
+  "name": "@cyberfaith/ai-provider",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "openai": "^4.77.0"
+  },
+  "devDependencies": {
+    "@cyberfaith/config-typescript": "workspace:*",
+    "typescript": "^5.7.2"
+  }
+}

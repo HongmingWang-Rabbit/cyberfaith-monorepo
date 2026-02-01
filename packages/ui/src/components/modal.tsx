@@ -22,11 +22,11 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="fixed inset-0 bg-black/60" onClick={onClose} />
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
         <div
           ref={ref}
           className={cn(
-            "relative z-50 w-full max-w-lg rounded-lg border border-border bg-secondary p-6 shadow-lg",
+            "relative z-50 w-full max-w-lg rounded-lg border border-primary/30 bg-card p-6 shadow-[var(--glow-purple)] backdrop-blur-md",
             className
           )}
           {...props}

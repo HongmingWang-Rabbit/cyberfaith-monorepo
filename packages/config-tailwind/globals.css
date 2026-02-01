@@ -1,20 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #6d28d9;
+  /* Cyberpunk Dark Theme */
+  --color-primary: #a855f7;
+  --color-primary-dark: #7c3aed;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #1e1b4b;
+  --color-secondary: #0f0f1a;
   --color-secondary-foreground: #e0e7ff;
-  --color-accent: #8b5cf6;
+  --color-accent: #06b6d4;
   --color-accent-foreground: #ffffff;
-  --color-background: #0f0a1a;
+  --color-highlight: #ec4899;
+  --color-background: #0a0a0f;
   --color-foreground: #e2e8f0;
-  --color-muted: #1e1b4b;
+  --color-card: #0f0f1a;
+  --color-card-foreground: #e2e8f0;
+  --color-muted: #1a1a2e;
   --color-muted-foreground: #94a3b8;
-  --color-border: #312e81;
+  --color-border: #2d1b69;
   --color-destructive: #ef4444;
   --color-destructive-foreground: #ffffff;
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
+}
+
+:root {
+  --glow-purple: 0 0 15px rgba(168, 85, 247, 0.5), 0 0 30px rgba(168, 85, 247, 0.2);
+  --glow-cyan: 0 0 15px rgba(6, 182, 212, 0.5), 0 0 30px rgba(6, 182, 212, 0.2);
+  --glow-pink: 0 0 15px rgba(236, 72, 153, 0.5), 0 0 30px rgba(236, 72, 153, 0.2);
+  --glow-purple-lg: 0 0 20px rgba(168, 85, 247, 0.6), 0 0 60px rgba(168, 85, 247, 0.3);
+  --glow-cyan-lg: 0 0 20px rgba(6, 182, 212, 0.6), 0 0 60px rgba(6, 182, 212, 0.3);
 }
