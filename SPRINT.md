@@ -95,16 +95,16 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 ## Sprint 3: Growth & Community (NEXT)
 
 ### Social Features
-- [ ] Share readings to social media (deep links)
+- [x] Share readings to social media (deep links + OG meta)
 - [ ] Friend system — add friends, view their public readings
 - [ ] Community feed — opt-in public reading stream
 - [ ] Comments/reactions on shared readings
 
 ### Monetization
-- [ ] Stripe subscription integration
+- [x] Stripe subscription integration (free/pro tiers)
 - [ ] Premium reading types (detailed reports)
 - [ ] Premium AI models for paying users
-- [ ] Usage limits for free tier
+- [x] Usage limits for free tier (TierLimitGuard)
 
 ### Spirit Arcade (v1)
 - [ ] Game framework scaffolding
@@ -112,7 +112,7 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 - [ ] Points integration with arcade
 
 ### Platform
-- [ ] PWA support (installable, offline shell)
+- [x] PWA support (installable, offline shell)
 - [ ] Email notifications (weekly digest)
 - [ ] Admin dashboard (user stats, moderation)
 - [ ] API versioning (v1 prefix)

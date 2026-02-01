@@ -9,7 +9,9 @@
       "zodiac": "星座",
       "iching": "易经",
       "fourPillars": "四柱八字",
-      "profile": "个人中心"
+      "profile": "个人中心",
+      "community": "社区",
+      "arcade": "游戏厅"
     },
     "auth": {
       "signIn": "登录",
@@ -331,5 +333,13 @@
     "proFeature2": "详细分析",
     "proFeature3": "优先AI模型",
     "proFeature4": "优先支持"
+  },
+  "community": {
+    "title": "社区动态",
+    "subtitle": "探索社区分享的占卜结果",
+    "allTypes": "全部",
+    "loading": "加载中...",
+    "endOfFeed": "已到底部",
+    "empty": "暂无公开占卜。成为第一个分享的人！"
   }
 }

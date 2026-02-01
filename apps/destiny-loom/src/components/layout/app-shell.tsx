@@ -13,6 +13,8 @@ const navItems = [
   { key: "zodiac", href: "/zodiac", icon: "⭐" },
   { key: "iching", href: "/i-ching", icon: "☯️" },
   { key: "fourPillars", href: "/four-pillars", icon: "🏛️" },
+  { key: "community", href: "/community", icon: "🌐" },
+  { key: "arcade", href: "/arcade", icon: "🕹️" },
   { key: "profile", href: "/profile", icon: "👤" },
 ] as const;
 

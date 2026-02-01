@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { NotFoundException, ForbiddenException } from "@nestjs/common";
+import { NotFoundException, ForbiddenException, BadRequestException, ConflictException } from "@nestjs/common";
 import { ReadingsController } from "../readings.controller";
 
 describe("ReadingsController", () => {
@@ -95,6 +95,53 @@ describe("ReadingsController", () => {
     it("throws NotFoundException when not found", async () => {
       mockDb.where.mockResolvedValueOnce([]);
       await expect(controller.remove(req, "nonexistent")).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe("feed", () => {
+    it("returns paginated public feed", async () => {
+      const feedItem = { id: "uuid-1", type: "tarot", result: {}, locale: "en", createdAt: new Date(), authorName: "Test", authorAvatar: null };
+      mockDb.offset.mockResolvedValue([feedItem]);
+      // innerJoin is chained
+      mockDb.innerJoin = vi.fn().mockReturnValue(mockDb);
+      const result = await controller.feed("1", "10");
+      expect(result.success).toBe(true);
+      expect(result.page).toBe(1);
+    });
+  });
+
+  describe("getReactions", () => {
+    it("returns reaction counts", async () => {
+      mockDb.groupBy = vi.fn().mockResolvedValue([{ emoji: "👍", count: 3 }]);
+      const result = await controller.getReactions("uuid-1");
+      expect(result.success).toBe(true);
+      expect(result.data["👍"]).toBe(3);
+    });
+  });
+
+  describe("react", () => {
+    it("rejects invalid emoji", async () => {
+      await expect(controller.react(req, "uuid-1", { emoji: "💩" })).rejects.toThrow(BadRequestException);
+    });
+
+    it("rejects non-public reading", async () => {
+      mockDb.where.mockResolvedValue([]);
+      await expect(controller.react(req, "uuid-1", { emoji: "👍" })).rejects.toThrow(NotFoundException);
+    });
+
+    it("adds reaction successfully", async () => {
+      const reaction = { id: "r1", readingId: "uuid-1", userId: "user-1", emoji: "👍", createdAt: new Date() };
+      mockDb.where.mockResolvedValueOnce([{ id: "uuid-1" }]);
+      mockDb.returning.mockResolvedValueOnce([reaction]);
+      const result = await controller.react(req, "uuid-1", { emoji: "👍" });
+      expect(result.success).toBe(true);
+      expect(result.data).toEqual(reaction);
+    });
+
+    it("throws ConflictException on duplicate", async () => {
+      mockDb.where.mockResolvedValueOnce([{ id: "uuid-1" }]);
+      mockDb.returning.mockRejectedValueOnce(Object.assign(new Error("unique"), { code: "23505" }));
+      await expect(controller.react(req, "uuid-1", { emoji: "👍" })).rejects.toThrow(ConflictException);
     });
   });
 });

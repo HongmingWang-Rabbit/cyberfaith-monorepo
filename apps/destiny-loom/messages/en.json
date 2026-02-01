@@ -9,7 +9,9 @@
       "zodiac": "Zodiac",
       "iching": "I Ching",
       "fourPillars": "Four Pillars",
-      "profile": "Profile"
+      "profile": "Profile",
+      "community": "Community",
+      "arcade": "Arcade"
     },
     "auth": {
       "signIn": "Sign In",
@@ -331,5 +333,13 @@
     "proFeature2": "Detailed analysis",
     "proFeature3": "Priority AI model",
     "proFeature4": "Priority support"
+  },
+  "community": {
+    "title": "Community Feed",
+    "subtitle": "Explore readings shared by the community",
+    "allTypes": "All",
+    "loading": "Loading...",
+    "endOfFeed": "You've reached the end",
+    "empty": "No public readings yet. Be the first to share!"
   }
 }

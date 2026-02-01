@@ -1,4 +1,5 @@
-import { pgTable, idColumn, timestampColumns, varchar, text, integer, boolean, jsonb, uniqueIndex } from "@cyberfaith/db-utils";
+import { pgTable, idColumn, timestampColumns, varchar, text, integer, boolean, jsonb, uniqueIndex, timestamp } from "@cyberfaith/db-utils";
+import { pgEnum } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: idColumn(),
@@ -48,6 +49,16 @@ export const achievements = pgTable("achievements", {
   pointsReward: integer("points_reward").notNull().default(0),
 });
 
+export const readingReactions = pgTable("reading_reactions", {
+  id: idColumn(),
+  ...timestampColumns(),
+  readingId: varchar("reading_id", { length: 36 }).notNull(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  emoji: varchar("emoji", { length: 10 }).notNull(),
+}, (table) => ({
+  uniqueReaction: uniqueIndex("reading_reaction_unique").on(table.readingId, table.userId, table.emoji),
+}));
+
 export const userAchievements = pgTable("user_achievements", {
   id: idColumn(),
   userId: varchar("user_id", { length: 36 }).notNull(),
@@ -55,4 +66,26 @@ export const userAchievements = pgTable("user_achievements", {
   unlockedAt: timestampColumns().createdAt,
 }, (table) => ({
   uniqueUserAchievement: uniqueIndex("user_achievement_unique").on(table.userId, table.achievementId),
+}));
+
+export const arcadePlays = pgTable("arcade_plays", {
+  id: idColumn(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  gameId: varchar("game_id", { length: 50 }).notNull(),
+  pointsSpent: integer("points_spent").notNull(),
+  pointsWon: integer("points_won").notNull().default(0),
+  result: jsonb("result"),
+});
+
+export const friendshipStatusEnum = pgEnum("friendship_status", ["pending", "accepted", "rejected"]);
+
+export const friendships = pgTable("friendships", {
+  id: idColumn(),
+  ...timestampColumns(),
+  requesterId: varchar("requester_id", { length: 36 }).notNull(),
+  addresseeId: varchar("addressee_id", { length: 36 }).notNull(),
+  status: friendshipStatusEnum("status").default("pending").notNull(),
+}, (table) => ({
+  uniqueFriendship: uniqueIndex("friendship_unique").on(table.requesterId, table.addresseeId),
 }));

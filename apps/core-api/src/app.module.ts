@@ -11,9 +11,11 @@ import { LoggerMiddleware } from "./common/logger.middleware";
 import { CorsMiddleware } from "./common/cors.middleware";
 import { RateLimitGuard } from "./common/rate-limit.guard";
 import { StripeModule } from "./stripe/stripe.module";
+import { ArcadeModule } from "./arcade/arcade.module";
+import { FriendsModule } from "./friends/friends.module";
 
 @Module({
-  imports: [DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule],
+  imports: [DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, FriendsModule],
   providers: [
     {
       provide: APP_GUARD,
