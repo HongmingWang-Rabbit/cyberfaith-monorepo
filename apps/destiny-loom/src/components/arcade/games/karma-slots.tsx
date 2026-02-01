@@ -15,7 +15,7 @@ export default function KarmaSlots({ config, balance, onBalanceChange, onPlay, i
   const [lastResult, setLastResult] = useState<{ reels: string[]; matches: number; pointsWon: number } | null>(null);
   const [showParticles, setShowParticles] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const particleTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const particleTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleSpin = useCallback(async () => {
     if (isPlaying) return;
@@ -23,7 +23,7 @@ export default function KarmaSlots({ config, balance, onBalanceChange, onPlay, i
     setLastResult(null);
     setShowParticles(false);
 
-    const playResult = await onPlay();
+    const playResult = await onPlay(undefined);
     if (!playResult) {
       setError("Spin failed — try again");
       return;

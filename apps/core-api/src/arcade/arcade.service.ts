@@ -20,7 +20,7 @@ export class ArcadeService {
       .select()
       .from(games)
       .where(eq(games.status, "active"))
-      .orderBy(games.name);
+      .orderBy(games.sortOrder, games.name);
 
     return rows;
   }

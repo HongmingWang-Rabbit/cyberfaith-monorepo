@@ -14,6 +14,7 @@ import type { ArcadeGameProps } from "./types";
  */
 const gameRegistry: Record<string, ComponentType<ArcadeGameProps>> = {
   "karma-slots": dynamic(() => import("./games/karma-slots"), { ssr: false }),
+  // Note: muyu has its own dedicated page at /arcade/muyu — not using the generic [slug] wrapper
 };
 
 export function getGameComponent(slug: string): ComponentType<ArcadeGameProps> | undefined {

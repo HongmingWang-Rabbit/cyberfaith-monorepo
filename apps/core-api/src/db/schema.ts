@@ -68,7 +68,7 @@ export const userAchievements = pgTable("user_achievements", {
   uniqueUserAchievement: uniqueIndex("user_achievement_unique").on(table.userId, table.achievementId),
 }));
 
-export const gameStatusEnum = pgEnum("game_status", ["active", "draft"]);
+export const gameStatusEnum = pgEnum("game_status", ["active", "draft", "disabled"]);
 
 export const games = pgTable("games", {
   id: idColumn(),
@@ -79,6 +79,7 @@ export const games = pgTable("games", {
   thumbnail: varchar("thumbnail", { length: 100 }),
   config: jsonb("config").notNull(), // { minBet, maxWin, symbols?, payoutRules }
   status: gameStatusEnum("status").default("active").notNull(),
+  sortOrder: integer("sort_order").default(0).notNull(),
 });
 
 export const arcadePlays = pgTable("arcade_plays", {

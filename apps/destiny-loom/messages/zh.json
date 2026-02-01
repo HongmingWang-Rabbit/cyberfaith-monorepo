@@ -341,5 +341,17 @@
     "loading": "加载中...",
     "endOfFeed": "已到底部",
     "empty": "暂无公开占卜。成为第一个分享的人！"
+  },
+  "muyu": {
+    "title": "电子木鱼",
+    "subtitle": "敲击积累功德",
+    "merit": "功德",
+    "session": "本次",
+    "allTime": "累计",
+    "tapsPerSec": "每秒",
+    "streak": "连续",
+    "days": "天",
+    "autoMode": "自动模式",
+    "combo": "连击!"
   }
 }
