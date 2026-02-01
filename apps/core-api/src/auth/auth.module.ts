@@ -4,7 +4,11 @@ import { PassportModule } from "@nestjs/passport";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { GoogleStrategy } from "./google.strategy";
+import { MockGoogleStrategy } from "./mock-google.strategy";
 import { JwtStrategy } from "./jwt.strategy";
+
+const GoogleOAuthStrategy =
+  process.env.AUTH_MOCK === "true" ? MockGoogleStrategy : GoogleStrategy;
 
 @Module({
   imports: [
@@ -15,7 +19,7 @@ import { JwtStrategy } from "./jwt.strategy";
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, JwtStrategy],
+  providers: [AuthService, GoogleOAuthStrategy, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}
