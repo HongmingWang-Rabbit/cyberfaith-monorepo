@@ -1,7 +1,5 @@
 import { describe, it, expect } from "vitest";
-
-// We test the seed data structure and idempotency logic without a real DB.
-// The actual seed script is tested via integration/manual run.
+import { SEED_ACHIEVEMENTS } from "../../achievements/achievements.service";
 
 describe("seed data", () => {
   it("has valid seed user UUIDs", async () => {
@@ -19,18 +17,13 @@ describe("seed data", () => {
   });
 
   it("has valid seed achievements", () => {
-    const achievements = [
-      { name: "First Reading", requiredPoints: 0 },
-      { name: "Five Readings", requiredPoints: 50 },
-      { name: "MBTI Explorer", requiredPoints: 25 },
-      { name: "Tarot Master", requiredPoints: 100 },
-      { name: "Daily Devotion", requiredPoints: 75 },
-    ];
-    for (const a of achievements) {
+    expect(SEED_ACHIEVEMENTS).toHaveLength(9);
+    for (const a of SEED_ACHIEVEMENTS) {
       expect(a.name.length).toBeGreaterThan(0);
-      expect(a.requiredPoints).toBeGreaterThanOrEqual(0);
+      expect(a.description.length).toBeGreaterThan(0);
+      expect(a.pointsReward).toBeGreaterThan(0);
+      expect(a.requirement).toBeTruthy();
     }
-    expect(achievements).toHaveLength(5);
   });
 
   it("has valid seed points with valid user references", () => {

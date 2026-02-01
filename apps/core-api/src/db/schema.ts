@@ -11,13 +11,17 @@ export const users = pgTable("users", {
   isActive: boolean("is_active").default(true).notNull(),
 });
 
-export const points = pgTable("points", {
+export const pointsTransactions = pgTable("points_transactions", {
   id: idColumn(),
   ...timestampColumns(),
   userId: varchar("user_id", { length: 36 }).notNull(),
   amount: integer("amount").notNull(),
-  reason: text("reason").notNull(),
+  reason: varchar("reason", { length: 50 }).notNull(), // reading_completed|achievement_unlocked|daily_login|streak_bonus
+  metadata: jsonb("metadata"),
 });
+
+// Keep old alias for backward compat
+export const points = pointsTransactions;
 
 export const readings = pgTable("readings", {
   id: idColumn(),
@@ -32,8 +36,17 @@ export const readings = pgTable("readings", {
 export const achievements = pgTable("achievements", {
   id: idColumn(),
   ...timestampColumns(),
-  name: varchar("name", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
   description: text("description").notNull(),
-  iconUrl: text("icon_url"),
-  requiredPoints: integer("required_points").notNull().default(0),
+  icon: varchar("icon", { length: 100 }),
+  category: varchar("category", { length: 50 }),
+  requirement: jsonb("requirement"),
+  pointsReward: integer("points_reward").notNull().default(0),
+});
+
+export const userAchievements = pgTable("user_achievements", {
+  id: idColumn(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  achievementId: varchar("achievement_id", { length: 36 }).notNull(),
+  unlockedAt: timestampColumns().createdAt,
 });

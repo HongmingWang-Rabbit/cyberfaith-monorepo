@@ -1,5 +1,5 @@
 import { createDbClient } from "@cyberfaith/db-utils";
-import { users, points, achievements } from "./schema";
+import { users, pointsTransactions, achievements } from "./schema";
 
 const DATABASE_URL = process.env.DATABASE_URL || "postgresql://localhost:5432/cyberfaith";
 
@@ -10,18 +10,22 @@ const SEED_USERS = [
 ];
 
 const SEED_ACHIEVEMENTS = [
-  { id: "00000000-0000-0000-0000-100000000001", name: "First Reading", description: "Complete your first reading", requiredPoints: 0 },
-  { id: "00000000-0000-0000-0000-100000000002", name: "Five Readings", description: "Complete five readings", requiredPoints: 50 },
-  { id: "00000000-0000-0000-0000-100000000003", name: "MBTI Explorer", description: "Complete an MBTI personality analysis", requiredPoints: 25 },
-  { id: "00000000-0000-0000-0000-100000000004", name: "Tarot Master", description: "Complete 10 tarot readings", requiredPoints: 100 },
-  { id: "00000000-0000-0000-0000-100000000005", name: "Daily Devotion", description: "Log in 7 consecutive days", requiredPoints: 75 },
+  { name: "First Steps", description: "Complete your first reading", icon: "🐣", category: "milestone", requirement: { type: "total_readings", count: 1 }, pointsReward: 10 },
+  { name: "MBTI Explorer", description: "Complete an MBTI test", icon: "🧠", category: "reading", requirement: { type: "reading_type", readingType: "mbti" }, pointsReward: 15 },
+  { name: "Card Reader", description: "Complete a tarot reading", icon: "🃏", category: "reading", requirement: { type: "reading_type", readingType: "tarot" }, pointsReward: 15 },
+  { name: "Oracle", description: "Complete an I Ching reading", icon: "☯️", category: "reading", requirement: { type: "reading_type", readingType: "i-ching" }, pointsReward: 15 },
+  { name: "Destiny Mapped", description: "Complete a Four Pillars reading", icon: "🏛️", category: "reading", requirement: { type: "reading_type", readingType: "four-pillars" }, pointsReward: 15 },
+  { name: "Star Gazer", description: "Check a zodiac reading", icon: "⭐", category: "reading", requirement: { type: "reading_type", readingType: "zodiac" }, pointsReward: 10 },
+  { name: "Well Rounded", description: "Complete all 5 reading types", icon: "🌀", category: "milestone", requirement: { type: "all_types", types: ["mbti", "tarot", "i-ching", "four-pillars", "zodiac"] }, pointsReward: 50 },
+  { name: "Dedicated Seeker", description: "Complete 10 readings", icon: "📚", category: "milestone", requirement: { type: "total_readings", count: 10 }, pointsReward: 30 },
+  { name: "Enlightened", description: "Complete 50 readings", icon: "🌟", category: "milestone", requirement: { type: "total_readings", count: 50 }, pointsReward: 100 },
 ];
 
 const SEED_POINTS = [
-  { id: "00000000-0000-0000-0000-200000000001", userId: SEED_USERS[0]!.id, amount: 10, reason: "First reading completed" },
-  { id: "00000000-0000-0000-0000-200000000002", userId: SEED_USERS[0]!.id, amount: 25, reason: "MBTI analysis completed" },
-  { id: "00000000-0000-0000-0000-200000000003", userId: SEED_USERS[1]!.id, amount: 10, reason: "First reading completed" },
-  { id: "00000000-0000-0000-0000-200000000004", userId: SEED_USERS[2]!.id, amount: 50, reason: "Five readings milestone" },
+  { id: "00000000-0000-0000-0000-200000000001", userId: SEED_USERS[0]!.id, amount: 10, reason: "reading_completed" },
+  { id: "00000000-0000-0000-0000-200000000002", userId: SEED_USERS[0]!.id, amount: 25, reason: "reading_completed" },
+  { id: "00000000-0000-0000-0000-200000000003", userId: SEED_USERS[1]!.id, amount: 10, reason: "reading_completed" },
+  { id: "00000000-0000-0000-0000-200000000004", userId: SEED_USERS[2]!.id, amount: 50, reason: "reading_completed" },
 ];
 
 async function seed() {
@@ -40,16 +44,16 @@ async function seed() {
   // Upsert achievements
   for (const achievement of SEED_ACHIEVEMENTS) {
     await db.insert(achievements).values(achievement).onConflictDoUpdate({
-      target: achievements.id,
-      set: { name: achievement.name, description: achievement.description, requiredPoints: achievement.requiredPoints },
+      target: achievements.name,
+      set: { description: achievement.description, pointsReward: achievement.pointsReward, icon: achievement.icon, category: achievement.category, requirement: achievement.requirement },
     });
     console.log(`  ✅ Achievement: ${achievement.name}`);
   }
 
   // Upsert points
   for (const point of SEED_POINTS) {
-    await db.insert(points).values(point).onConflictDoUpdate({
-      target: points.id,
+    await db.insert(pointsTransactions).values(point).onConflictDoUpdate({
+      target: pointsTransactions.id,
       set: { amount: point.amount, reason: point.reason },
     });
     console.log(`  ✅ Points: ${point.amount} for ${point.reason}`);
