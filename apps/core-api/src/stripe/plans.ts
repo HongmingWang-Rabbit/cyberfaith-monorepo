@@ -24,8 +24,9 @@ export const PLANS: Record<string, Plan> = {
     features: [
       "Unlimited AI readings",
       "Detailed analysis",
-      "Priority AI model",
+      "Premium AI models (GPT-4o, Claude, Gemini Pro)",
       "Priority support",
+      "Deeper, more detailed readings",
     ],
     aiModel: "priority",
   },

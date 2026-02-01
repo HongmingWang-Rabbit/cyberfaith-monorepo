@@ -11,7 +11,8 @@
       "fourPillars": "四柱八字",
       "profile": "个人中心",
       "community": "社区",
-      "arcade": "游戏厅"
+      "arcade": "游戏厅",
+      "admin": "管理后台"
     },
     "auth": {
       "signIn": "登录",
@@ -35,7 +36,10 @@
       "loading": "AI 分析中...",
       "error": "AI 分析暂时不可用，请稍后再试。",
       "retry": "重新分析",
-      "poweredBy": "AI 驱动"
+      "poweredBy": "AI 驱动",
+      "upsellTitle": "升级到 Pro 获得更深度的解读",
+      "upsellDescription": "Pro 订阅者使用高级AI模型，获得更丰富、更详细的解读。",
+      "upsellCta": "升级"
     }
   },
   "home": {
@@ -331,8 +335,9 @@
     "freeFeature3": "标准AI模型",
     "proFeature1": "无限AI解读",
     "proFeature2": "详细分析",
-    "proFeature3": "优先AI模型",
-    "proFeature4": "优先支持"
+    "proFeature3": "高级AI模型 (GPT-4o、Claude、Gemini Pro)",
+    "proFeature4": "优先支持",
+    "proFeature5": "更深入、更详细的解读"
   },
   "community": {
     "title": "社区动态",
@@ -353,5 +358,54 @@
     "days": "天",
     "autoMode": "自动模式",
     "combo": "连击!"
+  },
+  "admin": {
+    "title": "管理后台",
+    "subtitle": "系统监控与内容审核",
+    "loading": "加载中...",
+    "tabs": {
+      "dashboard": "仪表盘",
+      "users": "用户管理",
+      "readings": "内容审核"
+    },
+    "stats": {
+      "totalUsers": "总用户数",
+      "totalReadings": "总解读数",
+      "readingsToday": "今日解读",
+      "activeSubs": "活跃订阅",
+      "revenue": "收入概览",
+      "perMonth": "/ 月 (预估)",
+      "proUsers": "专业版",
+      "freeUsers": "免费版",
+      "todayActivity": "今日"
+    },
+    "users": {
+      "searchPlaceholder": "搜索姓名或邮箱...",
+      "name": "姓名",
+      "email": "邮箱",
+      "role": "角色",
+      "tier": "等级",
+      "readings": "解读数",
+      "joined": "注册时间",
+      "actions": "状态",
+      "noResults": "未找到用户"
+    },
+    "readings": {
+      "allTypes": "全部类型",
+      "allVisibility": "全部可见性",
+      "public": "公开",
+      "private": "私密",
+      "type": "类型",
+      "user": "用户",
+      "visibility": "可见性",
+      "date": "日期",
+      "actions": "操作",
+      "delete": "删除",
+      "confirmDelete": "确定要删除这条解读吗？",
+      "noResults": "未找到解读"
+    },
+    "pagination": {
+      "showing": "{from}-{to} / 共 {total}"
+    }
   }
 }

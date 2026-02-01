@@ -11,7 +11,8 @@
       "fourPillars": "Four Pillars",
       "profile": "Profile",
       "community": "Community",
-      "arcade": "Arcade"
+      "arcade": "Arcade",
+      "admin": "Admin"
     },
     "auth": {
       "signIn": "Sign In",
@@ -35,7 +36,10 @@
       "loading": "Analyzing with AI...",
       "error": "AI analysis unavailable right now. Please try again later.",
       "retry": "Retry Analysis",
-      "poweredBy": "Powered by AI"
+      "poweredBy": "Powered by AI",
+      "upsellTitle": "Upgrade to Pro for deeper insights",
+      "upsellDescription": "Pro subscribers get premium AI models with richer, more detailed readings.",
+      "upsellCta": "Upgrade"
     }
   },
   "home": {
@@ -331,8 +335,9 @@
     "freeFeature3": "Standard AI model",
     "proFeature1": "Unlimited AI readings",
     "proFeature2": "Detailed analysis",
-    "proFeature3": "Priority AI model",
-    "proFeature4": "Priority support"
+    "proFeature3": "Premium AI models (GPT-4o, Claude, Gemini Pro)",
+    "proFeature4": "Priority support",
+    "proFeature5": "Deeper, more detailed readings"
   },
   "community": {
     "title": "Community Feed",
@@ -353,5 +358,54 @@
     "days": "days",
     "autoMode": "Auto Mode",
     "combo": "combo!"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "subtitle": "System monitoring & moderation",
+    "loading": "Loading...",
+    "tabs": {
+      "dashboard": "Dashboard",
+      "users": "Users",
+      "readings": "Readings"
+    },
+    "stats": {
+      "totalUsers": "Total Users",
+      "totalReadings": "Total Readings",
+      "readingsToday": "Readings Today",
+      "activeSubs": "Active Subscriptions",
+      "revenue": "Revenue Overview",
+      "perMonth": "/ month (est.)",
+      "proUsers": "Pro",
+      "freeUsers": "Free",
+      "todayActivity": "Today"
+    },
+    "users": {
+      "searchPlaceholder": "Search by name or email...",
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "tier": "Tier",
+      "readings": "Readings",
+      "joined": "Joined",
+      "actions": "Status",
+      "noResults": "No users found"
+    },
+    "readings": {
+      "allTypes": "All types",
+      "allVisibility": "All visibility",
+      "public": "Public",
+      "private": "Private",
+      "type": "Type",
+      "user": "User",
+      "visibility": "Visibility",
+      "date": "Date",
+      "actions": "Actions",
+      "delete": "Delete",
+      "confirmDelete": "Are you sure you want to delete this reading?",
+      "noResults": "No readings found"
+    },
+    "pagination": {
+      "showing": "{from}-{to} of {total}"
+    }
   }
 }

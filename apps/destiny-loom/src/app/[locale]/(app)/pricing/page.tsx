@@ -21,6 +21,7 @@ const plans = [
       "proFeature2",
       "proFeature3",
       "proFeature4",
+      "proFeature5",
     ],
   },
 ];

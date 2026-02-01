@@ -2,7 +2,7 @@
 
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Card, CardContent } from "@cyberfaith/ui";
+import { Card, CardContent, Badge } from "@cyberfaith/ui";
 import { useParams } from "next/navigation";
 import { zodiacSigns, getZodiacSign } from "@/data/zodiac-signs";
 import { useState, useEffect } from "react";
@@ -133,7 +133,28 @@ export default function ZodiacSignPage() {
               </button>
             </div>
           ) : readingData ? (
-            <ReadingContent data={readingData as Record<string, unknown>} />
+            <>
+              {(readingData as Record<string, unknown>)?.aiTier === "pro" && (
+                <div className="flex items-center gap-1 mb-3">
+                  <Badge variant="highlight">⚡ PRO</Badge>
+                </div>
+              )}
+              <ReadingContent data={readingData as Record<string, unknown>} />
+              {(readingData as Record<string, unknown>)?.aiTier !== "pro" && (
+                <div className="mt-6 p-4 rounded-xl border border-cyan-500/30 bg-gradient-to-r from-cyan-950/30 to-purple-950/30">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">🔮</span>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-white">{tc("ai.upsellTitle")}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{tc("ai.upsellDescription")}</p>
+                    </div>
+                    <a href={`/${locale}/pricing`} className="text-xs px-4 py-2 rounded-lg font-semibold text-white bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 transition-all whitespace-nowrap">
+                      {tc("ai.upsellCta")}
+                    </a>
+                  </div>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-8 text-muted-foreground italic">
               {t("readingPlaceholder", { period: t(`readings.${period}`) })}
