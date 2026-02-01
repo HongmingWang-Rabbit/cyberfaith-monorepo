@@ -13,7 +13,7 @@ CyberFaith is a multi-app spiritual platform built as a Turborepo monorepo. Each
 │  website (3000)   sanctum (3001)   destiny-loom (3002)  │
 │  Static export    Dashboard        Guided journeys       │
 │                                                          │
-│  sanctuary (3003)   core-api (4000)                     │
+│  spirit-arcade (3003)   core-api (4000)                     │
 │  Community          NestJS REST API                      │
 └────────────┬────────────────────────────────────────────┘
              │ imports
@@ -39,8 +39,8 @@ Personal spiritual dashboard. Full-stack Next.js 15. Owns the `sanctum` database
 ### destiny-loom
 Guided spiritual journeys. Full-stack Next.js 15. Owns the `destiny-loom` database with `journeys` table (tracks progress 0-100, status, metadata).
 
-### sanctuary
-Community features. Full-stack Next.js 15. Owns the `sanctuary` database with `communities` and `memberships` tables.
+### spirit-arcade
+Community features. Full-stack Next.js 15. Owns the `spirit-arcade` database with `communities` and `memberships` tables.
 
 ## Database Architecture
 
@@ -51,7 +51,7 @@ PostgreSQL
 ├── cyberfaith      ← core-api (users, points, achievements)
 ├── sanctum         ← sanctum (sanctum_profiles)
 ├── destiny-loom    ← destiny-loom (journeys)
-└── sanctuary       ← sanctuary (communities, memberships)
+└── spirit-arcade       ← spirit-arcade (communities, memberships)
 ```
 
 Drizzle config files live at each app root. Migrations are generated per-app with `drizzle-kit`.

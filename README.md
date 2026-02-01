@@ -8,7 +8,7 @@ Turborepo monorepo for the CyberFaith platform.
 - **core-api** — Core API (NestJS)
 - **sanctum** — Sanctum app (Next.js 15)
 - **destiny-loom** — Destiny Loom app (Next.js 15)
-- **sanctuary** — Sanctuary app (Next.js 15)
+- **spirit-arcade** — Spirit Arcade app (Next.js 15)
 
 ## Packages
 

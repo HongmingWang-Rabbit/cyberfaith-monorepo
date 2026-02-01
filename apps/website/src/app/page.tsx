@@ -5,7 +5,7 @@ import Link from "next/link";
 const apps = [
   { name: "Sanctum", description: "Your personal spiritual dashboard", href: "/products" },
   { name: "Destiny Loom", description: "Weave your path with guided journeys", href: "/products" },
-  { name: "Sanctuary", description: "Community and shared experiences", href: "/products" },
+  { name: "Spirit Arcade", description: "Spiritual-themed gaming platform", href: "/products" },
 ];
 
 export default function Home() {

@@ -12,7 +12,7 @@ export default function ProductsPage() {
           <p className="text-muted-foreground">Guided journeys to weave your spiritual path.</p>
         </div>
         <div>
-          <h2 className="text-2xl font-semibold">Sanctuary</h2>
+          <h2 className="text-2xl font-semibold">Spirit Arcade</h2>
           <p className="text-muted-foreground">Community space for shared spiritual experiences.</p>
         </div>
       </div>

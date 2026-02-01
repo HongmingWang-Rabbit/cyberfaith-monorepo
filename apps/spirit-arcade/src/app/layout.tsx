@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sanctuary — CyberFaith",
+  title: "Spirit Arcade — CyberFaith",
   description: "Community and shared spiritual experiences",
 };
 

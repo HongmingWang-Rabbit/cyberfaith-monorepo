@@ -7,9 +7,9 @@ export default function Home() {
         <span className="text-primary">Sanctum</span>
       </h1>
       <p className="max-w-xl text-lg text-muted-foreground">
-        Your personal spiritual dashboard and daily companion.
+        Forums, real-time chat, and community connections.
       </p>
-      <Button size="lg">Get Started</Button>
+      <Button size="lg">Join Community</Button>
     </main>
   );
 }
