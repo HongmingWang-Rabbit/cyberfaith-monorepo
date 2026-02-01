@@ -216,24 +216,50 @@
     "title": "Profile",
     "guest": "Cosmic Traveler",
     "guestSub": "Sign in to save your journey across devices",
+    "loggedIn": "Welcome back!",
+    "loginPrompt": "Sign in to save your readings and track your journey.",
     "stats": {
       "title": "Your Stats",
+      "totalReadings": "Total Readings",
+      "streak": "Day Streak",
+      "points": "XP Points",
+      "achievements": "Achievements",
       "testsCompleted": "Tests Completed",
       "readingsDone": "Readings Done",
       "signsExplored": "Signs Explored"
     },
+    "achievements": {
+      "title": "Achievements",
+      "first_reading": "First Reading",
+      "five_readings": "Five Readings",
+      "ten_readings": "Ten Readings",
+      "all_types": "Explorer",
+      "streak_3": "3-Day Streak",
+      "streak_7": "7-Day Streak",
+      "streak_30": "30-Day Streak"
+    },
     "history": {
       "title": "Reading History",
-      "empty": "No readings yet. Start exploring!",
+      "empty": "No readings yet — try your first one!",
+      "delete": "Delete",
+      "confirmDelete": "Confirm?",
+      "clearAll": "Clear History",
+      "filterTypes": {
+        "all": "All",
+        "mbti": "MBTI",
+        "tarot": "Tarot",
+        "iching": "I Ching",
+        "fourPillars": "Four Pillars",
+        "zodiac": "Zodiac",
+        "i-ching": "I Ching",
+        "four-pillars": "Four Pillars"
+      },
       "mbti": "MBTI Result",
       "tarot": "Tarot Reading",
       "zodiac": "Zodiac Reading",
-      "clearAll": "Clear History",
       "fourPillars": "Four Pillars",
       "iching": "I Ching Reading"
-    },
-    "loggedIn": "Welcome back!",
-    "loginPrompt": "Sign in to save your readings and track your journey."
+    }
   },
   "fourPillars": {
     "title": "Four Pillars of Destiny",

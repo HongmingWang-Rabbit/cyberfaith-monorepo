@@ -216,24 +216,50 @@
     "title": "个人中心",
     "guest": "宇宙旅者",
     "guestSub": "登录以跨设备保存你的旅程",
+    "loggedIn": "欢迎回来！",
+    "loginPrompt": "登录以保存你的占卜记录和追踪你的旅程。",
     "stats": {
       "title": "你的数据",
+      "totalReadings": "总占卜次数",
+      "streak": "连续天数",
+      "points": "经验值",
+      "achievements": "成就",
       "testsCompleted": "完成测试",
       "readingsDone": "完成占卜",
       "signsExplored": "探索星座"
     },
+    "achievements": {
+      "title": "成就",
+      "first_reading": "初次占卜",
+      "five_readings": "五次占卜",
+      "ten_readings": "十次占卜",
+      "all_types": "探索者",
+      "streak_3": "连续3天",
+      "streak_7": "连续7天",
+      "streak_30": "连续30天"
+    },
     "history": {
       "title": "占卜历史",
-      "empty": "暂无记录。开始探索吧！",
+      "empty": "暂无记录——来试试你的第一次占卜吧！",
+      "delete": "删除",
+      "confirmDelete": "确认？",
+      "clearAll": "清除历史",
+      "filterTypes": {
+        "all": "全部",
+        "mbti": "MBTI",
+        "tarot": "塔罗",
+        "iching": "易经",
+        "fourPillars": "四柱",
+        "zodiac": "星座",
+        "i-ching": "易经",
+        "four-pillars": "四柱"
+      },
       "mbti": "MBTI结果",
       "tarot": "塔罗占卜",
       "zodiac": "星座解读",
-      "clearAll": "清除历史",
       "fourPillars": "四柱八字",
       "iching": "易经占卜"
-    },
-    "loggedIn": "欢迎回来！",
-    "loginPrompt": "登录以保存你的占卜记录和追踪你的旅程。"
+    }
   },
   "fourPillars": {
     "title": "四柱八字",
