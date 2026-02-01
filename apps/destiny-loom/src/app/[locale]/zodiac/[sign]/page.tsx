@@ -129,7 +129,7 @@ export default function ZodiacSignPage() {
                 onClick={() => fetchReading(sign.id, period, locale)}
                 className="text-xs px-3 py-1.5 rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
               >
-                {tc("actions.back")}
+                {tc("ai.retry")}
               </button>
             </div>
           ) : readingData ? (

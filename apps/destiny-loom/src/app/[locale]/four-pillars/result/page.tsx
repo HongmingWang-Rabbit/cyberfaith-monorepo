@@ -4,7 +4,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@cyberfaith/ui";
 import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { Suspense, useMemo } from "react";
 import { useAiAnalysis } from "@/hooks/useAiAnalysis";
 import { AiAnalysisCard, ReadingContent } from "@/components/ui/ai-analysis";
 import {
@@ -14,6 +14,7 @@ import {
 } from "@/lib/four-pillars";
 import { ShareButtons } from "@/components/ui/share-buttons";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { PageSkeleton } from "@/components/ui/skeleton";
 
 const ELEMENT_COLORS: Record<string, string> = {
   Wood: "text-green-400 border-green-400/30 bg-green-400/10",
@@ -76,7 +77,7 @@ function PillarCard({
   );
 }
 
-export default function FourPillarsResultPage() {
+function FourPillarsResultContent() {
   const t = useTranslations("fourPillars");
   const tc = useTranslations("common");
   const locale = useLocale();
@@ -211,5 +212,13 @@ export default function FourPillarsResultPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function FourPillarsResultPage() {
+  return (
+    <Suspense fallback={<PageSkeleton />}>
+      <FourPillarsResultContent />
+    </Suspense>
   );
 }

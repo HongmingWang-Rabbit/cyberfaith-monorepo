@@ -11,7 +11,7 @@ const navItems = [
   { key: "mbti", href: "/mbti", icon: "🧠" },
   { key: "tarot", href: "/tarot", icon: "🃏" },
   { key: "zodiac", href: "/zodiac", icon: "⭐" },
-  { key: "iching", href: "/iching", icon: "☯️" },
+  { key: "iching", href: "/i-ching", icon: "☯️" },
   { key: "fourPillars", href: "/four-pillars", icon: "🏛️" },
   { key: "profile", href: "/profile", icon: "👤" },
 ] as const;

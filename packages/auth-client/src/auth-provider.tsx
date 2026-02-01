@@ -70,45 +70,29 @@ export function AuthProvider({
 
   const apiBase = coreApiUrl || getApiBase();
 
-  // Validate token on mount
+  // Validate token on mount (check URL callback token first, then stored token)
   useEffect(() => {
-    const stored = loadStoredAuth();
-    if (!stored) {
-      setIsLoading(false);
-      return;
-    }
-
-    // Check URL for callback token
+    // Check URL for callback token (from OAuth redirect)
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const callbackToken = params.get("token");
       if (callbackToken) {
-        // Remove token from URL
+        // Remove token from URL immediately
         const url = new URL(window.location.href);
         url.searchParams.delete("token");
         window.history.replaceState({}, "", url.toString());
-        // Handle the callback token
         validateAndSetToken(callbackToken);
         return;
       }
     }
 
-    // Validate stored token
-    validateAndSetToken(stored.tokens.accessToken, stored);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Also check for callback token in URL on mount
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const callbackToken = params.get("token");
-    if (callbackToken) {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("token");
-      window.history.replaceState({}, "", url.toString());
-      validateAndSetToken(callbackToken);
+    // No callback token — validate stored token
+    const stored = loadStoredAuth();
+    if (!stored) {
+      setIsLoading(false);
+      return;
     }
+    validateAndSetToken(stored.tokens.accessToken, stored);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

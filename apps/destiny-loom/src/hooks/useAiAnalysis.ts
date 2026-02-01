@@ -73,19 +73,30 @@ export function useAiAnalysis<T = unknown>(
  * Cached version for zodiac readings - caches by key in component state
  */
 export function useZodiacReading() {
-  const [cache, setCache] = useState<Record<string, unknown>>({});
+  const cacheRef = useRef<Record<string, unknown>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentData, setCurrentData] = useState<unknown>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, []);
 
   const fetchReading = useCallback(
     async (sign: string, period: string, locale: string) => {
       const cacheKey = `${sign}-${period}-${locale}`;
 
-      if (cache[cacheKey]) {
-        setCurrentData(cache[cacheKey]);
+      if (cacheRef.current[cacheKey]) {
+        setCurrentData(cacheRef.current[cacheKey]);
         return;
       }
+
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
 
       setIsLoading(true);
       setError(null);
@@ -95,6 +106,7 @@ export function useZodiacReading() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ sign, period, locale }),
+          signal: controller.signal,
         });
 
         if (!res.ok) {
@@ -103,15 +115,22 @@ export function useZodiacReading() {
         }
 
         const result = await res.json();
-        setCache((prev) => ({ ...prev, [cacheKey]: result }));
-        setCurrentData(result);
+        if (!controller.signal.aborted) {
+          cacheRef.current[cacheKey] = result;
+          setCurrentData(result);
+        }
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : "Failed to load reading");
+        if (err instanceof Error && err.name === "AbortError") return;
+        if (!controller.signal.aborted) {
+          setError(err instanceof Error ? err.message : "Failed to load reading");
+        }
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     },
-    [cache]
+    []
   );
 
   return { data: currentData, isLoading, error, fetchReading };

@@ -6,7 +6,7 @@ const features = [
   { key: "mbti", href: "/mbti", icon: "🧠", color: "purple" },
   { key: "tarot", href: "/tarot", icon: "🃏", color: "cyan" },
   { key: "zodiac", href: "/zodiac", icon: "⭐", color: "pink" },
-  { key: "iching", href: "/iching", icon: "☯️", color: "cyan" },
+  { key: "iching", href: "/i-ching", icon: "☯️", color: "cyan" },
   { key: "fourPillars", href: "/four-pillars", icon: "🏛️", color: "purple" },
 ] as const;
 
