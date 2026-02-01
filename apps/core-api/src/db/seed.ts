@@ -1,5 +1,5 @@
 import { createDbClient } from "@cyberfaith/db-utils";
-import { users, pointsTransactions, achievements } from "./schema";
+import { users, pointsTransactions, achievements, games } from "./schema";
 
 const DATABASE_URL = process.env.DATABASE_URL || "postgresql://localhost:5432/cyberfaith";
 
@@ -57,6 +57,31 @@ async function seed() {
       set: { amount: point.amount, reason: point.reason },
     });
     console.log(`  ✅ Points: ${point.amount} for ${point.reason}`);
+  }
+
+  // Upsert arcade games
+  const SEED_GAMES = [
+    {
+      slug: "karma-slots",
+      name: "Karma Slots",
+      description: "Spin the spiritual reels and test your cosmic luck. Match sacred symbols for karmic rewards!",
+      thumbnail: "🎰",
+      config: {
+        minBet: 10,
+        maxWin: 50,
+        symbols: ["🔮", "✨", "🌟", "☯️", "🧿", "💫", "🪬", "🌙"],
+        reelCount: 3,
+        payoutRules: { threeMatch: 50, twoMatch: 20 },
+      },
+      status: "active" as const,
+    },
+  ];
+  for (const game of SEED_GAMES) {
+    await db.insert(games).values(game).onConflictDoUpdate({
+      target: games.slug,
+      set: { name: game.name, description: game.description, config: game.config, thumbnail: game.thumbnail, status: game.status },
+    });
+    console.log(`  ✅ Game: ${game.name}`);
   }
 
   console.log("🎉 Seed complete!");

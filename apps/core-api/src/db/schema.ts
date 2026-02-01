@@ -91,6 +91,15 @@ export const arcadePlays = pgTable("arcade_plays", {
   result: jsonb("result"),
 });
 
+export const muyuSessions = pgTable("muyu_sessions", {
+  id: idColumn(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  tapCount: integer("tap_count").notNull(),
+  duration: integer("duration"), // seconds
+  pointsEarned: integer("points_earned").notNull().default(0),
+});
+
 export const friendshipStatusEnum = pgEnum("friendship_status", ["pending", "accepted", "rejected"]);
 
 export const friendships = pgTable("friendships", {

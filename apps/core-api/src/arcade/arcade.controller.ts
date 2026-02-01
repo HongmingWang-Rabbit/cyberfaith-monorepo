@@ -11,13 +11,25 @@ interface AuthRequest extends Request {
 export class ArcadeController {
   constructor(private readonly arcadeService: ArcadeService) {}
 
-  @Post("play")
-  @UseGuards(AuthGuard("jwt"))
-  async play(@Req() req: AuthRequest, @Body() body: { gameId: string }) {
-    const data = await this.arcadeService.play(req.user.id, body.gameId);
+  /** List active games — public, no auth */
+  @Get("games")
+  async listGames() {
+    const data = await this.arcadeService.listGames();
     return { success: true, data };
   }
 
+  /** Play a game — auth required */
+  @Post("play")
+  @UseGuards(AuthGuard("jwt"))
+  async play(
+    @Req() req: AuthRequest,
+    @Body() body: { gameSlug: string; input?: Record<string, any> },
+  ) {
+    const data = await this.arcadeService.play(req.user.id, body.gameSlug, body.input);
+    return { success: true, data };
+  }
+
+  /** Play history — auth required */
   @Get("history")
   @UseGuards(AuthGuard("jwt"))
   async history(

@@ -1,18 +1,11 @@
-import { Inject, Injectable, BadRequestException } from "@nestjs/common";
-import { eq, desc, sql } from "drizzle-orm";
+import { Inject, Injectable, BadRequestException, NotFoundException } from "@nestjs/common";
+import { eq, desc } from "drizzle-orm";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { DRIZZLE } from "../db/db.module";
-import { arcadePlays, pointsTransactions } from "../db/schema";
+import { arcadePlays, games } from "../db/schema";
 import { PointsService } from "../points/points.service";
-
-const SYMBOLS = ["🔮", "✨", "🌟", "☯️", "🧿", "💫", "🪬", "🌙"] as const;
-const SPIN_COST = 10;
-
-export interface SpinResult {
-  reels: string[];
-  matches: number;
-  pointsWon: number;
-}
+import { getGameEngine } from "./engines";
+import type { GameConfig } from "./engines";
 
 @Injectable()
 export class ArcadeService {
@@ -21,69 +14,100 @@ export class ArcadeService {
     private pointsService: PointsService,
   ) {}
 
-  spin(): SpinResult {
-    const reels = [
-      SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
-      SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
-      SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
-    ];
+  /** List all active games */
+  async listGames() {
+    const rows = await this.db
+      .select()
+      .from(games)
+      .where(eq(games.status, "active"))
+      .orderBy(games.name);
 
-    // Count matches
-    const unique = new Set(reels);
-    let matches = 0;
-    let pointsWon = 0;
-
-    if (unique.size === 1) {
-      matches = 3;
-      pointsWon = 50;
-    } else if (unique.size === 2) {
-      matches = 2;
-      pointsWon = 20;
-    }
-
-    return { reels, matches, pointsWon };
+    return rows;
   }
 
-  async play(userId: string, gameId: string) {
-    if (gameId !== "karma-slots") {
-      throw new BadRequestException("Unknown game: " + gameId);
+  /** Get a single game by slug */
+  async getGameBySlug(slug: string) {
+    const [game] = await this.db
+      .select()
+      .from(games)
+      .where(eq(games.slug, slug));
+
+    return game ?? null;
+  }
+
+  /**
+   * Generic play: look up game from DB, validate config,
+   * check balance, run engine, record result.
+   */
+  async play(userId: string, gameSlug: string, input?: Record<string, any>) {
+    // 1. Look up game in DB
+    const game = await this.getGameBySlug(gameSlug);
+    if (!game) {
+      throw new NotFoundException("Game not found: " + gameSlug);
+    }
+    if (game.status !== "active") {
+      throw new BadRequestException("Game is not active: " + gameSlug);
     }
 
-    // Check user has enough points
+    // 2. Get engine
+    const engine = getGameEngine(gameSlug);
+    if (!engine) {
+      throw new BadRequestException("No engine registered for game: " + gameSlug);
+    }
+
+    // 3. Read config
+    const config = game.config as GameConfig;
+    const cost = config.minBet;
+    if (!cost || cost <= 0) {
+      throw new BadRequestException("Invalid game config: minBet must be > 0");
+    }
+
+    // 4. Check balance
     const { total } = await this.pointsService.getUserPoints(userId);
-    if (total < SPIN_COST) {
-      throw new BadRequestException("Not enough points. Need " + SPIN_COST + ", have " + total);
+    if (total < cost) {
+      throw new BadRequestException(
+        `Not enough points. Need ${cost}, have ${total}`,
+      );
     }
 
-    // Deduct points
-    await this.pointsService.awardPoints(userId, -SPIN_COST, "arcade_play", { gameId });
+    // 5. Deduct cost
+    await this.pointsService.awardPoints(userId, -cost, "arcade_play", {
+      gameSlug,
+    });
 
-    // Spin
-    const result = this.spin();
+    // 6. Run engine
+    const result = engine(config, input);
 
-    // Award winnings if any
+    // 7. Award winnings
     if (result.pointsWon > 0) {
       await this.pointsService.awardPoints(userId, result.pointsWon, "arcade_win", {
-        gameId,
-        matches: result.matches,
+        gameSlug,
+        outcome: result.outcome,
       });
     }
 
-    // Record play
+    // 8. Record play
     const [play] = await this.db
       .insert(arcadePlays)
       .values({
         userId,
-        gameId,
-        pointsSpent: SPIN_COST,
+        gameId: game.id,
+        pointsSpent: cost,
         pointsWon: result.pointsWon,
-        result,
+        result: result.outcome,
       })
       .returning();
 
-    return { play, result, netPoints: result.pointsWon - SPIN_COST };
+    return {
+      play,
+      result: result.outcome,
+      pointsWon: result.pointsWon,
+      pointsSpent: cost,
+      netPoints: result.pointsWon - cost,
+    };
   }
 
+  /** Play history for a user */
   async getHistory(userId: string, limit = 20, page = 1) {
     const offset = (page - 1) * limit;
     const rows = await this.db

@@ -96,9 +96,9 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 
 ### Social Features
 - [x] Share readings to social media (deep links + OG meta)
-- [ ] Friend system — add friends, view their public readings
-- [ ] Community feed — opt-in public reading stream
-- [ ] Comments/reactions on shared readings
+- [x] Friend system — add friends, view their public readings
+- [x] Community feed — infinite scroll public reading stream
+- [x] Emoji reactions on shared readings (👍❤️🔮✨🌟)
 
 ### Monetization
 - [x] Stripe subscription integration (free/pro tiers)
@@ -107,9 +107,10 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 - [x] Usage limits for free tier (TierLimitGuard)
 
 ### Spirit Arcade (v1)
-- [ ] Game framework scaffolding
-- [ ] First mini-game prototype
-- [ ] Points integration with arcade
+- [x] Game framework scaffolding (lobby + arcade API)
+- [x] Karma Slots — spiritual slot machine with neon animations
+- [x] Points integration with arcade (spend/win XP)
+- [ ] 木鱼 (Wooden Fish) — tap meditation tool with merit counter
 
 ### Platform
 - [x] PWA support (installable, offline shell)

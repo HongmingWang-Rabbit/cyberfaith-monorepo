@@ -1,38 +1,24 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
-
-const games = [
-  {
-    id: "karma-slots",
-    title: "Karma Slots",
-    description: "Spin the spiritual reels and test your cosmic luck. Match sacred symbols for karmic rewards!",
-    icon: "🎰",
-    cost: 10,
-    maxWin: 50,
-    status: "live" as const,
-  },
-  {
-    id: "chakra-match",
-    title: "Chakra Match",
-    description: "Match chakra energies in this memory game. Align your inner light!",
-    icon: "🧘",
-    cost: 15,
-    maxWin: 75,
-    status: "coming-soon" as const,
-  },
-  {
-    id: "destiny-dice",
-    title: "Destiny Dice",
-    description: "Roll the sacred dice and discover your fate. Double or nothing!",
-    icon: "🎲",
-    cost: 5,
-    maxWin: 30,
-    status: "coming-soon" as const,
-  },
-];
+import { hasGameComponent } from "@/components/arcade/registry";
+import type { GameDefinition } from "@/components/arcade/types";
 
 export default function ArcadePage() {
+  const [games, setGames] = useState<GameDefinition[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/arcade/games")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success) setGames(d.data);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-5xl mx-auto">
@@ -46,52 +32,75 @@ export default function ArcadePage() {
           </p>
         </div>
 
+        {/* Loading */}
+        {loading && (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="rounded-2xl border border-gray-700/50 bg-gray-900/40 p-6 h-64 animate-pulse" />
+            ))}
+          </div>
+        )}
+
         {/* Game Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {games.map((game) => (
-            <div
-              key={game.id}
-              className={`relative group rounded-2xl border p-6 flex flex-col transition-all duration-300 ${
-                game.status === "live"
-                  ? "border-cyan-500/40 bg-gradient-to-b from-cyan-950/30 to-purple-950/30 hover:border-cyan-400/70 hover:shadow-lg hover:shadow-cyan-500/20 cursor-pointer"
-                  : "border-gray-700/50 bg-gray-900/40 opacity-60"
-              }`}
-            >
-              {/* Glow effect */}
-              {game.status === "live" && (
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-              )}
+        {!loading && (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {games.map((game) => {
+              const hasComponent = hasGameComponent(game.slug);
+              const playable = game.status === "active" && hasComponent;
 
-              {game.status === "coming-soon" && (
-                <div className="absolute top-3 right-3 text-xs font-bold px-2 py-1 rounded-full bg-gray-700 text-gray-400">
-                  COMING SOON
-                </div>
-              )}
-
-              <div className="text-5xl mb-4">{game.icon}</div>
-              <h2 className="text-xl font-bold text-white mb-2">{game.title}</h2>
-              <p className="text-gray-400 text-sm mb-4 flex-1">{game.description}</p>
-
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-cyan-400">
-                  💰 {game.cost} pts/play
-                </span>
-                <span className="text-purple-400">
-                  🏆 Win up to {game.maxWin} pts
-                </span>
-              </div>
-
-              {game.status === "live" && (
-                <Link
-                  href={`/arcade/${game.id}`}
-                  className="mt-4 block w-full py-3 text-center rounded-xl font-semibold text-white bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 transition-all shadow-lg shadow-cyan-500/25"
+              return (
+                <div
+                  key={game.slug}
+                  className={`relative group rounded-2xl border p-6 flex flex-col transition-all duration-300 ${
+                    playable
+                      ? "border-cyan-500/40 bg-gradient-to-b from-cyan-950/30 to-purple-950/30 hover:border-cyan-400/70 hover:shadow-lg hover:shadow-cyan-500/20 cursor-pointer"
+                      : "border-gray-700/50 bg-gray-900/40 opacity-60"
+                  }`}
                 >
-                  Play Now ▶
-                </Link>
-              )}
-            </div>
-          ))}
-        </div>
+                  {playable && (
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  )}
+
+                  {!playable && (
+                    <div className="absolute top-3 right-3 text-xs font-bold px-2 py-1 rounded-full bg-gray-700 text-gray-400">
+                      COMING SOON
+                    </div>
+                  )}
+
+                  <div className="text-5xl mb-4">{game.thumbnail}</div>
+                  <h2 className="text-xl font-bold text-white mb-2">{game.name}</h2>
+                  <p className="text-gray-400 text-sm mb-4 flex-1">{game.description}</p>
+
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-cyan-400">
+                      💰 {game.config.minBet} pts/play
+                    </span>
+                    <span className="text-purple-400">
+                      🏆 Win up to {game.config.maxWin} pts
+                    </span>
+                  </div>
+
+                  {playable && (
+                    <Link
+                      href={`/arcade/${game.slug}`}
+                      className="mt-4 block w-full py-3 text-center rounded-xl font-semibold text-white bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 transition-all shadow-lg shadow-cyan-500/25"
+                    >
+                      Play Now ▶
+                    </Link>
+                  )}
+                </div>
+              );
+            })}
+
+            {/* Empty state */}
+            {games.length === 0 && (
+              <div className="col-span-full text-center py-16 text-gray-500">
+                <p className="text-2xl mb-2">🎮</p>
+                <p>No games available yet. Check back soon!</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

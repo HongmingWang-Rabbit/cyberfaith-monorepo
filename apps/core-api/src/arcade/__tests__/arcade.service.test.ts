@@ -1,11 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ArcadeService } from "../arcade.service";
-import { PointsService } from "../../points/points.service";
 
 describe("ArcadeService", () => {
   let service: ArcadeService;
   let mockDb: any;
   let mockPointsService: any;
+
+  const karmaSlotGame = {
+    id: "game-1",
+    slug: "karma-slots",
+    name: "Karma Slots",
+    status: "active",
+    config: {
+      minBet: 10,
+      maxWin: 50,
+      symbols: ["🔮", "✨", "🌟", "☯️", "🧿", "💫", "🪬", "🌙"],
+      reelCount: 3,
+      payoutRules: { threeMatch: 50, twoMatch: 20 },
+    },
+  };
 
   beforeEach(() => {
     const createChain = () => {
@@ -31,57 +44,54 @@ describe("ArcadeService", () => {
     service = new ArcadeService(mockDb, mockPointsService as any);
   });
 
-  describe("spin", () => {
-    it("returns 3 reels with valid symbols", () => {
-      const result = service.spin();
-      expect(result.reels).toHaveLength(3);
-      const validSymbols = ["🔮", "✨", "🌟", "☯️", "🧿", "💫", "🪬", "🌙"];
-      result.reels.forEach((r) => expect(validSymbols).toContain(r));
+  describe("listGames", () => {
+    it("returns games from DB", async () => {
+      mockDb.orderBy.mockResolvedValueOnce([karmaSlotGame]);
+      const result = await service.listGames();
+      expect(result).toEqual([karmaSlotGame]);
+      expect(mockDb.select).toHaveBeenCalled();
+      expect(mockDb.where).toHaveBeenCalled();
+    });
+  });
+
+  describe("getGameBySlug", () => {
+    it("returns game when found", async () => {
+      mockDb.where.mockResolvedValueOnce([karmaSlotGame]);
+      const result = await service.getGameBySlug("karma-slots");
+      expect(result).toEqual(karmaSlotGame);
     });
 
-    it("returns correct points for 3 match", () => {
-      // Mock Math.random to return same value
-      const orig = Math.random;
-      Math.random = () => 0.1; // Will pick index 0 for all
-      const result = service.spin();
-      Math.random = orig;
-
-      expect(result.matches).toBe(3);
-      expect(result.pointsWon).toBe(50);
-      expect(new Set(result.reels).size).toBe(1);
-    });
-
-    it("returns 0 points for no match", () => {
-      const orig = Math.random;
-      let call = 0;
-      // Return different indices: 0, 0.2, 0.5 → indices 0, 1, 4
-      Math.random = () => [0.0, 0.15, 0.5][call++] ?? 0.9;
-      const result = service.spin();
-      Math.random = orig;
-
-      if (new Set(result.reels).size === 3) {
-        expect(result.matches).toBe(0);
-        expect(result.pointsWon).toBe(0);
-      }
+    it("returns null when not found", async () => {
+      mockDb.where.mockResolvedValueOnce([]);
+      const result = await service.getGameBySlug("nope");
+      expect(result).toBeNull();
     });
   });
 
   describe("play", () => {
     it("rejects unknown game", async () => {
-      await expect(service.play("u1", "unknown-game")).rejects.toThrow("Unknown game");
+      mockDb.where.mockResolvedValueOnce([]);
+      await expect(service.play("u1", "unknown-game")).rejects.toThrow("Game not found");
+    });
+
+    it("rejects inactive game", async () => {
+      mockDb.where.mockResolvedValueOnce([{ ...karmaSlotGame, status: "draft" }]);
+      await expect(service.play("u1", "karma-slots")).rejects.toThrow("not active");
     });
 
     it("rejects when not enough points", async () => {
+      mockDb.where.mockResolvedValueOnce([karmaSlotGame]);
       mockPointsService.getUserPoints.mockResolvedValue({ total: 5, recent: [] });
       await expect(service.play("u1", "karma-slots")).rejects.toThrow("Not enough points");
     });
 
-    it("deducts points and records play", async () => {
+    it("deducts points, runs engine, and records play", async () => {
+      mockDb.where.mockResolvedValueOnce([karmaSlotGame]);
       const result = await service.play("u1", "karma-slots");
 
       // Should deduct 10 points
       expect(mockPointsService.awardPoints).toHaveBeenCalledWith(
-        "u1", -10, "arcade_play", { gameId: "karma-slots" }
+        "u1", -10, "arcade_play", { gameSlug: "karma-slots" },
       );
 
       // Should record play in db
@@ -89,10 +99,11 @@ describe("ArcadeService", () => {
       expect(result).toHaveProperty("play");
       expect(result).toHaveProperty("result");
       expect(result).toHaveProperty("netPoints");
+      expect(result).toHaveProperty("pointsSpent", 10);
     });
 
-    it("awards winnings on match", async () => {
-      // Force a triple match
+    it("awards winnings on triple match", async () => {
+      mockDb.where.mockResolvedValueOnce([karmaSlotGame]);
       const orig = Math.random;
       Math.random = () => 0.1;
 
@@ -101,7 +112,7 @@ describe("ArcadeService", () => {
 
       // Should award 50 points for triple match
       expect(mockPointsService.awardPoints).toHaveBeenCalledWith(
-        "u1", 50, "arcade_win", { gameId: "karma-slots", matches: 3 }
+        "u1", 50, "arcade_win", expect.objectContaining({ gameSlug: "karma-slots" }),
       );
       expect(result.netPoints).toBe(40); // 50 - 10
     });
