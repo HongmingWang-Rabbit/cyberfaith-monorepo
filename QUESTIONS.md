@@ -7,16 +7,12 @@
 
 ### Open
 
-1. **Domain name** — Do you have `cyberfaith.app` or similar registered? Need to know for CORS, OAuth redirect URIs, and OG meta tags.
-
-2. **Deployment platform preference** — SPRINT.md says Vercel (frontend) + Railway (API + Postgres). Still the plan, or do you want to use something else?
+1. **Domain name** — Do you have `cyberfaith.app` or similar registered? Need to know for CORS, OAuth redirect URIs, and OG meta tags. *(will get back later)*
 
 3. **Google OAuth** — When you're ready, create a Google Cloud project and OAuth 2.0 credentials. I'll prep step-by-step instructions. No rush — mock auth works for now.
 
-4. **Budget for AI calls** — gpt-4o-mini is cheap (~$0.15/1M input) but with scale it adds up. Any monthly budget in mind? This affects whether we add caching, rate limits per user, etc.
-
-5. **Analytics preference** — Plausible (privacy-friendly, $9/mo) vs Umami (self-hosted, free) vs Google Analytics (free, less private)?
-
 ### Answered ✅
 
-_(none yet)_
+2. ✅ **Deployment platform** — Vercel + Railway confirmed
+4. ✅ **AI cost tracking** — Adding to hourly reports (total hourly cost + per-feature average)
+5. ✅ **Analytics** — Clawd decides. Recommendation: Umami (self-hosted on Railway, free, privacy-friendly, matches stack)
