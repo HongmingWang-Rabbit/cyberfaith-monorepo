@@ -309,5 +309,27 @@
     "line": "第{pos}爻",
     "trigramAboveBelow": "上{upper}，下{lower}",
     "noData": "未找到卦象数据，请重新起卦。"
+  },
+  "pricing": {
+    "title": "选择你的道路",
+    "subtitle": "解锁神圣洞察的全部力量",
+    "month": "月",
+    "recommended": "推荐",
+    "upgrade": "升级到专业版",
+    "processing": "处理中...",
+    "currentPlan": "当前方案",
+    "free": {
+      "name": "免费版"
+    },
+    "pro": {
+      "name": "专业版"
+    },
+    "freeFeature1": "每日5次AI解读",
+    "freeFeature2": "基础分析",
+    "freeFeature3": "标准AI模型",
+    "proFeature1": "无限AI解读",
+    "proFeature2": "详细分析",
+    "proFeature3": "优先AI模型",
+    "proFeature4": "优先支持"
   }
 }

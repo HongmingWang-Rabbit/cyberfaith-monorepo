@@ -15,6 +15,13 @@
       "when": 1769979730438,
       "tag": "0001_amusing_spectrum",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770100000000,
+      "tag": "0002_stripe_subscription",
+      "breakpoints": true
     }
   ]
 }

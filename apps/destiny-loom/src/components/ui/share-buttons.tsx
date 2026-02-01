@@ -1,30 +1,40 @@
 "use client";
 
 import { useToast } from "@/components/ui/toast";
+import { useLocale } from "next-intl";
 
 interface ShareButtonsProps {
   title: string;
   description?: string;
+  /** If provided, share link points to /share/[readingId] instead of current page */
+  readingId?: string;
 }
 
-export function ShareButtons({ title, description }: ShareButtonsProps) {
+export function ShareButtons({ title, description, readingId }: ShareButtonsProps) {
   const { showToast } = useToast();
+  const locale = useLocale();
+
+  const getShareUrl = () => {
+    if (readingId) {
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      return `${origin}/${locale}/share/${readingId}`;
+    }
+    return typeof window !== "undefined" ? window.location.href : "";
+  };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
+    navigator.clipboard.writeText(getShareUrl());
     showToast("Link copied! ✓");
   };
 
   const handleTwitter = () => {
     const text = encodeURIComponent(`${title}${description ? " — " + description : ""}`);
-    const url = encodeURIComponent(window.location.href);
+    const url = encodeURIComponent(getShareUrl());
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
   };
 
   const handleWeChat = () => {
-    // WeChat sharing typically requires scanning a QR code with the URL
-    // For now we copy the link and show a message
-    navigator.clipboard.writeText(window.location.href);
+    navigator.clipboard.writeText(getShareUrl());
     showToast("Link copied — paste in WeChat to share! 💬");
   };
 

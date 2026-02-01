@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Delete,
   Body,
   Param,
@@ -16,6 +17,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { DRIZZLE } from "../db/drizzle.provider";
 import { readings } from "../db/schema";
 import { eq, and, desc } from "drizzle-orm";
+// Note: .update() is on the db instance, not imported from drizzle-orm
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { Request } from "express";
 
@@ -24,13 +26,35 @@ interface AuthRequest extends Request {
 }
 
 @Controller("readings")
-@UseGuards(AuthGuard("jwt"))
 export class ReadingsController {
   constructor(@Inject(DRIZZLE) private db: PostgresJsDatabase) {}
 
+  /** Public endpoint — no auth required. Only returns public readings without user info. */
+  @Get("public/:id")
+  async findPublic(@Param("id") id: string) {
+    const [reading] = await this.db
+      .select({
+        id: readings.id,
+        type: readings.type,
+        result: readings.result,
+        locale: readings.locale,
+        createdAt: readings.createdAt,
+        isPublic: readings.isPublic,
+      })
+      .from(readings)
+      .where(and(eq(readings.id, id), eq(readings.isPublic, true)));
+
+    if (!reading) {
+      throw new NotFoundException("Reading not found or not public");
+    }
+
+    return { success: true, data: reading };
+  }
+
+  @UseGuards(AuthGuard("jwt"))
   @Post()
   async create(@Req() req: AuthRequest, @Body() body: any) {
-    const { type, input, result, locale } = body;
+    const { type, input, result, locale, isPublic } = body;
 
     const validTypes = ["mbti", "tarot", "i-ching", "four-pillars", "zodiac"];
     if (!type || !validTypes.includes(type)) {
@@ -45,12 +69,35 @@ export class ReadingsController {
         input: input ?? null,
         result: result ?? null,
         locale: locale ?? null,
+        isPublic: isPublic ?? false,
       })
       .returning();
 
     return { success: true, data: reading };
   }
 
+  @UseGuards(AuthGuard("jwt"))
+  @Patch(":id/public")
+  async togglePublic(@Req() req: AuthRequest, @Param("id") id: string, @Body() body: { isPublic: boolean }) {
+    const [reading] = await this.db
+      .select()
+      .from(readings)
+      .where(and(eq(readings.id, id), eq(readings.userId, req.user.id)));
+
+    if (!reading) {
+      throw new NotFoundException("Reading not found");
+    }
+
+    const [updated] = await this.db
+      .update(readings)
+      .set({ isPublic: body.isPublic ?? false })
+      .where(and(eq(readings.id, id), eq(readings.userId, req.user.id)))
+      .returning();
+
+    return { success: true, data: updated };
+  }
+
+  @UseGuards(AuthGuard("jwt"))
   @Get()
   async findAll(@Req() req: AuthRequest, @Query("type") type?: string, @Query("page") page?: string, @Query("limit") limit?: string) {
     const pageNum = Math.max(1, parseInt(page || "1", 10) || 1);
@@ -73,6 +120,7 @@ export class ReadingsController {
     return { success: true, data: rows, page: pageNum, limit: limitNum };
   }
 
+  @UseGuards(AuthGuard("jwt"))
   @Get(":id")
   async findOne(@Req() req: AuthRequest, @Param("id") id: string) {
     const [reading] = await this.db
@@ -87,6 +135,7 @@ export class ReadingsController {
     return { success: true, data: reading };
   }
 
+  @UseGuards(AuthGuard("jwt"))
   @Delete(":id")
   async remove(@Req() req: AuthRequest, @Param("id") id: string) {
     const [reading] = await this.db

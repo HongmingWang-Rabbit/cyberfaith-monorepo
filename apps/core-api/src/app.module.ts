@@ -10,9 +10,10 @@ import { ReadingsModule } from "./readings/readings.module";
 import { LoggerMiddleware } from "./common/logger.middleware";
 import { CorsMiddleware } from "./common/cors.middleware";
 import { RateLimitGuard } from "./common/rate-limit.guard";
+import { StripeModule } from "./stripe/stripe.module";
 
 @Module({
-  imports: [DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule],
+  imports: [DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule],
   providers: [
     {
       provide: APP_GUARD,

@@ -68,13 +68,16 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
+      stripe:
+        specifier: ^20.3.0
+        version: 20.3.0(@types/node@25.1.0)
     devDependencies:
       '@cyberfaith/config-typescript':
         specifier: workspace:*
         version: link:../../packages/config-typescript
       '@nestjs/cli':
         specifier: ^10.4.9
-        version: 10.4.9(@swc/core@1.15.11)(esbuild@0.19.12)
+        version: 10.4.9(@swc/core@1.15.11)
       '@nestjs/schematics':
         specifier: ^10.2.3
         version: 10.2.3(chokidar@3.6.0)(typescript@5.9.3)
@@ -120,6 +123,9 @@ importers:
       '@cyberfaith/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@stripe/stripe-js':
+        specifier: ^8.7.0
+        version: 8.7.0
       drizzle-orm:
         specifier: ^0.38.3
         version: 0.38.4(@types/react@19.2.10)(postgres@3.4.8)(react@19.2.4)
@@ -1611,6 +1617,10 @@ packages:
 
   '@schummar/icu-type-parser@1.21.5':
     resolution: {integrity: sha512-bXHSaW5jRTmke9Vd0h5P7BtWZG9Znqb8gSDxZnxaGSJnGwPLDPfS+3g0BKzeWqzgZPsIVZkM7m2tbo18cm5HBw==}
+
+  '@stripe/stripe-js@8.7.0':
+    resolution: {integrity: sha512-tNUerSstwNC1KuHgX4CASGO0Md3CB26IJzSXmVlSuFvhsBP4ZaEPpY4jxWOn9tfdDscuVT4Kqb8cZ2o9nLCgRQ==}
+    engines: {node: '>=12.16'}
 
   '@swc/core-darwin-arm64@1.15.11':
     resolution: {integrity: sha512-QoIupRWVH8AF1TgxYyeA5nS18dtqMuxNwchjBIwJo3RdwLEFiJq6onOx9JAxHtuPwUkIVuU2Xbp+jCJ7Vzmgtg==}
@@ -3908,6 +3918,15 @@ packages:
   strip-literal@3.1.0:
     resolution: {integrity: sha512-8r3mkIM/2+PpjHoOtiAW8Rg3jJLHaV7xPwG+YRGrv6FP0wwk/toTpATxWYOW0BKdWwl82VT2tFYi5DlROa0Mxg==}
 
+  stripe@20.3.0:
+    resolution: {integrity: sha512-DYzcmV1MfYhycr1GwjCjeQVYk9Gu8dpxyTlu7qeDCsuguug7oUTxPsUQuZeSf/OPzK7pofqobvOKVqAwlpgf/Q==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@types/node': '>=16'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+
   strtok3@10.3.4:
     resolution: {integrity: sha512-KIy5nylvC5le1OdaaoCJ07L+8iQzJHGH6pWDuzS+d07Cu7n1MZ2x26P8ZKIWfbK02+XIL8Mp4RkWeqdUCrDMfg==}
     engines: {node: '>=18'}
@@ -4924,7 +4943,7 @@ snapshots:
 
   '@lukeed/csprng@1.1.0': {}
 
-  '@nestjs/cli@10.4.9(@swc/core@1.15.11)(esbuild@0.19.12)':
+  '@nestjs/cli@10.4.9(@swc/core@1.15.11)':
     dependencies:
       '@angular-devkit/core': 17.3.11(chokidar@3.6.0)
       '@angular-devkit/schematics': 17.3.11(chokidar@3.6.0)
@@ -4934,7 +4953,7 @@ snapshots:
       chokidar: 3.6.0
       cli-table3: 0.6.5
       commander: 4.1.1
-      fork-ts-checker-webpack-plugin: 9.0.2(typescript@5.7.2)(webpack@5.97.1(@swc/core@1.15.11)(esbuild@0.19.12))
+      fork-ts-checker-webpack-plugin: 9.0.2(typescript@5.7.2)(webpack@5.97.1(@swc/core@1.15.11))
       glob: 10.4.5
       inquirer: 8.2.6
       node-emoji: 1.11.0
@@ -4943,7 +4962,7 @@ snapshots:
       tsconfig-paths: 4.2.0
       tsconfig-paths-webpack-plugin: 4.2.0
       typescript: 5.7.2
-      webpack: 5.97.1(@swc/core@1.15.11)(esbuild@0.19.12)
+      webpack: 5.97.1(@swc/core@1.15.11)
       webpack-node-externals: 3.0.0
     optionalDependencies:
       '@swc/core': 1.15.11
@@ -5219,6 +5238,8 @@ snapshots:
     optional: true
 
   '@schummar/icu-type-parser@1.21.5': {}
+
+  '@stripe/stripe-js@8.7.0': {}
 
   '@swc/core-darwin-arm64@1.15.11':
     optional: true
@@ -6535,7 +6556,7 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
-  fork-ts-checker-webpack-plugin@9.0.2(typescript@5.7.2)(webpack@5.97.1(@swc/core@1.15.11)(esbuild@0.19.12)):
+  fork-ts-checker-webpack-plugin@9.0.2(typescript@5.7.2)(webpack@5.97.1(@swc/core@1.15.11)):
     dependencies:
       '@babel/code-frame': 7.29.0
       chalk: 4.1.2
@@ -6550,7 +6571,7 @@ snapshots:
       semver: 7.7.3
       tapable: 2.3.0
       typescript: 5.7.2
-      webpack: 5.97.1(@swc/core@1.15.11)(esbuild@0.19.12)
+      webpack: 5.97.1(@swc/core@1.15.11)
 
   form-data-encoder@1.7.2: {}
 
@@ -7699,6 +7720,10 @@ snapshots:
     dependencies:
       js-tokens: 9.0.1
 
+  stripe@20.3.0(@types/node@25.1.0):
+    optionalDependencies:
+      '@types/node': 25.1.0
+
   strtok3@10.3.4:
     dependencies:
       '@tokenizer/token': 0.3.0
@@ -7726,17 +7751,16 @@ snapshots:
 
   tapable@2.3.0: {}
 
-  terser-webpack-plugin@5.3.16(@swc/core@1.15.11)(esbuild@0.19.12)(webpack@5.97.1(@swc/core@1.15.11)(esbuild@0.19.12)):
+  terser-webpack-plugin@5.3.16(@swc/core@1.15.11)(webpack@5.97.1(@swc/core@1.15.11)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 4.3.3
       serialize-javascript: 6.0.2
       terser: 5.46.0
-      webpack: 5.97.1(@swc/core@1.15.11)(esbuild@0.19.12)
+      webpack: 5.97.1(@swc/core@1.15.11)
     optionalDependencies:
       '@swc/core': 1.15.11
-      esbuild: 0.19.12
 
   terser@5.46.0:
     dependencies:
@@ -8019,7 +8043,7 @@ snapshots:
 
   webpack-sources@3.3.3: {}
 
-  webpack@5.97.1(@swc/core@1.15.11)(esbuild@0.19.12):
+  webpack@5.97.1(@swc/core@1.15.11):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.8
@@ -8041,7 +8065,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.3.0
-      terser-webpack-plugin: 5.3.16(@swc/core@1.15.11)(esbuild@0.19.12)(webpack@5.97.1(@swc/core@1.15.11)(esbuild@0.19.12))
+      terser-webpack-plugin: 5.3.16(@swc/core@1.15.11)(webpack@5.97.1(@swc/core@1.15.11))
       watchpack: 2.5.1
       webpack-sources: 3.3.3
     transitivePeerDependencies:

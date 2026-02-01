@@ -9,6 +9,9 @@ export const users = pgTable("users", {
   passwordHash: text("password_hash"),
   avatarUrl: text("avatar_url"),
   isActive: boolean("is_active").default(true).notNull(),
+  subscriptionTier: varchar("subscription_tier", { length: 20 }).default("free").notNull(),
+  stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
+  stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
 });
 
 export const pointsTransactions = pgTable("points_transactions", {
@@ -31,6 +34,7 @@ export const readings = pgTable("readings", {
   input: jsonb("input"),
   result: jsonb("result"),
   locale: varchar("locale", { length: 10 }),
+  isPublic: boolean("is_public").default(false).notNull(),
 });
 
 export const achievements = pgTable("achievements", {

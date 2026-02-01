@@ -309,5 +309,27 @@
     "line": "Line {pos}",
     "trigramAboveBelow": "{upper} above, {lower} below",
     "noData": "No hexagram data found. Please cast a new hexagram."
+  },
+  "pricing": {
+    "title": "Choose Your Path",
+    "subtitle": "Unlock the full power of divine insights",
+    "month": "mo",
+    "recommended": "RECOMMENDED",
+    "upgrade": "Upgrade to Pro",
+    "processing": "Processing...",
+    "currentPlan": "Current Plan",
+    "free": {
+      "name": "Free"
+    },
+    "pro": {
+      "name": "Pro"
+    },
+    "freeFeature1": "5 AI readings per day",
+    "freeFeature2": "Basic analysis",
+    "freeFeature3": "Standard AI model",
+    "proFeature1": "Unlimited AI readings",
+    "proFeature2": "Detailed analysis",
+    "proFeature3": "Priority AI model",
+    "proFeature4": "Priority support"
   }
 }
