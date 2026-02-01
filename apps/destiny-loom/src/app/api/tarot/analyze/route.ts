@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getTarotReadingPrompt } from "@/lib/prompts";
 import { TAROT_DECK, SPREAD_POSITIONS } from "@/lib/tarot-deck";
-import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString, getAIProvider } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString, getAIProvider, getUserTier } from "@/lib/api-utils";
 import { saveReadingAsync } from "@/lib/save-reading";
 
 const VALID_CARD_NAMES = new Set(TAROT_DECK.map((c) => c.name));
@@ -61,15 +61,19 @@ export async function POST(request: NextRequest) {
       return withRateLimitHeaders(errorResponse("Duplicate cards are not allowed", 400));
     }
 
-    const { provider: ai, unavailableResponse } = getAIProvider();
+    const authHeader = request.headers.get("authorization");
+    const tier = await getUserTier(authHeader);
+    const { provider: ai, unavailableResponse, tierConfig } = getAIProvider(tier);
     if (!ai) return withRateLimitHeaders(unavailableResponse!);
     const sanitizedQuestion = question ? sanitizeString(question, 500) : undefined;
     const prompt = getTarotReadingPrompt(cards, spreadType, sanitizedQuestion, locale);
 
+    const systemPrompt = `You are CyberFaith's Destiny Loom — a mystical AI oracle weaving tarot wisdom through neon-lit digital threads. ${tierConfig.systemPromptSuffix}`;
+
     const aiResult = await ai.generateWithUsage(prompt, {
       temperature: 0.9,
-      maxTokens: 2048,
-      systemPrompt: "You are CyberFaith's Destiny Loom — a mystical AI oracle weaving tarot wisdom through neon-lit digital threads.",
+      maxTokens: tierConfig.maxTokens,
+      systemPrompt,
     });
 
     let interpretation;
@@ -80,8 +84,8 @@ export async function POST(request: NextRequest) {
     }
 
     const usage = aiResult.usage;
-    const responseData = { interpretation, cards, spreadType };
-    saveReadingAsync(request.headers.get("authorization"), "tarot", { cards, spreadType, question }, responseData, locale);
+    const responseData = { interpretation, cards, spreadType, aiTier: tier };
+    saveReadingAsync(authHeader, "tarot", { cards, spreadType, question }, responseData, locale);
     return withRateLimitHeaders(NextResponse.json({ ...responseData, usage }));
   } catch (error: unknown) {
     console.error("Tarot analyze error:", error);

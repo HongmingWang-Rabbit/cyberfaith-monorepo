@@ -1,6 +1,8 @@
 import { pgTable, idColumn, timestampColumns, varchar, text, integer, boolean, jsonb, uniqueIndex, timestamp } from "@cyberfaith/db-utils";
 import { pgEnum } from "drizzle-orm/pg-core";
 
+export const userRoleEnum = pgEnum("user_role", ["user", "admin"]);
+
 export const users = pgTable("users", {
   id: idColumn(),
   ...timestampColumns(),
@@ -13,6 +15,8 @@ export const users = pgTable("users", {
   subscriptionTier: varchar("subscription_tier", { length: 20 }).default("free").notNull(),
   stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
   stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
+  emailNotifications: boolean("email_notifications").default(true).notNull(),
+  role: userRoleEnum("role").default("user").notNull(),
 });
 
 export const pointsTransactions = pgTable("points_transactions", {

@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Card, CardContent, CardHeader, CardTitle } from "@cyberfaith/ui";
+import { Card, CardContent, CardHeader, CardTitle, Badge } from "@cyberfaith/ui";
+import { Link } from "@/i18n/navigation";
 
 interface AiAnalysisCardProps {
   title: string;
@@ -9,6 +10,7 @@ interface AiAnalysisCardProps {
   error: string | null;
   onRetry?: () => void;
   children: React.ReactNode;
+  aiTier?: string;
 }
 
 export function AiAnalysisCard({
@@ -17,6 +19,7 @@ export function AiAnalysisCard({
   error,
   onRetry,
   children,
+  aiTier,
 }: AiAnalysisCardProps) {
   const t = useTranslations("common.ai");
 
@@ -25,6 +28,9 @@ export function AiAnalysisCard({
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <span>✨</span> {title}
+          {aiTier === "pro" && (
+            <Badge variant="highlight" className="ml-1">⚡ PRO</Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -51,10 +57,38 @@ export function AiAnalysisCard({
             )}
           </div>
         ) : (
-          children
+          <>
+            {children}
+            {aiTier !== "pro" && (
+              <ProUpsellBanner />
+            )}
+          </>
         )}
       </CardContent>
     </Card>
+  );
+}
+
+/** Upsell banner shown on free-tier readings */
+function ProUpsellBanner() {
+  const t = useTranslations("common.ai");
+
+  return (
+    <div className="mt-6 p-4 rounded-xl border border-cyan-500/30 bg-gradient-to-r from-cyan-950/30 to-purple-950/30">
+      <div className="flex items-center gap-3">
+        <span className="text-2xl">🔮</span>
+        <div className="flex-1">
+          <p className="text-sm font-medium text-white">{t("upsellTitle")}</p>
+          <p className="text-xs text-gray-400 mt-0.5">{t("upsellDescription")}</p>
+        </div>
+        <Link
+          href="/pricing"
+          className="text-xs px-4 py-2 rounded-lg font-semibold text-white bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 transition-all whitespace-nowrap"
+        >
+          {t("upsellCta")}
+        </Link>
+      </div>
+    </div>
   );
 }
 
@@ -91,6 +125,18 @@ export function MbtiAnalysisContent({ data }: { data: Record<string, unknown> })
               <span key={c} className="text-xs px-2 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">{c}</span>
             ))}
           </div>
+        </div>
+      )}
+      {typeof analysis.deepDive === "string" && (
+        <div>
+          <p className="text-sm font-medium text-foreground mb-1">🔍 Deep Dive</p>
+          <p className="text-muted-foreground leading-relaxed">{analysis.deepDive}</p>
+        </div>
+      )}
+      {typeof analysis.shadowSide === "string" && (
+        <div>
+          <p className="text-sm font-medium text-foreground mb-1">🌑 Shadow Side</p>
+          <p className="text-muted-foreground leading-relaxed">{analysis.shadowSide}</p>
         </div>
       )}
       {typeof analysis.spiritAnimal === "string" && (

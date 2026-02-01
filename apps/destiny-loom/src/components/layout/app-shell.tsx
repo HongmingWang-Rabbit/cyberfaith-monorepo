@@ -18,6 +18,8 @@ const navItems = [
   { key: "profile", href: "/profile", icon: "👤" },
 ] as const;
 
+const adminNavItem = { key: "admin", href: "/admin", icon: "⚡" } as const;
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations("common");
   const pathname = usePathname();
@@ -71,6 +73,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </Link>
             );
           })}
+          {/* Admin link — only for admin users */}
+          {isAuthenticated && user && (user as any).role === "admin" && (
+            <Link
+              href={adminNavItem.href}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${
+                pathname.startsWith("/admin")
+                  ? "bg-primary/15 text-primary shadow-[var(--glow-purple)] border border-primary/20"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              }`}
+            >
+              <span className="text-lg">{adminNavItem.icon}</span>
+              <span>{t(`nav.${adminNavItem.key}`)}</span>
+            </Link>
+          )}
         </nav>
       </aside>
 

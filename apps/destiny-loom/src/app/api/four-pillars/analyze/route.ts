@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getFourPillarsPrompt } from "@/lib/prompts";
 import type { FourPillarsResult } from "@/lib/four-pillars";
-import { errorResponse, withRateLimitHeaders, parseBody, getAIProvider } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, parseBody, getAIProvider, getUserTier } from "@/lib/api-utils";
 import { saveReadingAsync } from "@/lib/save-reading";
 
 const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
@@ -32,15 +32,18 @@ export async function POST(request: NextRequest) {
       return withRateLimitHeaders(errorResponse("Invalid locale", 400, "Must be one of: en, zh, zh-CN, zh-TW"));
     }
 
-    const { provider: ai, unavailableResponse } = getAIProvider();
+    const authHeader = request.headers.get("authorization");
+    const tier = await getUserTier(authHeader);
+    const { provider: ai, unavailableResponse, tierConfig } = getAIProvider(tier);
     if (!ai) return withRateLimitHeaders(unavailableResponse!);
     const prompt = getFourPillarsPrompt(pillars, gender || "other", locale);
 
+    const systemPrompt = `You are CyberFaith's Destiny Loom — a BaZi master weaving fate analysis through neon-lit digital threads. ${tierConfig.systemPromptSuffix}`;
+
     const aiResult = await ai.generateWithUsage(prompt, {
       temperature: 0.85,
-      maxTokens: 2048,
-      systemPrompt:
-        "You are CyberFaith's Destiny Loom — a BaZi master weaving fate analysis through neon-lit digital threads.",
+      maxTokens: tierConfig.maxTokens,
+      systemPrompt,
     });
 
     let interpretation;
@@ -51,8 +54,8 @@ export async function POST(request: NextRequest) {
     }
 
     const usage = aiResult.usage;
-    const responseData = { interpretation, pillars };
-    saveReadingAsync(request.headers.get("authorization"), "four-pillars", { pillars, gender }, responseData, locale);
+    const responseData = { interpretation, pillars, aiTier: tier };
+    saveReadingAsync(authHeader, "four-pillars", { pillars, gender }, responseData, locale);
     return withRateLimitHeaders(NextResponse.json({ ...responseData, usage }));
   } catch (error: unknown) {
     console.error("Four Pillars analyze error:", error);

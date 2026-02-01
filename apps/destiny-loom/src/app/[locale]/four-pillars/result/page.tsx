@@ -190,6 +190,7 @@ function FourPillarsResultContent() {
         isLoading={aiLoading}
         error={aiError}
         onRetry={aiRetry}
+        aiTier={(aiData as Record<string, unknown>)?.aiTier as string | undefined}
       >
         {aiData ? (
           <ReadingContent data={aiData} />

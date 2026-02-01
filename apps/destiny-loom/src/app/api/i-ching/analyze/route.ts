@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getIChingPrompt } from "@/lib/prompts";
 import type { HexagramData } from "@/lib/i-ching";
-import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString, getAIProvider } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString, getAIProvider, getUserTier } from "@/lib/api-utils";
 import { saveReadingAsync } from "@/lib/save-reading";
 
 const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
@@ -42,16 +42,19 @@ export async function POST(request: NextRequest) {
       return withRateLimitHeaders(errorResponse("Invalid locale", 400, "Must be one of: en, zh, zh-CN, zh-TW"));
     }
 
-    const { provider: ai, unavailableResponse } = getAIProvider();
+    const authHeader = request.headers.get("authorization");
+    const tier = await getUserTier(authHeader);
+    const { provider: ai, unavailableResponse, tierConfig } = getAIProvider(tier);
     if (!ai) return withRateLimitHeaders(unavailableResponse!);
     const sanitizedQuestion = question ? sanitizeString(question, 500) : undefined;
     const prompt = getIChingPrompt(hexagram, changingLines, sanitizedQuestion, locale);
 
+    const systemPrompt = `You are CyberFaith's Destiny Loom — an I Ching oracle channeling ancient wisdom through digital streams. ${tierConfig.systemPromptSuffix}`;
+
     const aiResult = await ai.generateWithUsage(prompt, {
       temperature: 0.9,
-      maxTokens: 2048,
-      systemPrompt:
-        "You are CyberFaith's Destiny Loom — an I Ching oracle channeling ancient wisdom through digital streams.",
+      maxTokens: tierConfig.maxTokens,
+      systemPrompt,
     });
 
     let interpretation;
@@ -62,8 +65,8 @@ export async function POST(request: NextRequest) {
     }
 
     const usage = aiResult.usage;
-    const responseData = { interpretation, hexagram, changingLines };
-    saveReadingAsync(request.headers.get("authorization"), "i-ching", { hexagram, changingLines, question }, responseData, locale);
+    const responseData = { interpretation, hexagram, changingLines, aiTier: tier };
+    saveReadingAsync(authHeader, "i-ching", { hexagram, changingLines, question }, responseData, locale);
     return withRateLimitHeaders(NextResponse.json({ ...responseData, usage }));
   } catch (error: unknown) {
     console.error("I Ching analyze error:", error);

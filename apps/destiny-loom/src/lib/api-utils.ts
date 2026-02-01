@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAIProvider, type AIProvider } from "@cyberfaith/ai-provider";
+import { getTierConfig, type TierAIConfig } from "./ai-tier-config";
 
 /**
  * Get AI provider from env. Defaults to OpenAI gpt-4o-mini (cheapest).
  * Set AI_PROVIDER=anthropic|google and AI_MODEL to override.
  * Each provider reads its own key: OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_AI_API_KEY
  */
-export function getAIProvider(): { provider: AIProvider | null; unavailableResponse: NextResponse | null } {
-  const providerName = (process.env.AI_PROVIDER || "openai") as "openai" | "anthropic" | "google";
+export function getAIProvider(tier?: string): { provider: AIProvider | null; unavailableResponse: NextResponse | null; tierConfig: TierAIConfig } {
+  const tierConfig = getTierConfig(tier || "free");
+  const providerName = tierConfig.provider;
   const keyMap: Record<string, string | undefined> = {
     openai: process.env.OPENAI_API_KEY,
     anthropic: process.env.ANTHROPIC_API_KEY,
@@ -15,10 +17,28 @@ export function getAIProvider(): { provider: AIProvider | null; unavailableRespo
   };
   const apiKey = keyMap[providerName];
   if (!apiKey) {
-    return { provider: null, unavailableResponse: NextResponse.json({ analysis: null, message: "AI analysis unavailable — no API key configured" }) };
+    return { provider: null, unavailableResponse: NextResponse.json({ analysis: null, message: "AI analysis unavailable — no API key configured" }), tierConfig };
   }
-  const model = process.env.AI_MODEL || undefined;
-  return { provider: createAIProvider({ provider: providerName, apiKey, model }), unavailableResponse: null };
+  return { provider: createAIProvider({ provider: providerName, apiKey, model: tierConfig.model }), unavailableResponse: null, tierConfig };
+}
+
+/**
+ * Resolve the user's subscription tier from core-api via JWT token.
+ * Returns "free" if unauthenticated or on error.
+ */
+export async function getUserTier(authHeader: string | null): Promise<string> {
+  if (!authHeader) return "free";
+  try {
+    const coreApiUrl = process.env.CORE_API_URL || "http://localhost:4000";
+    const res = await fetch(`${coreApiUrl}/users/me`, {
+      headers: { Authorization: authHeader },
+    });
+    if (!res.ok) return "free";
+    const data = await res.json();
+    return data?.subscriptionTier || data?.data?.subscriptionTier || "free";
+  } catch {
+    return "free";
+  }
 }
 
 /**
