@@ -10,6 +10,8 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.72.1",
+    "@google/generative-ai": "^0.24.1",
     "openai": "^4.77.0"
   },
   "devDependencies": {

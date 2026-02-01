@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { createAIProvider } from "../factory";
 import { OpenAIProvider } from "../openai-provider";
+import { AnthropicProvider } from "../anthropic-provider";
+import { GoogleProvider } from "../google-provider";
 
 describe("createAIProvider", () => {
   it("creates an OpenAI provider", () => {
@@ -13,12 +15,14 @@ describe("createAIProvider", () => {
     expect(provider).toBeInstanceOf(OpenAIProvider);
   });
 
-  it("throws for anthropic provider (not yet implemented)", () => {
-    expect(() => createAIProvider({ provider: "anthropic", apiKey: "key" })).toThrow("not yet implemented");
+  it("creates an Anthropic provider", () => {
+    const provider = createAIProvider({ provider: "anthropic", apiKey: "test-key" });
+    expect(provider).toBeInstanceOf(AnthropicProvider);
   });
 
-  it("throws for google provider (not yet implemented)", () => {
-    expect(() => createAIProvider({ provider: "google", apiKey: "key" })).toThrow("not yet implemented");
+  it("creates a Google provider", () => {
+    const provider = createAIProvider({ provider: "google", apiKey: "test-key" });
+    expect(provider).toBeInstanceOf(GoogleProvider);
   });
 
   it("throws for unknown provider", () => {

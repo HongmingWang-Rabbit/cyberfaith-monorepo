@@ -13,7 +13,9 @@
     },
     "auth": {
       "signIn": "登录",
-      "signOut": "退出"
+      "signOut": "退出",
+      "profile": "个人中心",
+      "signingIn": "登录中..."
     },
     "locale": {
       "en": "English",
@@ -26,6 +28,12 @@
       "back": "返回",
       "next": "下一步",
       "copy": "复制链接"
+    },
+    "ai": {
+      "loading": "AI 分析中...",
+      "error": "AI 分析暂时不可用，请稍后再试。",
+      "retry": "重新分析",
+      "poweredBy": "AI 驱动"
     }
   },
   "home": {
@@ -34,25 +42,32 @@
     "features": {
       "mbti": {
         "title": "MBTI性格测试",
-        "description": "通过20个精心设计的问题，结合AI分析，发现你的性格类型。"
+        "description": "通过20个精心设计的问题，结合AI分析，发现你的性格类型。",
+        "badge": "热门"
       },
       "tarot": {
         "title": "塔罗占卜",
-        "description": "抽取塔罗牌，获取神秘的人生指引。"
+        "description": "抽取塔罗牌，获取神秘的人生指引。",
+        "badge": "热门"
       },
       "zodiac": {
         "title": "星座洞察",
-        "description": "探索你的星座和今日宇宙能量。"
+        "description": "探索你的星座和今日宇宙能量。",
+        "badge": ""
       },
       "iching": {
         "title": "易经占卜",
-        "description": "咨询古老的《易经》，获取智慧与指引。"
+        "description": "咨询古老的《易经》，获取智慧与指引。",
+        "badge": "新"
       },
       "fourPillars": {
         "title": "四柱八字",
-        "description": "通过古老的八字分析，解读你的命运密码。"
+        "description": "通过古老的八字分析，解读你的命运密码。",
+        "badge": ""
       }
-    }
+    },
+    "readingsCount": "已完成 {count} 次占卜",
+    "lastResult": "上次: {result}"
   },
   "mbti": {
     "title": "MBTI性格测试",
@@ -216,7 +231,9 @@
       "clearAll": "清除历史",
       "fourPillars": "四柱八字",
       "iching": "易经占卜"
-    }
+    },
+    "loggedIn": "欢迎回来！",
+    "loginPrompt": "登录以保存你的占卜记录和追踪你的旅程。"
   },
   "fourPillars": {
     "title": "四柱八字",

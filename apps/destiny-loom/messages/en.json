@@ -13,7 +13,9 @@
     },
     "auth": {
       "signIn": "Sign In",
-      "signOut": "Sign Out"
+      "signOut": "Sign Out",
+      "profile": "Profile",
+      "signingIn": "Signing in..."
     },
     "locale": {
       "en": "English",
@@ -26,6 +28,12 @@
       "back": "Back",
       "next": "Next",
       "copy": "Copy Link"
+    },
+    "ai": {
+      "loading": "Analyzing with AI...",
+      "error": "AI analysis unavailable right now. Please try again later.",
+      "retry": "Retry Analysis",
+      "poweredBy": "Powered by AI"
     }
   },
   "home": {
@@ -34,25 +42,32 @@
     "features": {
       "mbti": {
         "title": "MBTI Personality",
-        "description": "Discover your personality type through 20 carefully crafted questions with AI-powered analysis."
+        "description": "Discover your personality type through 20 carefully crafted questions with AI-powered analysis.",
+        "badge": "Popular"
       },
       "tarot": {
         "title": "Tarot Reading",
-        "description": "Draw cards and receive mystical guidance for your life's journey."
+        "description": "Draw cards and receive mystical guidance for your life's journey.",
+        "badge": "Popular"
       },
       "zodiac": {
         "title": "Zodiac Insights",
-        "description": "Explore your star sign and cosmic alignment for today and beyond."
+        "description": "Explore your star sign and cosmic alignment for today and beyond.",
+        "badge": ""
       },
       "iching": {
         "title": "I Ching Oracle",
-        "description": "Consult the ancient Book of Changes for wisdom and guidance."
+        "description": "Consult the ancient Book of Changes for wisdom and guidance.",
+        "badge": "New"
       },
       "fourPillars": {
         "title": "Four Pillars",
-        "description": "Decode your destiny through the ancient art of BaZi analysis."
+        "description": "Decode your destiny through the ancient art of BaZi analysis.",
+        "badge": ""
       }
-    }
+    },
+    "readingsCount": "{count} readings done",
+    "lastResult": "Last: {result}"
   },
   "mbti": {
     "title": "MBTI Personality Test",
@@ -216,7 +231,9 @@
       "clearAll": "Clear History",
       "fourPillars": "Four Pillars",
       "iching": "I Ching Reading"
-    }
+    },
+    "loggedIn": "Welcome back!",
+    "loginPrompt": "Sign in to save your readings and track your journey."
   },
   "fourPillars": {
     "title": "Four Pillars of Destiny",
