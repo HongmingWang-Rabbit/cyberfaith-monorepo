@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { useAuth } from "@cyberfaith/auth-client";
+import { useState, useRef, useEffect } from "react";
 
 const navItems = [
   { key: "home", href: "/", icon: "🏠" },
@@ -17,6 +19,19 @@ const navItems = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const t = useTranslations("common");
   const pathname = usePathname();
+  const { user, isAuthenticated, isLoading: authLoading, loginWithGoogle, logout } = useAuth();
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="flex min-h-screen">
@@ -70,9 +85,51 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="hidden md:block" />
           <div className="flex items-center gap-3">
             <LocaleSwitcher />
-            <button className="h-8 px-3 text-sm rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-primary transition-colors">
-              {t("auth.signIn")}
-            </button>
+            {authLoading ? (
+              <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+            ) : isAuthenticated && user ? (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setShowDropdown(!showDropdown)}
+                  className="flex items-center gap-2 h-8 px-2 rounded-md hover:bg-muted/50 transition-colors"
+                >
+                  {user.avatarUrl ? (
+                    <img src={user.avatarUrl} alt="" className="w-7 h-7 rounded-full" />
+                  ) : (
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xs font-bold text-white">
+                      {(user.name || user.email || "U")[0].toUpperCase()}
+                    </div>
+                  )}
+                  <span className="text-sm text-foreground hidden sm:inline max-w-[100px] truncate">
+                    {user.name || user.email}
+                  </span>
+                </button>
+                {showDropdown && (
+                  <div className="absolute right-0 top-full mt-1 w-44 bg-card border border-border rounded-lg shadow-lg py-1 z-50">
+                    <Link
+                      href="/profile"
+                      onClick={() => setShowDropdown(false)}
+                      className="block px-4 py-2 text-sm text-foreground hover:bg-muted/50 transition-colors"
+                    >
+                      👤 {t("auth.profile")}
+                    </Link>
+                    <button
+                      onClick={() => { logout(); setShowDropdown(false); }}
+                      className="block w-full text-left px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                    >
+                      🚪 {t("auth.signOut")}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={loginWithGoogle}
+                className="h-8 px-3 text-sm rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-primary transition-colors"
+              >
+                {t("auth.signIn")}
+              </button>
+            )}
           </div>
         </header>
 

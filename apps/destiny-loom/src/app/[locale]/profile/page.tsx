@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@cyberfaith/ui";
 import { useEffect, useState } from "react";
+import { useAuth } from "@cyberfaith/auth-client";
 
 interface HistoryEntry {
   id: string;
@@ -44,6 +45,7 @@ function getStats(history: HistoryEntry[]) {
 export default function ProfilePage() {
   const t = useTranslations("profile");
   const tc = useTranslations("common");
+  const { user, isAuthenticated, loginWithGoogle } = useAuth();
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
   useEffect(() => {
@@ -71,15 +73,36 @@ export default function ProfilePage() {
       <Card className="border-primary/20 shadow-[0_0_40px_rgba(168,85,247,0.15)] overflow-hidden">
         <CardContent className="p-8 text-center space-y-4">
           {/* Avatar */}
-          <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-primary via-accent to-highlight flex items-center justify-center text-3xl shadow-[0_0_25px_rgba(168,85,247,0.3)]">
-            👤
-          </div>
+          {isAuthenticated && user?.avatarUrl ? (
+            <img
+              src={user.avatarUrl}
+              alt=""
+              className="mx-auto w-20 h-20 rounded-full shadow-[0_0_25px_rgba(168,85,247,0.3)] object-cover"
+            />
+          ) : (
+            <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-primary via-accent to-highlight flex items-center justify-center text-3xl shadow-[0_0_25px_rgba(168,85,247,0.3)]">
+              {isAuthenticated && user ? (user.name || user.email || "U")[0].toUpperCase() : "👤"}
+            </div>
+          )}
           <div>
             <h1 className="text-2xl font-bold text-foreground">
-              {t("guest")}
+              {isAuthenticated && user ? (user.name || user.email) : t("guest")}
             </h1>
-            <p className="text-sm text-muted-foreground">{t("guestSub")}</p>
+            <p className="text-sm text-muted-foreground">
+              {isAuthenticated ? t("loggedIn") : t("guestSub")}
+            </p>
           </div>
+          {!isAuthenticated && (
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground">{t("loginPrompt")}</p>
+              <button
+                onClick={loginWithGoogle}
+                className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shadow-[0_0_15px_rgba(168,85,247,0.3)]"
+              >
+                {tc("auth.signIn")}
+              </button>
+            </div>
+          )}
         </CardContent>
       </Card>
 

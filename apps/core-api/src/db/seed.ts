@@ -1,6 +1,5 @@
 import { createDbClient } from "@cyberfaith/db-utils";
 import { users, points, achievements } from "./schema";
-import { sql } from "drizzle-orm";
 
 const DATABASE_URL = process.env.DATABASE_URL || "postgresql://localhost:5432/cyberfaith";
 
@@ -57,8 +56,6 @@ async function seed() {
   }
 
   console.log("🎉 Seed complete!");
-  // Exit cleanly - postgres.js keeps connection alive
-  await sql`SELECT 1`;
   process.exit(0);
 }
 

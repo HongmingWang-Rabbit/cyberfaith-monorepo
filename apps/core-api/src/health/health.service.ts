@@ -43,9 +43,15 @@ export class HealthService {
   }
 
   private async checkDatabase(): Promise<HealthReport["database"]> {
+    const timeoutMs = 5_000;
     try {
       const start = Date.now();
-      await this.db.execute(sql`SELECT 1`);
+      await Promise.race([
+        this.db.execute(sql`SELECT 1`),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("DB health check timeout")), timeoutMs),
+        ),
+      ]);
       return { status: "connected", latencyMs: Date.now() - start };
     } catch {
       return { status: "disconnected" };
