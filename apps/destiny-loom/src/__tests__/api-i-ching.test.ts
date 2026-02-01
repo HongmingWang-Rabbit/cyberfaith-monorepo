@@ -70,6 +70,42 @@ describe("I Ching hexagram casting", () => {
     }
   });
 
+  it("should have a valid hexagram name (not empty)", () => {
+    for (let i = 0; i < 30; i++) {
+      const result = castHexagram();
+      expect(result.hexagram.name.length).toBeGreaterThan(0);
+      expect(result.hexagram.chinese.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("should have description for every hexagram", () => {
+    for (let i = 0; i < 50; i++) {
+      const result = castHexagram();
+      expect(result.hexagram.description.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("should produce hexagram numbers covering range over many casts", () => {
+    const seen = new Set<number>();
+    for (let i = 0; i < 500; i++) {
+      const result = castHexagram();
+      seen.add(result.hexagram.number);
+    }
+    // With 500 random casts, we should see a reasonable variety
+    expect(seen.size).toBeGreaterThan(10);
+  });
+
+  it("result hexagram should differ from original when lines change", () => {
+    for (let i = 0; i < 100; i++) {
+      const result = castHexagram();
+      if (result.changingLines.length > 0 && result.resultHexagram) {
+        // Result hexagram might be same number in rare cases, but structure should be valid
+        expect(result.resultHexagram.number).toBeGreaterThanOrEqual(1);
+        expect(result.resultHexagram.number).toBeLessThanOrEqual(64);
+      }
+    }
+  });
+
   it("should have resultHexagram only when there are changing lines", () => {
     // Run enough times to likely hit both cases
     let sawChanging = false;

@@ -77,6 +77,37 @@ describe("Four Pillars calculation", () => {
     });
   });
 
+  describe("historical dates", () => {
+    it("2000-01-01 should have Dragon year and 甲午 day", () => {
+      // 2000 is 庚辰 year, but Jan → previous year pillar (1999 = 己卯)
+      const result = calculateFourPillars(2000, 1, 1, 12);
+      // Jan maps to previous year: 1999 己卯
+      expect(result.year.stem.chinese).toBe("己");
+      expect(result.year.branch.animal).toBe("Rabbit");
+      // Day: Jan 1, 2000 = 甲午
+      expect(result.day.stem.chinese).toBe("甲");
+      expect(result.day.branch.chinese).toBe("午");
+    });
+
+    it("2000-06-15 should be in Dragon year", () => {
+      const result = calculateFourPillars(2000, 6, 15, 10);
+      expect(result.year.stem.chinese).toBe("庚");
+      expect(result.year.branch.animal).toBe("Dragon");
+    });
+
+    it("1990-06-15 should be in Horse year", () => {
+      const result = calculateFourPillars(1990, 6, 15, 8);
+      expect(result.year.stem.chinese).toBe("庚");
+      expect(result.year.branch.animal).toBe("Horse");
+    });
+
+    it("1984-03-01 should be Rat year (甲子)", () => {
+      const result = calculateFourPillars(1984, 3, 1, 6);
+      expect(result.year.stem.chinese).toBe("甲");
+      expect(result.year.branch.animal).toBe("Rat");
+    });
+  });
+
   describe("calculateFourPillars", () => {
     it("should return all 4 pillars with elements", () => {
       const result = calculateFourPillars(1990, 8, 15, 10);

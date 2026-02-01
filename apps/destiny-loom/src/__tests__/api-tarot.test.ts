@@ -54,6 +54,32 @@ describe("Tarot Deck", () => {
     expect(new Set(names).size).toBe(names.length);
   });
 
+  it("never draws duplicates across many draws", () => {
+    for (let i = 0; i < 50; i++) {
+      const cards = drawCards("celtic");
+      const names = cards.map((c) => c.name);
+      expect(new Set(names).size).toBe(names.length);
+    }
+  });
+
+  it("has unique card names in the full deck", () => {
+    const names = TAROT_DECK.map((c) => c.name);
+    expect(new Set(names).size).toBe(78);
+  });
+
+  it("has correct number of cards per suit in minor arcana", () => {
+    for (const suit of ["wands", "cups", "swords", "pentacles"]) {
+      const suitCards = TAROT_DECK.filter((c) => c.suit === suit);
+      expect(suitCards).toHaveLength(14); // 10 pips + 4 court
+    }
+  });
+
+  it("spread positions match expected counts", () => {
+    expect(SPREAD_POSITIONS.single).toHaveLength(1);
+    expect(SPREAD_POSITIONS.three).toHaveLength(3);
+    expect(SPREAD_POSITIONS.celtic).toHaveLength(10);
+  });
+
   it("assigns reversed status as boolean", () => {
     const cards = drawCards("three");
     for (const card of cards) {
