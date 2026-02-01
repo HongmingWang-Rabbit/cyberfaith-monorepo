@@ -14,4 +14,4 @@ export const timestampColumns = () => ({
 });
 
 export { pgTable, uuid, timestamp };
-export { varchar, text, integer, boolean, jsonb } from "drizzle-orm/pg-core";
+export { varchar, text, integer, boolean, jsonb, uniqueIndex } from "drizzle-orm/pg-core";

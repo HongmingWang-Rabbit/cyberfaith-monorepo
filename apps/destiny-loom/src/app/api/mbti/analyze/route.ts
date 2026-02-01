@@ -67,7 +67,7 @@ Give a personality analysis in this JSON format:
 
 Respond ONLY with valid JSON, no markdown.`;
 
-    const result = await ai.generateCompletion(prompt, {
+    const aiResult = await ai.generateWithUsage(prompt, {
       temperature: 0.8,
       maxTokens: 1024,
       systemPrompt: "You are CyberFaith's Destiny Loom — a mystical AI oracle that reveals personality insights with a playful cyberpunk aesthetic.",
@@ -75,14 +75,15 @@ Respond ONLY with valid JSON, no markdown.`;
 
     let analysis;
     try {
-      analysis = JSON.parse(result);
+      analysis = JSON.parse(aiResult.text);
     } catch {
-      analysis = { raw: result };
+      analysis = { raw: aiResult.text };
     }
 
+    const usage = aiResult.usage;
     const responseData = { type: mbtiType, analysis };
     saveReadingAsync(request.headers.get("authorization"), "mbti", { answers }, responseData);
-    return withRateLimitHeaders(NextResponse.json(responseData));
+    return withRateLimitHeaders(NextResponse.json({ ...responseData, usage }));
   } catch (error: unknown) {
     console.error("MBTI analyze error:", error);
     return withRateLimitHeaders(errorResponse("Failed to analyze personality", 500));

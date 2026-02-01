@@ -16,6 +16,7 @@ describe("AchievementsService", () => {
       chain.innerJoin = vi.fn().mockReturnValue(chain);
       chain.insert = vi.fn().mockReturnValue(chain);
       chain.values = vi.fn().mockReturnValue(chain);
+      chain.onConflictDoNothing = vi.fn().mockReturnValue(chain);
       chain.returning = vi.fn().mockResolvedValue([]);
       return chain;
     };

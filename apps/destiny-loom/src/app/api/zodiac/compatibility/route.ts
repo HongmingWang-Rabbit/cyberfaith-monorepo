@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     if (!ai) return withRateLimitHeaders(unavailableResponse!);
     const prompt = getCompatibilityPrompt(sign1.toLowerCase(), sign2.toLowerCase(), locale);
 
-    const result = await ai.generateCompletion(prompt, {
+    const aiResult = await ai.generateWithUsage(prompt, {
       temperature: 0.85,
       maxTokens: 1536,
       systemPrompt: "You are CyberFaith's Celestial Navigator — analyzing cosmic bonds between souls.",
@@ -42,12 +42,12 @@ export async function POST(request: NextRequest) {
 
     let compatibility;
     try {
-      compatibility = JSON.parse(result);
+      compatibility = JSON.parse(aiResult.text);
     } catch {
-      compatibility = { analysis: result };
+      compatibility = { analysis: aiResult.text };
     }
 
-    return withRateLimitHeaders(NextResponse.json({ compatibility, sign1: sign1.toLowerCase(), sign2: sign2.toLowerCase() }));
+    return withRateLimitHeaders(NextResponse.json({ compatibility, sign1: sign1.toLowerCase(), sign2: sign2.toLowerCase(), usage: aiResult.usage }));
   } catch (error: unknown) {
     console.error("Zodiac compatibility error:", error);
     return withRateLimitHeaders(errorResponse("Failed to analyze compatibility", 500));

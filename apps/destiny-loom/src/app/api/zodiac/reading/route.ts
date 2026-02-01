@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     if (!ai) return withRateLimitHeaders(unavailableResponse!);
     const prompt = getZodiacReadingPrompt(sign.toLowerCase(), period, locale);
 
-    const result = await ai.generateCompletion(prompt, {
+    const aiResult = await ai.generateWithUsage(prompt, {
       temperature: 0.85,
       maxTokens: 1536,
       systemPrompt: "You are CyberFaith's Celestial Navigator — mapping star patterns through digital constellations.",
@@ -45,14 +45,15 @@ export async function POST(request: NextRequest) {
 
     let reading;
     try {
-      reading = JSON.parse(result);
+      reading = JSON.parse(aiResult.text);
     } catch {
-      reading = { horoscope: result };
+      reading = { horoscope: aiResult.text };
     }
 
+    const usage = aiResult.usage;
     const responseData = { reading, sign: sign.toLowerCase(), period };
     saveReadingAsync(request.headers.get("authorization"), "zodiac", { sign, period }, responseData, locale);
-    return withRateLimitHeaders(NextResponse.json(responseData));
+    return withRateLimitHeaders(NextResponse.json({ ...responseData, usage }));
   } catch (error: unknown) {
     console.error("Zodiac reading error:", error);
     return withRateLimitHeaders(errorResponse("Failed to generate zodiac reading", 500));

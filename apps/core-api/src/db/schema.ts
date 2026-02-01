@@ -1,4 +1,4 @@
-import { pgTable, idColumn, timestampColumns, varchar, text, integer, boolean, jsonb } from "@cyberfaith/db-utils";
+import { pgTable, idColumn, timestampColumns, varchar, text, integer, boolean, jsonb, uniqueIndex } from "@cyberfaith/db-utils";
 
 export const users = pgTable("users", {
   id: idColumn(),
@@ -49,4 +49,6 @@ export const userAchievements = pgTable("user_achievements", {
   userId: varchar("user_id", { length: 36 }).notNull(),
   achievementId: varchar("achievement_id", { length: 36 }).notNull(),
   unlockedAt: timestampColumns().createdAt,
-});
+}, (table) => ({
+  uniqueUserAchievement: uniqueIndex("user_achievement_unique").on(table.userId, table.achievementId),
+}));

@@ -91,7 +91,11 @@ export class AchievementsService {
         const [unlock] = await this.db
           .insert(userAchievements)
           .values({ userId, achievementId: achievement.id })
+          .onConflictDoNothing()
           .returning();
+
+        // If conflict (already awarded), skip points and notification
+        if (!unlock) continue;
 
         // Award points for achievement
         await this.pointsService.awardPoints(

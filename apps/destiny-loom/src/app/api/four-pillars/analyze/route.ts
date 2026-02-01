@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     if (!ai) return withRateLimitHeaders(unavailableResponse!);
     const prompt = getFourPillarsPrompt(pillars, gender || "other", locale);
 
-    const result = await ai.generateCompletion(prompt, {
+    const aiResult = await ai.generateWithUsage(prompt, {
       temperature: 0.85,
       maxTokens: 2048,
       systemPrompt:
@@ -45,14 +45,15 @@ export async function POST(request: NextRequest) {
 
     let interpretation;
     try {
-      interpretation = JSON.parse(result);
+      interpretation = JSON.parse(aiResult.text);
     } catch {
-      interpretation = { reading: result };
+      interpretation = { reading: aiResult.text };
     }
 
+    const usage = aiResult.usage;
     const responseData = { interpretation, pillars };
     saveReadingAsync(request.headers.get("authorization"), "four-pillars", { pillars, gender }, responseData, locale);
-    return withRateLimitHeaders(NextResponse.json(responseData));
+    return withRateLimitHeaders(NextResponse.json({ ...responseData, usage }));
   } catch (error: unknown) {
     console.error("Four Pillars analyze error:", error);
     return withRateLimitHeaders(errorResponse("Failed to analyze Four Pillars", 500));

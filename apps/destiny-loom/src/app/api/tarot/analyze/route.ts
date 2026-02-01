@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     const sanitizedQuestion = question ? sanitizeString(question, 500) : undefined;
     const prompt = getTarotReadingPrompt(cards, spreadType, sanitizedQuestion, locale);
 
-    const result = await ai.generateCompletion(prompt, {
+    const aiResult = await ai.generateWithUsage(prompt, {
       temperature: 0.9,
       maxTokens: 2048,
       systemPrompt: "You are CyberFaith's Destiny Loom — a mystical AI oracle weaving tarot wisdom through neon-lit digital threads.",
@@ -74,14 +74,15 @@ export async function POST(request: NextRequest) {
 
     let interpretation;
     try {
-      interpretation = JSON.parse(result);
+      interpretation = JSON.parse(aiResult.text);
     } catch {
-      interpretation = { reading: result };
+      interpretation = { reading: aiResult.text };
     }
 
+    const usage = aiResult.usage;
     const responseData = { interpretation, cards, spreadType };
     saveReadingAsync(request.headers.get("authorization"), "tarot", { cards, spreadType, question }, responseData, locale);
-    return withRateLimitHeaders(NextResponse.json(responseData));
+    return withRateLimitHeaders(NextResponse.json({ ...responseData, usage }));
   } catch (error: unknown) {
     console.error("Tarot analyze error:", error);
     return withRateLimitHeaders(errorResponse("Failed to analyze tarot spread", 500));

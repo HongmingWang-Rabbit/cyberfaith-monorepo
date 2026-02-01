@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     const sanitizedQuestion = question ? sanitizeString(question, 500) : undefined;
     const prompt = getIChingPrompt(hexagram, changingLines, sanitizedQuestion, locale);
 
-    const result = await ai.generateCompletion(prompt, {
+    const aiResult = await ai.generateWithUsage(prompt, {
       temperature: 0.9,
       maxTokens: 2048,
       systemPrompt:
@@ -56,14 +56,15 @@ export async function POST(request: NextRequest) {
 
     let interpretation;
     try {
-      interpretation = JSON.parse(result);
+      interpretation = JSON.parse(aiResult.text);
     } catch {
-      interpretation = { reading: result };
+      interpretation = { reading: aiResult.text };
     }
 
+    const usage = aiResult.usage;
     const responseData = { interpretation, hexagram, changingLines };
     saveReadingAsync(request.headers.get("authorization"), "i-ching", { hexagram, changingLines, question }, responseData, locale);
-    return withRateLimitHeaders(NextResponse.json(responseData));
+    return withRateLimitHeaders(NextResponse.json({ ...responseData, usage }));
   } catch (error: unknown) {
     console.error("I Ching analyze error:", error);
     return withRateLimitHeaders(errorResponse("Failed to analyze hexagram", 500));
