@@ -3,10 +3,12 @@
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@cyberfaith/ui";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { CastResult, HexagramLine } from "@/lib/i-ching";
 import { ShareButtons } from "@/components/ui/share-buttons";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { useAiAnalysis } from "@/hooks/useAiAnalysis";
+import { AiAnalysisCard, ReadingContent } from "@/components/ui/ai-analysis";
 
 function HexagramDisplay({
   lines,

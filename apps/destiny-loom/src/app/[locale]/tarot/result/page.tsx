@@ -4,6 +4,8 @@ import { Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { Button, Card, CardContent, CardHeader, CardTitle, Divider } from "@cyberfaith/ui";
+import { useAiAnalysis } from "@/hooks/useAiAnalysis";
+import { AiAnalysisCard, ReadingContent } from "@/components/ui/ai-analysis";
 import { Link } from "@/i18n/navigation";
 import { useToast } from "@/components/ui/toast";
 import { TarotSpread } from "@/components/tarot/TarotSpread";
@@ -32,6 +34,24 @@ function ResultContent() {
       return [];
     }
   }, [cardsRaw]);
+
+  const apiBody = useMemo(() => {
+    if (drawnCards.length === 0) return null;
+    return {
+      cards: drawnCards.map((c) => ({
+        name: c.card.name,
+        position: c.position,
+        reversed: c.isReversed,
+      })),
+      spreadType: spread,
+      locale,
+    };
+  }, [drawnCards, spread, locale]);
+
+  const { data: aiData, isLoading: aiLoading, error: aiError, refetch: aiRetry } = useAiAnalysis<Record<string, unknown>>(
+    apiBody ? "/api/tarot/analyze" : null,
+    apiBody
+  );
 
   function handleShare() {
     navigator.clipboard.writeText(window.location.href);
@@ -113,17 +133,19 @@ function ResultContent() {
         ))}
       </div>
 
-      {/* AI Analysis placeholder */}
-      <Card className="border-accent/20">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <span>✨</span> {t("tarot.result.aiAnalysis")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      {/* AI Analysis */}
+      <AiAnalysisCard
+        title={t("tarot.result.aiAnalysis")}
+        isLoading={aiLoading}
+        error={aiError}
+        onRetry={aiRetry}
+      >
+        {aiData ? (
+          <ReadingContent data={aiData} />
+        ) : (
           <p className="text-muted-foreground italic">{t("tarot.result.aiPlaceholder")}</p>
-        </CardContent>
-      </Card>
+        )}
+      </AiAnalysisCard>
 
       <ShareButtons title="My Tarot Reading" description="Interactive Tarot reading on Destiny Loom" />
 

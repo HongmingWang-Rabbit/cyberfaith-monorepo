@@ -1,9 +1,11 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Button, Card, CardContent, CardHeader, CardTitle, Badge, Divider } from "@cyberfaith/ui";
+import { useAiAnalysis } from "@/hooks/useAiAnalysis";
+import { AiAnalysisCard, MbtiAnalysisContent } from "@/components/ui/ai-analysis";
 import { Link } from "@/i18n/navigation";
 import { useToast } from "@/components/ui/toast";
 import { ShareButtons } from "@/components/ui/share-buttons";
@@ -20,6 +22,7 @@ const dimensionLabels: Record<string, [string, string]> = {
 
 function MbtiResultContent() {
   const t = useTranslations();
+  const locale = useLocale();
   const { showToast } = useToast();
   const searchParams = useSearchParams();
   const type = searchParams.get("type") || "INTJ";
@@ -32,6 +35,22 @@ function MbtiResultContent() {
       // Invalid scores param, use defaults
     }
   }
+
+  // Build answers from scores for the API (reconstruct approximate answers)
+  const apiBody = useMemo(() => {
+    if (!type || type.length !== 4) return null;
+    const answers = dimensionKeys.map((dim, i) => ({
+      questionId: i + 1,
+      dimension: dim,
+      value: type[i],
+    }));
+    return { answers, locale };
+  }, [type, locale]);
+
+  const { data: aiData, isLoading: aiLoading, error: aiError, refetch: aiRetry } = useAiAnalysis<Record<string, unknown>>(
+    apiBody ? "/api/mbti/analyze" : null,
+    apiBody
+  );
 
   const typeName = t(`results.typeNames.${type}`);
   const typeDesc = t(`results.typeDescriptions.${type}`);
@@ -117,17 +136,19 @@ function MbtiResultContent() {
         </CardContent>
       </Card>
 
-      {/* AI Analysis placeholder */}
-      <Card className="border-accent/20">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <span>✨</span> {t("results.aiAnalysis")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      {/* AI Analysis */}
+      <AiAnalysisCard
+        title={t("results.aiAnalysis")}
+        isLoading={aiLoading}
+        error={aiError}
+        onRetry={aiRetry}
+      >
+        {aiData ? (
+          <MbtiAnalysisContent data={aiData} />
+        ) : (
           <p className="text-muted-foreground italic">{t("results.aiPlaceholder")}</p>
-        </CardContent>
-      </Card>
+        )}
+      </AiAnalysisCard>
 
       {/* Share */}
       <ShareButtons title={`My MBTI type is ${type} — ${typeName}`} description="Discover your personality type on Destiny Loom" />
