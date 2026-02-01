@@ -3,8 +3,8 @@
 import { useCallback, useRef } from "react";
 
 /**
- * Web Audio API "tok" sound — no audio files needed.
- * Creates a short percussive wooden knock sound.
+ * Web Audio API wooden "tok" sound.
+ * Short, hollow, percussive — like striking a real mokugyo.
  */
 export function useMuyuSound() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -17,22 +17,22 @@ export function useMuyuSound() {
       const ctx = ctxRef.current;
       const now = ctx.currentTime;
 
-      // Fundamental "tok" — short burst
+      // Hollow wood tone — lower pitch, quick decay
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = "sine";
-      osc.frequency.setValueAtTime(800, now);
-      osc.frequency.exponentialRampToValueAtTime(200, now + 0.08);
-      gain.gain.setValueAtTime(0.4, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc.frequency.setValueAtTime(600, now);
+      osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.12);
+      osc.stop(now + 0.15);
 
-      // Click transient — adds the "wood" quality
+      // Wood knock transient
       const noise = ctx.createBufferSource();
-      const bufferSize = ctx.sampleRate * 0.02;
+      const bufferSize = Math.floor(ctx.sampleRate * 0.015);
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
@@ -40,12 +40,12 @@ export function useMuyuSound() {
       }
       noise.buffer = buffer;
       const noiseGain = ctx.createGain();
-      noiseGain.gain.setValueAtTime(0.3, now);
+      noiseGain.gain.setValueAtTime(0.15, now);
       noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
       const filter = ctx.createBiquadFilter();
       filter.type = "bandpass";
-      filter.frequency.value = 1200;
-      filter.Q.value = 2;
+      filter.frequency.value = 800;
+      filter.Q.value = 3;
       noise.connect(filter);
       filter.connect(noiseGain);
       noiseGain.connect(ctx.destination);

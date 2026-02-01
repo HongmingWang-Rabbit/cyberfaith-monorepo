@@ -1,65 +1,54 @@
-export type MuyuSkin = "neon-purple" | "golden" | "jade" | "crystal";
+export type MuyuSkin = "classic" | "dark-wood" | "golden" | "jade";
 
 export interface SkinConfig {
   id: MuyuSkin;
   name: string;
   nameZh: string;
   meritRequired: number;
-  /** Primary glow color */
-  glow: string;
-  /** SVG fill gradient stops */
-  gradientFrom: string;
-  gradientTo: string;
-  /** Border/stroke color */
-  stroke: string;
-  /** Inner detail color */
-  detail: string;
+  /** Wood body color */
+  bodyColor: string;
+  /** Darker shade for depth */
+  bodyDark: string;
+  /** Highlight/accent */
+  accent: string;
 }
 
 export const SKINS: SkinConfig[] = [
   {
-    id: "neon-purple",
-    name: "Neon Purple",
-    nameZh: "霓虹紫",
+    id: "classic",
+    name: "Classic",
+    nameZh: "经典",
     meritRequired: 0,
-    glow: "rgba(168, 85, 247, 0.6)",
-    gradientFrom: "#7c3aed",
-    gradientTo: "#a855f7",
-    stroke: "#c084fc",
-    detail: "#ddd6fe",
+    bodyColor: "#8B5E3C",
+    bodyDark: "#5C3A1E",
+    accent: "#C4956A",
+  },
+  {
+    id: "dark-wood",
+    name: "Dark Wood",
+    nameZh: "深木",
+    meritRequired: 1000,
+    bodyColor: "#4A2C17",
+    bodyDark: "#2D1A0E",
+    accent: "#7A5233",
   },
   {
     id: "golden",
     name: "Golden",
     nameZh: "金色",
-    meritRequired: 1000,
-    glow: "rgba(251, 191, 36, 0.6)",
-    gradientFrom: "#b45309",
-    gradientTo: "#fbbf24",
-    stroke: "#fcd34d",
-    detail: "#fef3c7",
+    meritRequired: 5000,
+    bodyColor: "#B8860B",
+    bodyDark: "#8B6508",
+    accent: "#DAA520",
   },
   {
     id: "jade",
     name: "Jade",
     nameZh: "翡翠",
-    meritRequired: 5000,
-    glow: "rgba(52, 211, 153, 0.6)",
-    gradientFrom: "#065f46",
-    gradientTo: "#34d399",
-    stroke: "#6ee7b7",
-    detail: "#d1fae5",
-  },
-  {
-    id: "crystal",
-    name: "Crystal",
-    nameZh: "水晶",
     meritRequired: 10000,
-    glow: "rgba(96, 165, 250, 0.6)",
-    gradientFrom: "#1e3a5f",
-    gradientTo: "#60a5fa",
-    stroke: "#93c5fd",
-    detail: "#dbeafe",
+    bodyColor: "#2E7D5B",
+    bodyDark: "#1A4D38",
+    accent: "#5CAE8B",
   },
 ];
 
