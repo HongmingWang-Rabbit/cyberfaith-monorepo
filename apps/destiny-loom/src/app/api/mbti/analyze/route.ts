@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAIProvider } from "@cyberfaith/ai-provider";
-import { errorResponse, withRateLimitHeaders, parseBody } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, parseBody, getAIProvider } from "@/lib/api-utils";
 
 interface MBTIAnswer {
   questionId: number;
@@ -49,16 +48,8 @@ export async function POST(request: NextRequest) {
 
     const mbtiType = computeMBTIType(answers);
 
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      return withRateLimitHeaders(NextResponse.json({
-        type: mbtiType,
-        analysis: null,
-        message: "AI analysis unavailable — set OPENAI_API_KEY for personality insights",
-      }));
-    }
-
-    const ai = createAIProvider({ provider: "openai", apiKey });
+    const { provider: ai, unavailableResponse } = getAIProvider();
+    if (!ai) return withRateLimitHeaders(unavailableResponse!);
 
     const prompt = `You are a fun, insightful personality analyst with a cyberpunk vibe. The user got MBTI type: ${mbtiType}.
 

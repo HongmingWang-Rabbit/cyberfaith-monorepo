@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAIProvider } from "@cyberfaith/ai-provider";
 import { getTarotReadingPrompt } from "@/lib/prompts";
 import { TAROT_DECK, SPREAD_POSITIONS } from "@/lib/tarot-deck";
-import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString, getAIProvider } from "@/lib/api-utils";
 
 const VALID_CARD_NAMES = new Set(TAROT_DECK.map((c) => c.name));
 const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
@@ -61,17 +60,8 @@ export async function POST(request: NextRequest) {
       return withRateLimitHeaders(errorResponse("Duplicate cards are not allowed", 400));
     }
 
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      return withRateLimitHeaders(NextResponse.json({
-        interpretation: null,
-        message: "AI analysis unavailable — set OPENAI_API_KEY for tarot interpretations",
-        cards,
-        spreadType,
-      }));
-    }
-
-    const ai = createAIProvider({ provider: "openai", apiKey });
+    const { provider: ai, unavailableResponse } = getAIProvider();
+    if (!ai) return withRateLimitHeaders(unavailableResponse!);
     const sanitizedQuestion = question ? sanitizeString(question, 500) : undefined;
     const prompt = getTarotReadingPrompt(cards, spreadType, sanitizedQuestion, locale);
 

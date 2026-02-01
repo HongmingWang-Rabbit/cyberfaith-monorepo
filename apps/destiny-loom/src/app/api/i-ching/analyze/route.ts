@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAIProvider } from "@cyberfaith/ai-provider";
 import { getIChingPrompt } from "@/lib/prompts";
 import type { HexagramData } from "@/lib/i-ching";
-import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString, getAIProvider } from "@/lib/api-utils";
 
 const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
 
@@ -42,16 +41,8 @@ export async function POST(request: NextRequest) {
       return withRateLimitHeaders(errorResponse("Invalid locale", 400, "Must be one of: en, zh, zh-CN, zh-TW"));
     }
 
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      return withRateLimitHeaders(NextResponse.json({
-        interpretation: null,
-        message: "AI analysis unavailable — set OPENAI_API_KEY for I Ching interpretations",
-        hexagram,
-      }));
-    }
-
-    const ai = createAIProvider({ provider: "openai", apiKey });
+    const { provider: ai, unavailableResponse } = getAIProvider();
+    if (!ai) return withRateLimitHeaders(unavailableResponse!);
     const sanitizedQuestion = question ? sanitizeString(question, 500) : undefined;
     const prompt = getIChingPrompt(hexagram, changingLines, sanitizedQuestion, locale);
 

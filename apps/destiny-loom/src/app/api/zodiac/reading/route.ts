@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAIProvider } from "@cyberfaith/ai-provider";
 import { getZodiacReadingPrompt } from "@/lib/prompts";
-import { errorResponse, withRateLimitHeaders, parseBody } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, parseBody, getAIProvider } from "@/lib/api-utils";
 
 const VALID_SIGNS = new Set([
   "aries", "taurus", "gemini", "cancer", "leo", "virgo",
@@ -33,17 +32,8 @@ export async function POST(request: NextRequest) {
       return withRateLimitHeaders(errorResponse("Invalid locale", 400, "Must be one of: en, zh, zh-CN, zh-TW"));
     }
 
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      return withRateLimitHeaders(NextResponse.json({
-        reading: null,
-        message: "AI analysis unavailable — set OPENAI_API_KEY for zodiac readings",
-        sign: sign.toLowerCase(),
-        period,
-      }));
-    }
-
-    const ai = createAIProvider({ provider: "openai", apiKey });
+    const { provider: ai, unavailableResponse } = getAIProvider();
+    if (!ai) return withRateLimitHeaders(unavailableResponse!);
     const prompt = getZodiacReadingPrompt(sign.toLowerCase(), period, locale);
 
     const result = await ai.generateCompletion(prompt, {

@@ -1,4 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createAIProvider, type AIProvider } from "@cyberfaith/ai-provider";
+
+/**
+ * Get AI provider from env. Defaults to OpenAI gpt-4o-mini (cheapest).
+ * Set AI_PROVIDER=anthropic|google and AI_MODEL to override.
+ * Each provider reads its own key: OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_AI_API_KEY
+ */
+export function getAIProvider(): { provider: AIProvider | null; unavailableResponse: NextResponse | null } {
+  const providerName = (process.env.AI_PROVIDER || "openai") as "openai" | "anthropic" | "google";
+  const keyMap: Record<string, string | undefined> = {
+    openai: process.env.OPENAI_API_KEY,
+    anthropic: process.env.ANTHROPIC_API_KEY,
+    google: process.env.GOOGLE_AI_API_KEY,
+  };
+  const apiKey = keyMap[providerName];
+  if (!apiKey) {
+    return { provider: null, unavailableResponse: NextResponse.json({ analysis: null, message: "AI analysis unavailable — no API key configured" }) };
+  }
+  const model = process.env.AI_MODEL || undefined;
+  return { provider: createAIProvider({ provider: providerName, apiKey, model }), unavailableResponse: null };
+}
 
 /**
  * Consistent error response format for all API endpoints

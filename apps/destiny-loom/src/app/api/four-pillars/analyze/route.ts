@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAIProvider } from "@cyberfaith/ai-provider";
 import { getFourPillarsPrompt } from "@/lib/prompts";
 import type { FourPillarsResult } from "@/lib/four-pillars";
-import { errorResponse, withRateLimitHeaders, parseBody } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, parseBody, getAIProvider } from "@/lib/api-utils";
 
 const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
 const VALID_GENDERS = new Set(["male", "female", "other"]);
@@ -32,16 +31,8 @@ export async function POST(request: NextRequest) {
       return withRateLimitHeaders(errorResponse("Invalid locale", 400, "Must be one of: en, zh, zh-CN, zh-TW"));
     }
 
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      return withRateLimitHeaders(NextResponse.json({
-        interpretation: null,
-        message: "AI analysis unavailable — set OPENAI_API_KEY for BaZi interpretations",
-        pillars,
-      }));
-    }
-
-    const ai = createAIProvider({ provider: "openai", apiKey });
+    const { provider: ai, unavailableResponse } = getAIProvider();
+    if (!ai) return withRateLimitHeaders(unavailableResponse!);
     const prompt = getFourPillarsPrompt(pillars, gender || "other", locale);
 
     const result = await ai.generateCompletion(prompt, {
