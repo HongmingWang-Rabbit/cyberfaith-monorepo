@@ -106,6 +106,20 @@ export default function IChingResultPage() {
     }
   }, []);
 
+  const apiBody = useMemo(() => {
+    if (!result) return null;
+    return {
+      hexagram: result.hexagram,
+      changingLines: result.changingLines,
+      locale,
+    };
+  }, [result, locale]);
+
+  const { data: aiData, isLoading: aiLoading, error: aiError, refetch: aiRetry } = useAiAnalysis<Record<string, unknown>>(
+    apiBody ? "/api/i-ching/analyze" : null,
+    apiBody
+  );
+
   if (!result) {
     return (
       <div className="max-w-xl mx-auto py-16 text-center space-y-4">
@@ -211,15 +225,19 @@ export default function IChingResultPage() {
         </CardContent>
       </Card>
 
-      {/* AI Placeholder */}
-      <Card>
-        <CardContent className="p-6 text-center space-y-3">
-          <h3 className="text-lg font-semibold text-foreground">
-            {t("aiAnalysis")}
-          </h3>
+      {/* AI Analysis */}
+      <AiAnalysisCard
+        title={t("aiAnalysis")}
+        isLoading={aiLoading}
+        error={aiError}
+        onRetry={aiRetry}
+      >
+        {aiData ? (
+          <ReadingContent data={aiData} />
+        ) : (
           <p className="text-muted-foreground italic">{t("aiPlaceholder")}</p>
-        </CardContent>
-      </Card>
+        )}
+      </AiAnalysisCard>
 
       <ShareButtons
         title={`I Ching — ${hexagram.chinese} · ${hexagram.name}`}

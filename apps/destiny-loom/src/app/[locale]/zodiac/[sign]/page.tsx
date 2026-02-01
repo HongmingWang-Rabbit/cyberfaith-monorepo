@@ -5,10 +5,12 @@ import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@cyberfaith/ui";
 import { useParams } from "next/navigation";
 import { zodiacSigns, getZodiacSign } from "@/data/zodiac-signs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { notFound } from "next/navigation";
 import { ShareButtons } from "@/components/ui/share-buttons";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { useZodiacReading } from "@/hooks/useAiAnalysis";
+import { AiAnalysisCard, ReadingContent } from "@/components/ui/ai-analysis";
 
 type Period = "daily" | "weekly" | "monthly";
 
@@ -19,6 +21,13 @@ export default function ZodiacSignPage() {
   const params = useParams();
   const sign = getZodiacSign(params.sign as string);
   const [period, setPeriod] = useState<Period>("daily");
+  const { data: readingData, isLoading: readingLoading, error: readingError, fetchReading } = useZodiacReading();
+
+  useEffect(() => {
+    if (sign) {
+      fetchReading(sign.id, period, locale);
+    }
+  }, [sign, period, locale, fetchReading]);
 
   if (!sign) {
     notFound();
@@ -103,9 +112,33 @@ export default function ZodiacSignPage() {
               </button>
             ))}
           </div>
-          <div className="text-center py-8 text-muted-foreground italic">
-            {t("readingPlaceholder", { period: t(`readings.${period}`) })}
-          </div>
+          {readingLoading ? (
+            <div className="flex items-center justify-center gap-3 py-8">
+              <div className="relative w-5 h-5">
+                <div className="absolute inset-0 rounded-full border-2 border-primary/30" />
+                <div className="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+              </div>
+              <span className="text-muted-foreground text-sm animate-pulse">
+                {t("readingPlaceholder", { period: t(`readings.${period}`) })}
+              </span>
+            </div>
+          ) : readingError ? (
+            <div className="text-center py-8 space-y-2">
+              <p className="text-muted-foreground text-sm italic">{readingError}</p>
+              <button
+                onClick={() => fetchReading(sign.id, period, locale)}
+                className="text-xs px-3 py-1.5 rounded-md bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
+              >
+                {tc("actions.back")}
+              </button>
+            </div>
+          ) : readingData ? (
+            <ReadingContent data={readingData as Record<string, unknown>} />
+          ) : (
+            <div className="text-center py-8 text-muted-foreground italic">
+              {t("readingPlaceholder", { period: t(`readings.${period}`) })}
+            </div>
+          )}
         </CardContent>
       </Card>
 

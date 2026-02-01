@@ -5,6 +5,8 @@ import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@cyberfaith/ui";
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
+import { useAiAnalysis } from "@/hooks/useAiAnalysis";
+import { AiAnalysisCard, ReadingContent } from "@/components/ui/ai-analysis";
 import {
   calculateFourPillars,
   type FourPillarsResult,
@@ -90,6 +92,16 @@ export default function FourPillarsResultPage() {
     return calculateFourPillars(year, month, day, hour ?? 12);
   }, [searchParams]);
 
+  const apiBody = useMemo(() => {
+    if (!result) return null;
+    return { pillars: result, locale };
+  }, [result, locale]);
+
+  const { data: aiData, isLoading: aiLoading, error: aiError, refetch: aiRetry } = useAiAnalysis<Record<string, unknown>>(
+    apiBody ? "/api/four-pillars/analyze" : null,
+    apiBody
+  );
+
   if (!result) {
     return (
       <div className="max-w-xl mx-auto py-16 text-center space-y-4">
@@ -171,15 +183,19 @@ export default function FourPillarsResultPage() {
         </CardContent>
       </Card>
 
-      {/* AI Analysis Placeholder */}
-      <Card>
-        <CardContent className="p-6 text-center space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">
-            {t("aiAnalysis")}
-          </h2>
+      {/* AI Analysis */}
+      <AiAnalysisCard
+        title={t("aiAnalysis")}
+        isLoading={aiLoading}
+        error={aiError}
+        onRetry={aiRetry}
+      >
+        {aiData ? (
+          <ReadingContent data={aiData} />
+        ) : (
           <p className="text-muted-foreground italic">{t("aiPlaceholder")}</p>
-        </CardContent>
-      </Card>
+        )}
+      </AiAnalysisCard>
 
       <ShareButtons
         title="My Four Pillars of Destiny"
