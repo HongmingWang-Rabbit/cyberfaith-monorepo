@@ -73,7 +73,7 @@ export function MbtiAnalysisContent({ data }: { data: Record<string, unknown> })
       {typeof analysis.summary === "string" && (
         <p className="text-muted-foreground leading-relaxed">{analysis.summary}</p>
       )}
-      {analysis.strengths && Array.isArray(analysis.strengths) && (
+      {Array.isArray(analysis.strengths) && analysis.strengths.length > 0 && (
         <div>
           <p className="text-sm font-medium text-foreground mb-1">💪 Strengths</p>
           <div className="flex flex-wrap gap-2">
@@ -83,7 +83,7 @@ export function MbtiAnalysisContent({ data }: { data: Record<string, unknown> })
           </div>
         </div>
       )}
-      {analysis.challenges && Array.isArray(analysis.challenges) && (
+      {Array.isArray(analysis.challenges) && analysis.challenges.length > 0 && (
         <div>
           <p className="text-sm font-medium text-foreground mb-1">🎯 Challenges</p>
           <div className="flex flex-wrap gap-2">
