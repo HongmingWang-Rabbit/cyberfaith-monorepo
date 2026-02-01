@@ -68,11 +68,24 @@ export const userAchievements = pgTable("user_achievements", {
   uniqueUserAchievement: uniqueIndex("user_achievement_unique").on(table.userId, table.achievementId),
 }));
 
+export const gameStatusEnum = pgEnum("game_status", ["active", "draft"]);
+
+export const games = pgTable("games", {
+  id: idColumn(),
+  ...timestampColumns(),
+  slug: varchar("slug", { length: 50 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  thumbnail: varchar("thumbnail", { length: 100 }),
+  config: jsonb("config").notNull(), // { minBet, maxWin, symbols?, payoutRules }
+  status: gameStatusEnum("status").default("active").notNull(),
+});
+
 export const arcadePlays = pgTable("arcade_plays", {
   id: idColumn(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   userId: varchar("user_id", { length: 36 }).notNull(),
-  gameId: varchar("game_id", { length: 50 }).notNull(),
+  gameId: varchar("game_id", { length: 36 }).notNull(),
   pointsSpent: integer("points_spent").notNull(),
   pointsWon: integer("points_won").notNull().default(0),
   result: jsonb("result"),
