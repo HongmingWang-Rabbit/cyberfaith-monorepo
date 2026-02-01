@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@cyberfaith/ai-provider": "workspace:^",
     "@cyberfaith/auth-client": "workspace:*",
     "@cyberfaith/config-tailwind": "workspace:*",
     "@cyberfaith/db-utils": "workspace:*",
