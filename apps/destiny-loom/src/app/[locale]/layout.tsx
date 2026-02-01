@@ -7,6 +7,7 @@ import "../globals.css";
 import { AppShell } from "@/components/layout/app-shell";
 import { ToastProvider } from "@/components/ui/toast";
 import { AuthWrapper } from "@/components/auth-wrapper";
+import { ServiceWorkerRegister } from "@/components/sw-register";
 
 export const metadata: Metadata = {
   title: "Destiny Loom — CyberFaith",
@@ -28,10 +29,18 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <html lang={locale}>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#7c3aed" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+      </head>
       <body className="bg-background text-foreground min-h-screen">
         <NextIntlClientProvider messages={messages}>
           <AuthWrapper>
             <ToastProvider>
+              <ServiceWorkerRegister />
               <AppShell>{children}</AppShell>
             </ToastProvider>
           </AuthWrapper>

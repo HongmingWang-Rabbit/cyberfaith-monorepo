@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="64" fill="#0a0a0a"/>
+  <circle cx="256" cy="240" r="120" fill="none" stroke="#7c3aed" stroke-width="8"/>
+  <circle cx="256" cy="240" r="80" fill="none" stroke="#a78bfa" stroke-width="4"/>
+  <circle cx="256" cy="240" r="8" fill="#c084fc"/>
+  <text x="256" y="420" text-anchor="middle" font-family="sans-serif" font-size="48" font-weight="bold" fill="#7c3aed">DL</text>
+</svg>
