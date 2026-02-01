@@ -263,6 +263,8 @@
     "questionPlaceholder": "你想问神谕什么？",
     "aiAnalysis": "AI易经解读",
     "aiPlaceholder": "AI驱动的易经解读即将上线！古老的神谕将通过数字之流开口。",
+    "line": "第{pos}爻",
+    "trigramAboveBelow": "上{upper}，下{lower}",
     "noData": "未找到卦象数据，请重新起卦。"
   }
 }

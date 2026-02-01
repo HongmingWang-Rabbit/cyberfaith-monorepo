@@ -52,8 +52,9 @@ export default function FourPillarsPage() {
           <div className="grid grid-cols-2 gap-4">
             {/* Year */}
             <div>
-              <label className={labelClass}>{t("year")}</label>
+              <label htmlFor="fp-year" className={labelClass}>{t("year")}</label>
               <select
+                id="fp-year"
                 value={year}
                 onChange={(e) => setYear(Number(e.target.value))}
                 className={selectClass}
@@ -70,8 +71,9 @@ export default function FourPillarsPage() {
 
             {/* Month */}
             <div>
-              <label className={labelClass}>{t("month")}</label>
+              <label htmlFor="fp-month" className={labelClass}>{t("month")}</label>
               <select
+                id="fp-month"
                 value={month}
                 onChange={(e) => setMonth(Number(e.target.value))}
                 className={selectClass}
@@ -86,8 +88,9 @@ export default function FourPillarsPage() {
 
             {/* Day */}
             <div>
-              <label className={labelClass}>{t("day")}</label>
+              <label htmlFor="fp-day" className={labelClass}>{t("day")}</label>
               <select
+                id="fp-day"
                 value={day}
                 onChange={(e) => setDay(Number(e.target.value))}
                 className={selectClass}
@@ -102,8 +105,9 @@ export default function FourPillarsPage() {
 
             {/* Hour */}
             <div>
-              <label className={labelClass}>{t("hour")}</label>
+              <label htmlFor="fp-hour" className={labelClass}>{t("hour")}</label>
               <select
+                id="fp-hour"
                 value={hour}
                 onChange={(e) => setHour(Number(e.target.value))}
                 className={selectClass}
@@ -120,10 +124,12 @@ export default function FourPillarsPage() {
           {/* Gender */}
           <div>
             <label className={labelClass}>{t("gender")}</label>
-            <div className="flex gap-3">
+            <div className="flex gap-3" role="radiogroup" aria-label={t("gender")}>
               {(["male", "female", "other"] as const).map((g) => (
                 <button
                   key={g}
+                  role="radio"
+                  aria-checked={gender === g}
                   onClick={() => setGender(g)}
                   className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all border ${
                     gender === g

@@ -162,7 +162,7 @@ export default function IChingResultPage() {
               {t("image")}
             </h3>
             <p className="text-muted-foreground text-sm">
-              {hexagram.trigrams.upper} above, {hexagram.trigrams.lower} below
+              {t("trigramAboveBelow", { upper: hexagram.trigrams.upper, lower: hexagram.trigrams.lower })}
             </p>
           </CardContent>
         </Card>
@@ -182,7 +182,7 @@ export default function IChingResultPage() {
                     key={pos}
                     className="px-3 py-1 rounded-full text-sm font-medium bg-accent/10 text-accent border border-accent/20"
                   >
-                    Line {pos}
+                    {t("line", { pos })}
                   </span>
                 ))}
               </div>

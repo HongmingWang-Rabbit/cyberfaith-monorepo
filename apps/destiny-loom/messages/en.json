@@ -263,6 +263,8 @@
     "questionPlaceholder": "What would you like to ask the oracle?",
     "aiAnalysis": "AI I Ching Interpretation",
     "aiPlaceholder": "AI-powered I Ching interpretation coming soon! The ancient oracle will speak through digital streams.",
+    "line": "Line {pos}",
+    "trigramAboveBelow": "{upper} above, {lower} below",
     "noData": "No hexagram data found. Please cast a new hexagram."
   }
 }

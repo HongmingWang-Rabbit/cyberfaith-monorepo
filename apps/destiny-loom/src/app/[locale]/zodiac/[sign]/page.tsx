@@ -29,10 +29,14 @@ export default function ZodiacSignPage() {
 
   const handleShare = async () => {
     const text = `${sign.symbol} ${isZh ? sign.nameZh : sign.name} — ${sign.dateRange}`;
-    if (navigator.share) {
-      await navigator.share({ title: text, url: window.location.href });
-    } else {
-      await navigator.clipboard.writeText(window.location.href);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: text, url: window.location.href });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+      }
+    } catch {
+      /* User cancelled share or clipboard unavailable */
     }
   };
 

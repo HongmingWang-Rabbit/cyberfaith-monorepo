@@ -82,7 +82,7 @@ export function monthPillar(year: number, month: number): Pillar {
 
   // Five Tigers (五虎遁月) — year stem determines the starting month stem
   const yearStemIdx = ((y - 4) % 10 + 10) % 10;
-  const startStem = (yearStemIdx % 5) * 2; // 甲/己→丙(2), 乙/庚→戊(4), etc.
+  const startStem = ((yearStemIdx % 5) * 2 + 2) % 10; // 甲/己→丙(2), 乙/庚→戊(4), 丙/辛→庚(6), 丁/壬→壬(8), 戊/癸→甲(0)
   const stemIdx = (startStem + chineseMonth - 1) % 10;
 
   return makePillar(stemIdx, branchIdx);
