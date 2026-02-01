@@ -3,7 +3,7 @@ import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString } from "
 
 interface ReadingHistoryItem {
   id: string;
-  type: "mbti" | "tarot" | "zodiac";
+  type: "mbti" | "tarot" | "zodiac" | "i-ching" | "four-pillars";
   result: Record<string, unknown>;
   createdAt: string;
   userId: string;
@@ -33,7 +33,7 @@ const MOCK_HISTORY: ReadingHistoryItem[] = [
   },
 ];
 
-const VALID_TYPES = new Set(["mbti", "tarot", "zodiac"]);
+const VALID_TYPES = new Set(["mbti", "tarot", "zodiac", "i-ching", "four-pillars"]);
 
 export async function GET(request: NextRequest) {
   try {
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     if (!type || !VALID_TYPES.has(type)) {
       return withRateLimitHeaders(
-        errorResponse("Invalid type", 400, "Must be one of: mbti, tarot, zodiac")
+        errorResponse("Invalid type", 400, "Must be one of: mbti, tarot, zodiac, i-ching, four-pillars")
       );
     }
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     const savedItem: ReadingHistoryItem = {
       id: `mock-${Date.now()}`,
-      type: type as "mbti" | "tarot" | "zodiac",
+      type: type as ReadingHistoryItem["type"],
       result,
       createdAt: new Date().toISOString(),
       userId: userId ? sanitizeString(userId, 100) : "anonymous",

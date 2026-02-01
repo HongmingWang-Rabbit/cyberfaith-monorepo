@@ -53,6 +53,7 @@ export async function parseBody<T = any>(
  */
 export function sanitizeString(input: string, maxLength = 500): string {
   return input
+    .replace(/[\u200B-\u200F\u2028-\u202F\uFEFF\u00AD]/g, "") // strip zero-width & invisible chars
     .slice(0, maxLength)
     .replace(/<[^>]*>/g, "") // strip HTML tags
     .replace(/[<>{}[\]\\]/g, "") // strip injection chars

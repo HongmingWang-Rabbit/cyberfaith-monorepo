@@ -8,6 +8,7 @@ const VALID_SIGNS = new Set([
   "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces",
 ]);
 const VALID_PERIODS = new Set(["daily", "weekly", "monthly"]);
+const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,6 +27,10 @@ export async function POST(request: NextRequest) {
       return withRateLimitHeaders(
         errorResponse("Invalid period", 400, "Must be one of: daily, weekly, monthly")
       );
+    }
+
+    if (locale && !VALID_LOCALES.has(locale)) {
+      return withRateLimitHeaders(errorResponse("Invalid locale", 400, "Must be one of: en, zh, zh-CN, zh-TW"));
     }
 
     const apiKey = process.env.OPENAI_API_KEY;

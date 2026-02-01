@@ -276,7 +276,7 @@ Get AI zodiac compatibility analysis between two signs.
 }
 ```
 
-**Errors:** `400` Invalid sign(s), `500` Server error
+**Errors:** `400` Invalid sign(s) or locale, `500` Server error
 
 **Example:**
 ```bash
@@ -498,7 +498,7 @@ Save a reading to history. *(Currently mock — DB integration pending)*
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `type` | string | Yes | One of: `mbti`, `tarot`, `zodiac` |
+| `type` | string | Yes | One of: `mbti`, `tarot`, `zodiac`, `i-ching`, `four-pillars` |
 | `result` | object | Yes | Reading result data |
 | `userId` | string | No | User identifier (default: `anonymous`) |
 

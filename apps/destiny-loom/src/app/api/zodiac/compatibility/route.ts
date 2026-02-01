@@ -7,6 +7,7 @@ const VALID_SIGNS = new Set([
   "aries", "taurus", "gemini", "cancer", "leo", "virgo",
   "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces",
 ]);
+const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,6 +25,10 @@ export async function POST(request: NextRequest) {
       return withRateLimitHeaders(
         errorResponse("Invalid sign2", 400, `Must be one of: ${[...VALID_SIGNS].join(", ")}`)
       );
+    }
+
+    if (locale && !VALID_LOCALES.has(locale)) {
+      return withRateLimitHeaders(errorResponse("Invalid locale", 400, "Must be one of: en, zh, zh-CN, zh-TW"));
     }
 
     const apiKey = process.env.OPENAI_API_KEY;
