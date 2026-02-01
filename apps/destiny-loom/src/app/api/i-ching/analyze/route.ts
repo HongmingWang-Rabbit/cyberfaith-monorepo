@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getIChingPrompt } from "@/lib/prompts";
 import type { HexagramData } from "@/lib/i-ching";
 import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString, getAIProvider } from "@/lib/api-utils";
+import { saveReadingAsync } from "@/lib/save-reading";
 
 const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
 
@@ -60,7 +61,9 @@ export async function POST(request: NextRequest) {
       interpretation = { reading: result };
     }
 
-    return withRateLimitHeaders(NextResponse.json({ interpretation, hexagram, changingLines }));
+    const responseData = { interpretation, hexagram, changingLines };
+    saveReadingAsync(request.headers.get("authorization"), "i-ching", { hexagram, changingLines, question }, responseData, locale);
+    return withRateLimitHeaders(NextResponse.json(responseData));
   } catch (error: unknown) {
     console.error("I Ching analyze error:", error);
     return withRateLimitHeaders(errorResponse("Failed to analyze hexagram", 500));

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { errorResponse, withRateLimitHeaders, parseBody, getAIProvider } from "@/lib/api-utils";
+import { saveReadingAsync } from "@/lib/save-reading";
 
 interface MBTIAnswer {
   questionId: number;
@@ -79,7 +80,9 @@ Respond ONLY with valid JSON, no markdown.`;
       analysis = { raw: result };
     }
 
-    return withRateLimitHeaders(NextResponse.json({ type: mbtiType, analysis }));
+    const responseData = { type: mbtiType, analysis };
+    saveReadingAsync(request.headers.get("authorization"), "mbti", { answers }, responseData);
+    return withRateLimitHeaders(NextResponse.json(responseData));
   } catch (error: unknown) {
     console.error("MBTI analyze error:", error);
     return withRateLimitHeaders(errorResponse("Failed to analyze personality", 500));

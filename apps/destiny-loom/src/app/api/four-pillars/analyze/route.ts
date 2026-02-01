@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getFourPillarsPrompt } from "@/lib/prompts";
 import type { FourPillarsResult } from "@/lib/four-pillars";
 import { errorResponse, withRateLimitHeaders, parseBody, getAIProvider } from "@/lib/api-utils";
+import { saveReadingAsync } from "@/lib/save-reading";
 
 const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
 const VALID_GENDERS = new Set(["male", "female", "other"]);
@@ -49,7 +50,9 @@ export async function POST(request: NextRequest) {
       interpretation = { reading: result };
     }
 
-    return withRateLimitHeaders(NextResponse.json({ interpretation, pillars }));
+    const responseData = { interpretation, pillars };
+    saveReadingAsync(request.headers.get("authorization"), "four-pillars", { pillars, gender }, responseData, locale);
+    return withRateLimitHeaders(NextResponse.json(responseData));
   } catch (error: unknown) {
     console.error("Four Pillars analyze error:", error);
     return withRateLimitHeaders(errorResponse("Failed to analyze Four Pillars", 500));

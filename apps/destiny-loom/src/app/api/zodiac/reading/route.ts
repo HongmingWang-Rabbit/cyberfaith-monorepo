@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getZodiacReadingPrompt } from "@/lib/prompts";
 import { errorResponse, withRateLimitHeaders, parseBody, getAIProvider } from "@/lib/api-utils";
+import { saveReadingAsync } from "@/lib/save-reading";
 
 const VALID_SIGNS = new Set([
   "aries", "taurus", "gemini", "cancer", "leo", "virgo",
@@ -49,7 +50,9 @@ export async function POST(request: NextRequest) {
       reading = { horoscope: result };
     }
 
-    return withRateLimitHeaders(NextResponse.json({ reading, sign: sign.toLowerCase(), period }));
+    const responseData = { reading, sign: sign.toLowerCase(), period };
+    saveReadingAsync(request.headers.get("authorization"), "zodiac", { sign, period }, responseData, locale);
+    return withRateLimitHeaders(NextResponse.json(responseData));
   } catch (error: unknown) {
     console.error("Zodiac reading error:", error);
     return withRateLimitHeaders(errorResponse("Failed to generate zodiac reading", 500));

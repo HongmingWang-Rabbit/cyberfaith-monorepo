@@ -6,12 +6,13 @@ import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
 import { PointsModule } from "./points/points.module";
 import { AchievementsModule } from "./achievements/achievements.module";
+import { ReadingsModule } from "./readings/readings.module";
 import { LoggerMiddleware } from "./common/logger.middleware";
 import { CorsMiddleware } from "./common/cors.middleware";
 import { RateLimitGuard } from "./common/rate-limit.guard";
 
 @Module({
-  imports: [DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule],
+  imports: [DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule],
   providers: [
     {
       provide: APP_GUARD,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getTarotReadingPrompt } from "@/lib/prompts";
 import { TAROT_DECK, SPREAD_POSITIONS } from "@/lib/tarot-deck";
 import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString, getAIProvider } from "@/lib/api-utils";
+import { saveReadingAsync } from "@/lib/save-reading";
 
 const VALID_CARD_NAMES = new Set(TAROT_DECK.map((c) => c.name));
 const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
@@ -78,7 +79,9 @@ export async function POST(request: NextRequest) {
       interpretation = { reading: result };
     }
 
-    return withRateLimitHeaders(NextResponse.json({ interpretation, cards, spreadType }));
+    const responseData = { interpretation, cards, spreadType };
+    saveReadingAsync(request.headers.get("authorization"), "tarot", { cards, spreadType, question }, responseData, locale);
+    return withRateLimitHeaders(NextResponse.json(responseData));
   } catch (error: unknown) {
     console.error("Tarot analyze error:", error);
     return withRateLimitHeaders(errorResponse("Failed to analyze tarot spread", 500));

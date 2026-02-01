@@ -1,4 +1,4 @@
-import { pgTable, idColumn, timestampColumns, varchar, text, integer, boolean } from "@cyberfaith/db-utils";
+import { pgTable, idColumn, timestampColumns, varchar, text, integer, boolean, jsonb } from "@cyberfaith/db-utils";
 
 export const users = pgTable("users", {
   id: idColumn(),
@@ -17,6 +17,16 @@ export const points = pgTable("points", {
   userId: varchar("user_id", { length: 36 }).notNull(),
   amount: integer("amount").notNull(),
   reason: text("reason").notNull(),
+});
+
+export const readings = pgTable("readings", {
+  id: idColumn(),
+  ...timestampColumns(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  type: varchar("type", { length: 20 }).notNull(), // mbti|tarot|i-ching|four-pillars|zodiac
+  input: jsonb("input"),
+  result: jsonb("result"),
+  locale: varchar("locale", { length: 10 }),
 });
 
 export const achievements = pgTable("achievements", {
