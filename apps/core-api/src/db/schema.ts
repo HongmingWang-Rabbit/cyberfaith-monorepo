@@ -5,7 +5,8 @@ export const users = pgTable("users", {
   ...timestampColumns(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   name: varchar("name", { length: 255 }).notNull(),
-  passwordHash: text("password_hash").notNull(),
+  googleId: varchar("google_id", { length: 255 }).unique(),
+  passwordHash: text("password_hash"),
   avatarUrl: text("avatar_url"),
   isActive: boolean("is_active").default(true).notNull(),
 });
