@@ -135,7 +135,7 @@ export class DigestService {
         ),
       );
 
-    const friendIds = friendRows.map((r) => r.friendId).filter(Boolean);
+    const friendIds = (Array.isArray(friendRows) ? friendRows : []).map((r: any) => r.friendId).filter(Boolean);
 
     let friendReadings: { friendName: string; type: string }[] = [];
     if (friendIds.length > 0) {
