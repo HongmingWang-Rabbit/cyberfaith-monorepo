@@ -13,8 +13,9 @@ const AdminAnalyticsTab = dynamic(() => import("./analytics-tab").then(m => m.Ad
 const AdminEventsTab = dynamic(() => import("./events-tab").then(m => m.AdminEventsTab), { ssr: false });
 const AdminNotificationsTab = dynamic(() => import("./notifications-tab").then(m => m.AdminNotificationsTab), { ssr: false });
 const AdminAuditLogTab = dynamic(() => import("./audit-log-tab").then(m => m.AdminAuditLogTab), { ssr: false });
+const AdminMonitoringTab = dynamic(() => import("./monitoring-tab").then(m => m.AdminMonitoringTab), { ssr: false });
 
-type TabKey = "overview" | "users" | "readings" | "analytics" | "reports" | "events" | "notifications" | "metrics" | "audit";
+type TabKey = "overview" | "users" | "readings" | "analytics" | "reports" | "events" | "notifications" | "metrics" | "monitoring" | "audit";
 
 interface Stats {
   totalUsers: number;
@@ -106,6 +107,7 @@ export default function AdminDashboard() {
     { key: "events", label: t("tabs.events"), icon: "🎉" },
     { key: "notifications", label: t("tabs.notifications"), icon: "📣" },
     { key: "metrics", label: t("tabs.metrics"), icon: "⚡" },
+    { key: "monitoring", label: t("tabs.monitoring"), icon: "🖥️" },
     { key: "audit", label: t("tabs.audit"), icon: "📋" },
   ];
 
@@ -214,6 +216,7 @@ export default function AdminDashboard() {
       {activeTab === "reports" && <AdminReportsTable />}
       {activeTab === "events" && <AdminEventsTab />}
       {activeTab === "notifications" && <AdminNotificationsTab />}
+      {activeTab === "monitoring" && <AdminMonitoringTab />}
       {activeTab === "audit" && <AdminAuditLogTab />}
     </div>
   );
