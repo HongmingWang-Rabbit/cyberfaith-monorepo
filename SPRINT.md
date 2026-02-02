@@ -217,7 +217,33 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 - [ ] Haptic feedback on mobile interactions (arcade games, card flips)
 
 ### Infrastructure
-- [ ] Redis for session storage + rate limiting + caching
-- [ ] Monitoring dashboard (health metrics, error rates, response times)
-- [ ] Database indexes audit for query performance
-- [ ] Automated DB migrations on Railway deploy
+- [x] Redis for session storage + rate limiting + caching
+- [x] Monitoring dashboard (health metrics, error rates, response times)
+- [x] Database indexes audit for query performance
+- [x] Automated DB migrations on Railway deploy
+
+---
+
+## Sprint 8: Launch Readiness
+
+### Marketing & Landing
+- [ ] Website redesign — feature showcase, testimonials, pricing, download CTA
+- [ ] App Store / Play Store metadata prep (screenshots, description, keywords)
+- [ ] Blog/content section on website (SEO-driven spiritual content)
+
+### Security
+- [ ] Security audit — CSRF protection, input sanitization review, SQL injection check
+- [ ] Content Security Policy headers
+- [ ] API key rotation system
+- [ ] GDPR compliance — data export, cookie consent
+
+### Testing
+- [ ] Visual regression tests (Playwright screenshots)
+- [ ] Load testing (k6 or artillery against staging)
+- [ ] Accessibility audit (axe-core, screen reader testing)
+
+### Final Polish
+- [ ] App-wide search (readings, users, content)
+- [ ] Notification center — in-app notification bell with history
+- [ ] Dark/light theme refinement — ensure all pages look good in both
+- [ ] Performance budget enforcement (bundle size limits)
