@@ -5,6 +5,8 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { useAuth } from "@cyberfaith/auth-client";
 import { useState, useRef, useEffect } from "react";
+import { BottomNav } from "@/components/layout/bottom-nav";
+import { PageTransition } from "@/components/layout/page-transition";
 
 const navItems = [
   { key: "home", href: "/", icon: "🏠" },
@@ -164,28 +166,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Content */}
-        <main id="main-content" className="flex-1 p-4 md:p-6">{children}</main>
+        <main id="main-content" className="flex-1 p-4 md:p-6 pb-20 md:pb-6">
+          <PageTransition>{children}</PageTransition>
+        </main>
       </div>
 
       {/* Mobile bottom nav */}
-      <nav aria-label="Mobile navigation" className="md:hidden fixed bottom-0 inset-x-0 z-40 flex items-center justify-around h-16 border-t border-border bg-card/80 backdrop-blur-md">
-        {navItems.slice(0, 5).map((item) => {
-          const isActive =
-            item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.key}
-              href={item.href}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1 text-xs transition-colors ${
-                isActive ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              <span className="text-xl">{item.icon}</span>
-              <span>{t(`nav.${item.key}`)}</span>
-            </Link>
-          );
-        })}
-      </nav>
+      <BottomNav />
 
       <style jsx>{`
         .cyber-grid {

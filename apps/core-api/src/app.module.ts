@@ -23,18 +23,23 @@ import { ReferralsModule } from "./referrals/referrals.module";
 import { GiftsModule } from "./gifts/gifts.module";
 import { CacheModule } from "./cache/cache.module";
 import { LeaderboardModule } from "./leaderboard/leaderboard.module";
+import { RedisModule } from "./redis/redis.module";
+import { RedisService } from "./redis/redis.service";
+import { MetricsMiddleware } from "./common/metrics.middleware";
+import { MetricsModule } from "./metrics/metrics.module";
 
 @Module({
-  imports: [CacheModule, DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule, ReferralsModule, GiftsModule, LeaderboardModule],
+  imports: [RedisModule, CacheModule, DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule, ReferralsModule, GiftsModule, LeaderboardModule, MetricsModule],
   providers: [
     {
       provide: APP_GUARD,
-      useFactory: () => new RateLimitGuard(60, 60_000),
+      useFactory: (redis: RedisService) => new RateLimitGuard(redis, 60, 60_000),
+      inject: [RedisService],
     },
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CorsMiddleware, LoggerMiddleware).forRoutes("*");
+    consumer.apply(CorsMiddleware, LoggerMiddleware, MetricsMiddleware).forRoutes("*");
   }
 }

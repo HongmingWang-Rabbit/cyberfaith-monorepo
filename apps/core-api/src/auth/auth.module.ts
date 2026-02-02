@@ -6,6 +6,7 @@ import { AuthService } from "./auth.service";
 import { GoogleStrategy } from "./google.strategy";
 import { MockGoogleStrategy } from "./mock-google.strategy";
 import { JwtStrategy } from "./jwt.strategy";
+import { TokenBlacklistService } from "./token-blacklist.service";
 
 const GoogleOAuthStrategy =
   process.env.AUTH_MOCK === "true" ? MockGoogleStrategy : GoogleStrategy;
@@ -19,7 +20,7 @@ const GoogleOAuthStrategy =
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, GoogleOAuthStrategy, JwtStrategy],
-  exports: [AuthService],
+  providers: [AuthService, GoogleOAuthStrategy, JwtStrategy, TokenBlacklistService],
+  exports: [AuthService, TokenBlacklistService],
 })
 export class AuthModule {}

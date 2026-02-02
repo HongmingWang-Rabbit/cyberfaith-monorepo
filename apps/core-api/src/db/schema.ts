@@ -1,5 +1,5 @@
 import { pgTable, idColumn, timestampColumns, varchar, text, integer, boolean, jsonb, uniqueIndex, timestamp } from "@cyberfaith/db-utils";
-import { pgEnum, uuid } from "drizzle-orm/pg-core";
+import { pgEnum, uuid, index } from "drizzle-orm/pg-core";
 
 export const userRoleEnum = pgEnum("user_role", ["user", "admin"]);
 
@@ -210,4 +210,49 @@ export const friendships = pgTable("friendships", {
   status: friendshipStatusEnum("status").default("pending").notNull(),
 }, (table) => ({
   uniqueFriendship: uniqueIndex("friendship_unique").on(table.requesterId, table.addresseeId),
+}));
+
+// ─── User Follows ─────────────────────────────────────────
+export const userFollows = pgTable("user_follows", {
+  id: idColumn(),
+  followerId: varchar("follower_id", { length: 36 }).notNull(),
+  followingId: varchar("following_id", { length: 36 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  uniqueFollow: uniqueIndex("user_follows_unique").on(table.followerId, table.followingId),
+  followerIdx: index("user_follows_follower_idx").on(table.followerId),
+  followingIdx: index("user_follows_following_idx").on(table.followingId),
+}));
+
+// ─── Comments ─────────────────────────────────────────────
+export const comments = pgTable("comments", {
+  id: idColumn(),
+  readingId: varchar("reading_id", { length: 36 }).notNull(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  content: varchar("content", { length: 500 }).notNull(),
+  parentId: varchar("parent_id", { length: 36 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  deletedAt: timestamp("deleted_at"),
+}, (table) => ({
+  readingIdx: index("comments_reading_idx").on(table.readingId),
+  parentIdx: index("comments_parent_idx").on(table.parentId),
+}));
+
+// ─── Reports ──────────────────────────────────────────────
+export const reportReasonEnum = pgEnum("report_reason", ["spam", "inappropriate", "harassment", "other"]);
+export const reportStatusEnum = pgEnum("report_status", ["pending", "reviewed", "dismissed"]);
+export const reportTargetTypeEnum = pgEnum("report_target_type", ["reading", "comment", "user"]);
+
+export const reports = pgTable("reports", {
+  id: idColumn(),
+  reporterId: varchar("reporter_id", { length: 36 }).notNull(),
+  targetType: reportTargetTypeEnum("target_type").notNull(),
+  targetId: varchar("target_id", { length: 36 }).notNull(),
+  reason: reportReasonEnum("reason").notNull(),
+  details: text("details"),
+  status: reportStatusEnum("status").default("pending").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  statusIdx: index("reports_status_idx").on(table.status),
+  reporterIdx: index("reports_reporter_idx").on(table.reporterId),
 }));

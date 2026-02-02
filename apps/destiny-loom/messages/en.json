@@ -22,7 +22,8 @@
       "leaderboard": "Leaderboard",
       "numerology": "Numerology",
       "fengShui": "Feng Shui",
-      "affirmations": "Affirmations"
+      "affirmations": "Affirmations",
+      "readings": "Readings"
     },
     "auth": {
       "signIn": "Sign In",
@@ -679,7 +680,8 @@
       "confirmDescription": "This action is irreversible. All your data will be anonymized and your account deactivated.",
       "typeToConfirm": "Type DELETE to confirm",
       "confirmDelete": "Permanently Delete"
-    }
+    },
+    "haptic": "Haptic Feedback"
   },
   "insights": {
     "title": "Personal Insights",
@@ -814,5 +816,43 @@
     "allAffirmations": "All Affirmations",
     "favorites": "Favorites",
     "history": "History"
+  },
+  "onboarding": {
+    "welcome": "Welcome to Destiny Loom",
+    "zodiacPrompt": "What's your zodiac sign?",
+    "mbtiPrompt": "What's your MBTI type?",
+    "mbtiSubtext": "This helps us personalize your experience",
+    "interestsPrompt": "What interests you?",
+    "interestsSubtext": "Select all that resonate with you",
+    "readyTitle": "You're all set!",
+    "readySubtext": "Let's try your first reading based on your interests",
+    "startReading": "Try Your First Reading!",
+    "skip": "Skip",
+    "signs": {
+      "aries": "Aries",
+      "taurus": "Taurus",
+      "gemini": "Gemini",
+      "cancer": "Cancer",
+      "leo": "Leo",
+      "virgo": "Virgo",
+      "libra": "Libra",
+      "scorpio": "Scorpio",
+      "sagittarius": "Sagittarius",
+      "capricorn": "Capricorn",
+      "aquarius": "Aquarius",
+      "pisces": "Pisces"
+    },
+    "interests": {
+      "tarot": "Tarot",
+      "numerology": "Numerology",
+      "fengShui": "Feng Shui",
+      "dreams": "Dreams",
+      "zodiac": "Zodiac",
+      "iching": "I Ching",
+      "mbti": "MBTI",
+      "birthChart": "Birth Chart",
+      "compatibility": "Compatibility",
+      "meditation": "Meditation"
+    }
   }
 }

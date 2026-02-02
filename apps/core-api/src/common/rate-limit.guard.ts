@@ -1,5 +1,6 @@
-import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus } from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus, Inject, Optional } from "@nestjs/common";
 import { Request } from "express";
+import { RedisService } from "../redis/redis.service";
 
 interface RateLimitEntry {
   count: number;
@@ -9,13 +10,18 @@ interface RateLimitEntry {
 @Injectable()
 export class RateLimitGuard implements CanActivate {
   private readonly store = new Map<string, RateLimitEntry>();
-  private readonly maxRequests: number;
-  private readonly windowMs: number;
+  protected readonly maxRequests: number;
+  protected readonly windowMs: number;
+  private readonly PREFIX = "ratelimit:";
 
   private readonly cleanupInterval: ReturnType<typeof setInterval>;
   private readonly maxStoreSize = 10_000;
 
-  constructor(maxRequests = 60, windowMs = 60_000) {
+  constructor(
+    @Optional() @Inject(RedisService) protected readonly redis?: RedisService,
+    maxRequests = 60,
+    windowMs = 60_000,
+  ) {
     this.maxRequests = maxRequests;
     this.windowMs = windowMs;
 
@@ -25,17 +31,45 @@ export class RateLimitGuard implements CanActivate {
     }
   }
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest<Request>();
     const ip = req.ip || req.socket.remoteAddress || "unknown";
-    const now = Date.now();
 
+    // Try Redis
+    if (this.redis?.isConnected) {
+      return this.checkRedis(ip);
+    }
+
+    return this.checkMemory(ip);
+  }
+
+  private async checkRedis(ip: string): Promise<boolean> {
+    const key = this.PREFIX + ip;
+    try {
+      const count = await this.redis!.incr(key);
+      if (count === 1) {
+        await this.redis!.expire(key, Math.ceil(this.windowMs / 1000));
+      }
+      if (count > this.maxRequests) {
+        throw new HttpException(
+          { statusCode: HttpStatus.TOO_MANY_REQUESTS, message: "Too Many Requests", error: "RATE_LIMIT_EXCEEDED" },
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+      }
+      return true;
+    } catch (err) {
+      if (err instanceof HttpException) throw err;
+      // Redis error — fall back to memory
+      return this.checkMemory(ip);
+    }
+  }
+
+  private checkMemory(ip: string): boolean {
+    const now = Date.now();
     const entry = this.store.get(ip);
 
     if (!entry || now > entry.resetAt) {
-      if (this.store.size >= this.maxStoreSize) {
-        this.cleanup();
-      }
+      if (this.store.size >= this.maxStoreSize) this.cleanup();
       this.store.set(ip, { count: 1, resetAt: now + this.windowMs });
       return true;
     }
@@ -55,9 +89,7 @@ export class RateLimitGuard implements CanActivate {
   private cleanup(): void {
     const now = Date.now();
     for (const [ip, entry] of this.store) {
-      if (now > entry.resetAt) {
-        this.store.delete(ip);
-      }
+      if (now > entry.resetAt) this.store.delete(ip);
     }
   }
 }
@@ -68,7 +100,7 @@ export class RateLimitGuard implements CanActivate {
  */
 @Injectable()
 export class AuthRateLimitGuard extends RateLimitGuard {
-  constructor() {
-    super(10, 60_000);
+  constructor(@Optional() @Inject(RedisService) redis?: RedisService) {
+    super(redis, 10, 60_000);
   }
 }

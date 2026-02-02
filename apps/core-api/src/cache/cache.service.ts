@@ -1,4 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { RedisService } from "../redis/redis.service";
 
 interface CacheEntry<T> {
   value: T;
@@ -8,75 +9,126 @@ interface CacheEntry<T> {
 @Injectable()
 export class CacheService {
   private readonly logger = new Logger(CacheService.name);
-  private readonly store = new Map<string, CacheEntry<unknown>>();
+  private readonly memStore = new Map<string, CacheEntry<unknown>>();
   private readonly maxSize: number;
   private readonly defaultTtlMs: number;
+  private readonly PREFIX = "cache:";
 
-  constructor(maxSize = 500, defaultTtlMs = 15 * 60 * 1000) {
+  // Metrics
+  private hits = 0;
+  private misses = 0;
+
+  constructor(
+    private readonly redis: RedisService,
+    maxSize = 500,
+    defaultTtlMs = 15 * 60 * 1000,
+  ) {
     this.maxSize = maxSize;
     this.defaultTtlMs = defaultTtlMs;
   }
 
-  get<T>(key: string): T | null {
-    const entry = this.store.get(key) as CacheEntry<T> | undefined;
-    if (!entry) return null;
+  get hitRate(): number {
+    const total = this.hits + this.misses;
+    return total === 0 ? 0 : this.hits / total;
+  }
+
+  get totalHits(): number { return this.hits; }
+  get totalMisses(): number { return this.misses; }
+
+  async get<T>(key: string): Promise<T | null> {
+    // Try Redis first
+    if (this.redis.isConnected) {
+      try {
+        const raw = await this.redis.get(this.PREFIX + key);
+        if (raw) {
+          this.hits++;
+          return JSON.parse(raw) as T;
+        }
+        this.misses++;
+        return null;
+      } catch {
+        // fall through to memory
+      }
+    }
+
+    // In-memory fallback
+    const entry = this.memStore.get(key) as CacheEntry<T> | undefined;
+    if (!entry) { this.misses++; return null; }
 
     if (Date.now() > entry.expiresAt) {
-      this.store.delete(key);
+      this.memStore.delete(key);
+      this.misses++;
       return null;
     }
 
-    // Move to end for LRU behavior (Map preserves insertion order)
-    this.store.delete(key);
-    this.store.set(key, entry);
+    this.memStore.delete(key);
+    this.memStore.set(key, entry);
+    this.hits++;
     return entry.value;
   }
 
-  set<T>(key: string, value: T, ttlMs?: number): void {
-    // Evict oldest if at capacity
-    if (this.store.size >= this.maxSize && !this.store.has(key)) {
-      const firstKey = this.store.keys().next().value;
-      if (firstKey !== undefined) {
-        this.store.delete(firstKey);
+  async set<T>(key: string, value: T, ttlMs?: number): Promise<void> {
+    const ttl = ttlMs ?? this.defaultTtlMs;
+
+    if (this.redis.isConnected) {
+      try {
+        await this.redis.set(this.PREFIX + key, JSON.stringify(value), Math.ceil(ttl / 1000));
+        return;
+      } catch {
+        // fall through
       }
     }
 
-    this.store.set(key, {
-      value,
-      expiresAt: Date.now() + (ttlMs ?? this.defaultTtlMs),
-    });
+    if (this.memStore.size >= this.maxSize && !this.memStore.has(key)) {
+      const firstKey = this.memStore.keys().next().value;
+      if (firstKey !== undefined) this.memStore.delete(firstKey);
+    }
+    this.memStore.set(key, { value, expiresAt: Date.now() + ttl });
   }
 
-  invalidate(key: string): boolean {
-    return this.store.delete(key);
+  async invalidate(key: string): Promise<boolean> {
+    if (this.redis.isConnected) {
+      try { await this.redis.del(this.PREFIX + key); return true; } catch { /* fall through */ }
+    }
+    return this.memStore.delete(key);
   }
 
-  invalidatePattern(pattern: string): number {
+  async invalidatePattern(pattern: string): Promise<number> {
+    if (this.redis.isConnected) {
+      try {
+        const keys = await this.redis.keys(this.PREFIX + pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\\\*/g, "*"));
+        for (const k of keys) await this.redis.del(k);
+        if (keys.length > 0) this.logger.debug(`Invalidated ${keys.length} Redis entries matching ${pattern}`);
+        return keys.length;
+      } catch { /* fall through */ }
+    }
+
     const regex = new RegExp(pattern);
     let count = 0;
-    for (const key of this.store.keys()) {
-      if (regex.test(key)) {
-        this.store.delete(key);
-        count++;
-      }
+    for (const key of this.memStore.keys()) {
+      if (regex.test(key)) { this.memStore.delete(key); count++; }
     }
-    if (count > 0) {
-      this.logger.debug(`Invalidated ${count} entries matching /${pattern}/`);
-    }
+    if (count > 0) this.logger.debug(`Invalidated ${count} entries matching /${pattern}/`);
     return count;
   }
 
-  clear(): void {
-    this.store.clear();
+  async clear(): Promise<void> {
+    if (this.redis.isConnected) {
+      try {
+        const keys = await this.redis.keys(this.PREFIX + "*");
+        for (const k of keys) await this.redis.del(k);
+      } catch { /* fall through */ }
+    }
+    this.memStore.clear();
   }
 
   get size(): number {
-    return this.store.size;
+    return this.memStore.size;
   }
 
   /** Wrap an async function with caching */
   async wrap<T>(key: string, fn: () => Promise<T>, ttlMs?: number): Promise<T> {
-    const cached = this.get<T>(key);
+    const cached = await this.get<T>(key);
     if (cached !== null) {
       this.logger.debug(`Cache HIT: ${key}`);
       return cached;
@@ -84,7 +136,7 @@ export class CacheService {
 
     this.logger.debug(`Cache MISS: ${key}`);
     const result = await fn();
-    this.set(key, result, ttlMs);
+    await this.set(key, result, ttlMs);
     return result;
   }
 }
