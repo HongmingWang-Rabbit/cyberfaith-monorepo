@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useAuth } from "@cyberfaith/auth-client";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
@@ -45,6 +46,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
   const [recent, setRecent] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const trapRef = useFocusTrap<HTMLDivElement>(open);
 
   useEffect(() => {
     if (open) {
@@ -101,9 +103,10 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]" role="dialog" aria-modal="true" aria-label={t("placeholder")} onClick={onClose}>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
       <div
+        ref={trapRef}
         className="relative w-full max-w-lg mx-4 bg-card border border-primary/40 rounded-xl shadow-2xl overflow-hidden"
         style={{ boxShadow: "0 0 30px rgba(168, 85, 247, 0.3), 0 0 60px rgba(168, 85, 247, 0.1)" }}
         onClick={(e) => e.stopPropagation()}
@@ -122,6 +125,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("placeholder")}
+            aria-label={t("placeholder")}
             className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground outline-none text-sm"
             onKeyDown={(e) => {
               if (e.key === "Escape") onClose();

@@ -73,7 +73,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Desktop sidebar */}
-      <aside aria-label="Main navigation" className="hidden md:flex w-64 flex-col fixed inset-y-0 left-0 z-40 border-r border-border bg-card/80 backdrop-blur-md">
+      <aside role="navigation" aria-label="Main navigation" className="hidden md:flex w-64 flex-col fixed inset-y-0 left-0 z-40 border-r border-border bg-card/80 backdrop-blur-md">
         <div className="p-6">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl">🔮</span>

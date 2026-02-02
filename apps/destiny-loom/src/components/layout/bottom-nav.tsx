@@ -105,6 +105,7 @@ export function BottomNav() {
 
       {/* Bottom nav bar */}
       <motion.nav
+        role="navigation"
         aria-label="Mobile navigation"
         initial={false}
         animate={{ y: direction === "down" ? 80 : 0 }}

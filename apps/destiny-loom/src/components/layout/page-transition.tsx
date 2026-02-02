@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { usePathname } from "@/i18n/navigation";
 
 const pageVariants: Variants = {
@@ -11,14 +11,15 @@ const pageVariants: Variants = {
 
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const prefersReducedMotion = useReducedMotion();
   return (
     <motion.div
       key={pathname}
-      variants={pageVariants}
-      initial="initial"
+      variants={prefersReducedMotion ? undefined : pageVariants}
+      initial={prefersReducedMotion ? false : "initial"}
       animate="animate"
-      exit="exit"
-      transition={{ duration: 0.25, ease: "easeOut" }}
+      exit={prefersReducedMotion ? undefined : "exit"}
+      transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.25, ease: "easeOut" }}
     >
       {children}
     </motion.div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@cyberfaith/auth-client";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
@@ -21,6 +22,7 @@ export function ReportModal({ targetType, targetId, onClose }: ReportModalProps)
   const [details, setDetails] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const trapRef = useFocusTrap<HTMLDivElement>(true);
 
   const token = session?.tokens?.accessToken;
 
@@ -46,8 +48,9 @@ export function ReportModal({ targetType, targetId, onClose }: ReportModalProps)
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" role="dialog" aria-modal="true" aria-labelledby="report-title" onClick={onClose}>
       <div
+        ref={trapRef}
         className="w-full max-w-md rounded-2xl border border-primary/20 bg-card/95 backdrop-blur-sm shadow-2xl shadow-primary/10 p-6 space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
@@ -59,7 +62,7 @@ export function ReportModal({ targetType, targetId, onClose }: ReportModalProps)
         ) : (
           <>
             <div>
-              <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <h3 id="report-title" className="text-lg font-semibold text-foreground flex items-center gap-2">
                 🚩 {t("title")}
               </h3>
               <p className="text-sm text-muted-foreground mt-1">{t("subtitle")}</p>
@@ -92,6 +95,7 @@ export function ReportModal({ targetType, targetId, onClose }: ReportModalProps)
               value={details}
               onChange={(e) => setDetails(e.target.value.slice(0, 1000))}
               placeholder={t("detailsPlaceholder")}
+              aria-label={t("detailsPlaceholder")}
               rows={3}
               className="w-full px-3 py-2 rounded-lg bg-muted/30 border border-primary/10 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/40 resize-none"
             />
@@ -137,6 +141,7 @@ export function ReportButton({
       <button
         onClick={() => setOpen(true)}
         className={`text-muted-foreground hover:text-red-400 transition ${className}`}
+        aria-label="Report"
         title="Report"
       >
         🚩

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getMbtiAnalysisPrompt } from "@/lib/prompts";
 import { errorResponse, withRateLimitHeaders, parseBody, getAIProvider, getUserTier } from "@/lib/api-utils";
 import { saveReadingAsync } from "@/lib/save-reading";
 
@@ -10,6 +11,7 @@ interface MBTIAnswer {
 
 const VALID_VALUES = new Set(["E", "I", "S", "N", "T", "F", "J", "P"]);
 const VALID_DIMENSIONS = new Set(["EI", "SN", "TF", "JP"]);
+const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
 
 function computeMBTIType(answers: MBTIAnswer[]): string {
   const scores: Record<string, number> = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
@@ -31,7 +33,7 @@ export async function POST(request: NextRequest) {
     const { data: body, error } = await parseBody(request, 20_000);
     if (error) return withRateLimitHeaders(error);
 
-    const { answers } = body as { answers: MBTIAnswer[] };
+    const { answers, locale } = body as { answers: MBTIAnswer[]; locale?: string };
 
     if (!answers || !Array.isArray(answers) || answers.length === 0) {
       return withRateLimitHeaders(errorResponse("Answers are required", 400));
@@ -47,6 +49,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    if (locale && !VALID_LOCALES.has(locale)) {
+      return withRateLimitHeaders(errorResponse("Invalid locale", 400, "Must be one of: en, zh, zh-CN, zh-TW"));
+    }
+
     const mbtiType = computeMBTIType(answers);
 
     const authHeader = request.headers.get("authorization");
@@ -54,24 +60,12 @@ export async function POST(request: NextRequest) {
     const { provider: ai, unavailableResponse, tierConfig } = getAIProvider(tier);
     if (!ai) return withRateLimitHeaders(unavailableResponse!);
 
-    const proExtra = tier === "pro"
-      ? `\n  "deepDive": "A detailed paragraph exploring how this type navigates relationships, career, and personal growth",\n  "shadowSide": "A paragraph about the less-discussed challenges and blind spots of this type",`
-      : "";
+    const scores: Record<string, number> = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+    for (const answer of answers) {
+      scores[answer.value] = (scores[answer.value] || 0) + 1;
+    }
 
-    const prompt = `You are a fun, insightful personality analyst with a cyberpunk vibe. The user got MBTI type: ${mbtiType}.
-
-Give a personality analysis in this JSON format:
-{
-  "title": "A cool cyberpunk-themed title for this type",
-  "summary": "2-3 sentence overview of this personality type",
-  "strengths": ["strength1", "strength2", "strength3"],
-  "challenges": ["challenge1", "challenge2", "challenge3"],
-  "spiritAnimal": "A mythical/cyber creature that represents this type",
-  "compatibility": ["XXXX", "XXXX"],${proExtra}
-  "advice": "One sentence of cosmic advice"
-}
-
-Respond ONLY with valid JSON, no markdown.`;
+    const prompt = getMbtiAnalysisPrompt(mbtiType, scores, locale);
 
     const systemPrompt = `You are CyberFaith's Destiny Loom — a mystical AI oracle that reveals personality insights with a playful cyberpunk aesthetic. ${tierConfig.systemPromptSuffix}`;
 
@@ -90,7 +84,7 @@ Respond ONLY with valid JSON, no markdown.`;
 
     const usage = aiResult.usage;
     const responseData = { type: mbtiType, analysis, aiTier: tier };
-    saveReadingAsync(authHeader, "mbti", { answers }, responseData);
+    saveReadingAsync(authHeader, "mbti", { answers }, responseData, locale);
     return withRateLimitHeaders(NextResponse.json({ ...responseData, usage }));
   } catch (error: unknown) {
     console.error("MBTI analyze error:", error);
