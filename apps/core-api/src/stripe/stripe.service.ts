@@ -10,9 +10,15 @@ export class StripeService {
   private readonly logger = new Logger(StripeService.name);
 
   constructor(@Inject(DRIZZLE) private readonly db: any) {
-    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-      apiVersion: "2026-01-28.clover",
-    });
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (key) {
+      this.stripe = new Stripe(key, {
+        apiVersion: "2026-01-28.clover",
+      });
+    } else {
+      this.logger.warn("STRIPE_SECRET_KEY not set — Stripe features disabled");
+      this.stripe = null as any;
+    }
   }
 
   async createCheckoutSession(userId: string, email: string): Promise<string> {

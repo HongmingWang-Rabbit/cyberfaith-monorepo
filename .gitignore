@@ -7,3 +7,5 @@ dist
 .env.local
 gcp-service-account.json
 .env.neon
+.vercel
+.env*.local
