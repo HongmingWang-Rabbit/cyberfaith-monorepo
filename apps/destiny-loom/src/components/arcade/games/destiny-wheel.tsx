@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useHaptic } from "@/hooks/useHaptic";
 import type { ArcadeGameProps } from "../types";
 
 interface Segment {
@@ -39,6 +40,7 @@ function markFreeSpinUsed(): void {
 export default function DestinyWheel({ config, balance, onBalanceChange, onPlay, isPlaying }: ArcadeGameProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [spinning, setSpinning] = useState(false);
+  const { vibrate } = useHaptic();
   const [result, setResult] = useState<Segment | null>(null);
   const [rotation, setRotation] = useState(0);
   const [isFree, setIsFree] = useState(true);
@@ -115,6 +117,7 @@ export default function DestinyWheel({ config, balance, onBalanceChange, onPlay,
   }, [rotation, locale]);
 
   const spinWheel = useCallback(async () => {
+    vibrate("medium");
     if (spinning || isPlaying) return;
     setError(null);
     setResult(null);

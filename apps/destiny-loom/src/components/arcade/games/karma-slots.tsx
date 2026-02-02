@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import { useHaptic } from "@/hooks/useHaptic";
 import type { ArcadeGameProps } from "../types";
 
 const DEFAULT_SYMBOLS = ["🔮", "✨", "🌟", "☯️", "🧿", "💫", "🪬", "🌙"];
 
 export default function KarmaSlots({ config, balance, onBalanceChange, onPlay, isPlaying }: ArcadeGameProps) {
+  const { vibrate } = useHaptic();
   const symbols: string[] = config.symbols || DEFAULT_SYMBOLS;
   const reelCount: number = config.reelCount || 3;
   const payoutRules = config.payoutRules || { threeMatch: 50, twoMatch: 20 };
@@ -18,6 +20,7 @@ export default function KarmaSlots({ config, balance, onBalanceChange, onPlay, i
   const particleTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleSpin = useCallback(async () => {
+    vibrate("medium");
     if (isPlaying) return;
     setError(null);
     setLastResult(null);

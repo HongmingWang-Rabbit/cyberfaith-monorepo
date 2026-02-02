@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
+import { useHaptic } from "@/hooks/useHaptic";
 import dynamic from "next/dynamic";
 import { useMuyuSound } from "@/components/arcade/games/muyu/use-muyu-sound";
 
@@ -33,6 +34,7 @@ export default function MuyuPage() {
   const t = T[locale as keyof typeof T] || T.en;
   const playTok = useMuyuSound();
 
+  const { vibrate } = useHaptic();
   const [sessionTaps, setSessionTaps] = useState(0);
   const [allTimeTaps, setAllTimeTaps] = useState(0);
   const [activeSkin, setActiveSkin] = useState<MuyuSkin>("classic");
@@ -91,6 +93,7 @@ export default function MuyuPage() {
       if (e) e.preventDefault();
 
       playTok();
+      vibrate("light");
 
       setSessionTaps((p) => p + 1);
       setAllTimeTaps((p) => p + 1);

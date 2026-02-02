@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useHaptic } from "@/hooks/useHaptic";
 import type { ArcadeGameProps } from "../types";
 
 type AmbientSound = "silence" | "rain" | "bowls" | "ocean";
@@ -137,6 +138,7 @@ class AmbientSynth {
 }
 
 export default function MeditationTimer({ config, balance, onBalanceChange, onPlay, isPlaying }: ArcadeGameProps) {
+  const { vibrate } = useHaptic();
   const [duration, setDuration] = useState(300);
   const [customMin, setCustomMin] = useState("");
   const [timeLeft, setTimeLeft] = useState(0);
@@ -212,6 +214,7 @@ export default function MeditationTimer({ config, balance, onBalanceChange, onPl
   }, [active]);
 
   const handleComplete = useCallback(async () => {
+    vibrate("success");
     const newStreak = updateStreak();
     setStreak(newStreak);
 
@@ -230,6 +233,7 @@ export default function MeditationTimer({ config, balance, onBalanceChange, onPl
   }, [duration, balance, onPlay, onBalanceChange]);
 
   const startSession = () => {
+    vibrate("light");
     const dur = customMin ? parseInt(customMin) * 60 : duration;
     if (dur <= 0 || dur > 3600) return;
     setDuration(dur);

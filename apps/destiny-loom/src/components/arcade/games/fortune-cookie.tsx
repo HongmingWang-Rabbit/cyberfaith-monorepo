@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useHaptic } from "@/hooks/useHaptic";
 import type { ArcadeGameProps } from "../types";
 
 const FORTUNES_EN = [
@@ -238,6 +239,7 @@ function markFreeCrackUsed(): void {
 
 export default function FortuneCookie({ config, balance, onBalanceChange, onPlay, isPlaying }: ArcadeGameProps) {
   const [cracked, setCracked] = useState(false);
+  const { vibrate } = useHaptic();
   const [fortune, setFortune] = useState("");
   const [karmaWon, setKarmaWon] = useState(0);
   const [isFreeCrack, setIsFreeCrack] = useState(true);
@@ -256,6 +258,7 @@ export default function FortuneCookie({ config, balance, onBalanceChange, onPlay
   const cost = isFreeCrack ? 0 : (config.minBet || 5);
 
   const handleCrack = useCallback(async () => {
+    vibrate("heavy");
     if (cracked || isPlaying) return;
     setError(null);
 

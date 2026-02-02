@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import type { TarotCard as TarotCardType } from "@/data/tarot-deck";
 import { useLocale } from "next-intl";
+import { useHaptic } from "@/hooks/useHaptic";
 
 interface TarotCardProps {
   card?: TarotCardType;
@@ -15,6 +16,7 @@ interface TarotCardProps {
 
 export function TarotCard({ card, isReversed, isFlipped, isSelected, onClick, size = "md" }: TarotCardProps) {
   const locale = useLocale();
+  const { vibrate } = useHaptic();
   const sizeClasses = {
     sm: "w-20 h-32",
     md: "w-28 h-44",
@@ -22,7 +24,7 @@ export function TarotCard({ card, isReversed, isFlipped, isSelected, onClick, si
   };
 
   return (
-    <div className={`perspective-1000 ${sizeClasses[size]} cursor-pointer`} onClick={onClick}>
+    <div className={`perspective-1000 ${sizeClasses[size]} cursor-pointer`} onClick={() => { vibrate("medium"); onClick?.(); }}>
       <motion.div
         className="relative w-full h-full"
         style={{ transformStyle: "preserve-3d" }}
