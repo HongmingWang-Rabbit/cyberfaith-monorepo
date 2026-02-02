@@ -1051,5 +1051,13 @@
     "tapToFlip": "点击卡牌翻转",
     "reversed": "逆位",
     "interpretation": "解读"
+  },
+  "challenges": {
+    "dailyChallenge": "每日挑战",
+    "earnKarma": "获得 +{amount} 功德",
+    "completed": "已完成",
+    "markComplete": "标记完成",
+    "completing": "完成中...",
+    "karma": "功德"
   }
 }

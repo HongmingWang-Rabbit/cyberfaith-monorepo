@@ -1,0 +1,65 @@
+{
+  "common": {
+    "title": "灵魂游戏厅",
+    "backToArcade": "返回游戏厅",
+    "karmaPoints": "功德点",
+    "loading": "加载中...",
+    "signInRequired": "请登录后游玩",
+    "dailyLimitReached": "明天再来吧！",
+    "streak": "连续",
+    "days": "天",
+    "totalSessions": "总次数"
+  },
+  "fortuneCookie": {
+    "title": "幸运签饼",
+    "subtitle": "敲开你的每日签语",
+    "crack": "敲开签饼",
+    "cracking": "正在敲开...",
+    "alreadyCracked": "今天已经敲过了！",
+    "yourFortune": "你的签语",
+    "earned": "获得 {points} 功德！",
+    "comeBack": "明天回来获取新的签语",
+    "totalCracked": "已敲签饼"
+  },
+  "destinyWheel": {
+    "title": "命运之轮",
+    "subtitle": "转动获取每日奖励",
+    "spin": "转动轮盘",
+    "spinning": "转动中...",
+    "alreadySpun": "今天已经转过了！",
+    "reward": "你赢得了：{reward}",
+    "earned": "+{points} 功德！",
+    "comeBack": "明天再来转一次",
+    "totalSpins": "总转数"
+  },
+  "meditation": {
+    "title": "冥想计时器",
+    "subtitle": "寻找你的内心宁静",
+    "start": "开始冥想",
+    "pause": "暂停",
+    "resume": "继续",
+    "stop": "结束",
+    "complete": "冥想完成！",
+    "earned": "获得 {points} 功德！",
+    "streakBonus": "🔥 连续奖励！额外 +{bonus} 功德",
+    "breatheIn": "吸气",
+    "breatheOut": "呼气",
+    "hold": "屏息",
+    "duration": "时长",
+    "minutes": "分钟",
+    "sounds": {
+      "title": "环境音",
+      "none": "静默",
+      "rain": "雨声",
+      "ocean": "海浪",
+      "bells": "寺庙钟声",
+      "bowl": "颂钵"
+    },
+    "stats": {
+      "totalMinutes": "总分钟数",
+      "totalSessions": "总次数",
+      "streak": "连续天数",
+      "todaySessions": "今日"
+    }
+  }
+}

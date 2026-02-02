@@ -1052,5 +1052,13 @@
     "tapToFlip": "Tap card to flip",
     "reversed": "Reversed",
     "interpretation": "Interpretation"
+  },
+  "challenges": {
+    "dailyChallenge": "Daily Challenge",
+    "earnKarma": "Earn +{amount} karma",
+    "completed": "Completed",
+    "markComplete": "Mark as Complete",
+    "completing": "Completing...",
+    "karma": "karma"
   }
 }

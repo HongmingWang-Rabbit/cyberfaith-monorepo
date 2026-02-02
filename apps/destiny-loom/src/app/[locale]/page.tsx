@@ -8,6 +8,7 @@ import { DailyHoroscope } from "@/components/daily-horoscope";
 import { PushPrompt } from "@/components/push-prompt";
 import { FeaturedReading } from "@/components/featured-reading";
 import { EventBanner } from "@/components/events/event-banner";
+import { DailyChallenge } from "@/components/daily-challenge";
 
 const features = [
   { key: "mbti", href: "/mbti", icon: "🧠", color: "purple" },
@@ -33,10 +34,11 @@ export default function HomePage() {
       {/* Event Banner */}
       <EventBanner />
 
-      {/* Daily Horoscope */}
+      {/* Daily Horoscope + Challenge */}
       {isAuthenticated && (
         <section className="space-y-3">
           <DailyHoroscope token={token} />
+          <DailyChallenge token={token} />
           <PushPrompt token={token} />
         </section>
       )}

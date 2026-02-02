@@ -167,6 +167,36 @@ export const zodiacSignEnum = pgEnum("zodiac_sign", [
   "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces",
 ]);
 
+// ── Fortune Cookie ──
+export const fortuneCookieCracks = pgTable("fortune_cookie_cracks", {
+  id: idColumn(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  fortune: text("fortune").notNull(),
+  pointsEarned: integer("points_earned").notNull().default(0),
+});
+
+// ── Destiny Wheel ──
+export const destinyWheelSpins = pgTable("destiny_wheel_spins", {
+  id: idColumn(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  segment: varchar("segment", { length: 100 }).notNull(),
+  reward: jsonb("reward").notNull(), // { type, amount?, description }
+  pointsEarned: integer("points_earned").notNull().default(0),
+});
+
+// ── Meditation Timer ──
+export const meditationSessions = pgTable("meditation_sessions", {
+  id: idColumn(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  durationMinutes: integer("duration_minutes").notNull(),
+  soundUsed: varchar("sound_used", { length: 50 }),
+  completed: boolean("completed").default(true).notNull(),
+  pointsEarned: integer("points_earned").notNull().default(0),
+});
+
 export const dailyHoroscopes = pgTable("daily_horoscopes", {
   id: idColumn(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -273,6 +303,34 @@ export const inAppNotifications = pgTable("in_app_notifications", {
 }));
 
 // ─── Reports ──────────────────────────────────────────────
+// ─── Daily Challenges ─────────────────────────────────────
+export const challengeTypeEnum = pgEnum("challenge_type", [
+  "tarot_stranger", "meditation", "journaling", "share_reading",
+  "kindness", "divination", "reflection", "community",
+]);
+
+export const dailyChallenges = pgTable("daily_challenges", {
+  id: idColumn(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  type: challengeTypeEnum("type").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  karmaReward: integer("karma_reward").notNull().default(10),
+  date: varchar("date", { length: 10 }).notNull(), // YYYY-MM-DD
+}, (table) => ({
+  uniqueDate: uniqueIndex("daily_challenge_date_unique").on(table.date),
+}));
+
+export const challengeCompletions = pgTable("challenge_completions", {
+  id: idColumn(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  challengeId: varchar("challenge_id", { length: 36 }).notNull(),
+}, (table) => ({
+  uniqueCompletion: uniqueIndex("challenge_completion_unique").on(table.userId, table.challengeId),
+  userIdx: index("challenge_completions_user_idx").on(table.userId),
+}));
+
 export const reportReasonEnum = pgEnum("report_reason", ["spam", "inappropriate", "harassment", "other"]);
 export const reportStatusEnum = pgEnum("report_status", ["pending", "reviewed", "dismissed"]);
 export const reportTargetTypeEnum = pgEnum("report_target_type", ["reading", "comment", "user"]);

@@ -1,0 +1,65 @@
+{
+  "common": {
+    "title": "Spirit Arcade",
+    "backToArcade": "Back to Arcade",
+    "karmaPoints": "Karma Points",
+    "loading": "Loading...",
+    "signInRequired": "Sign in to play",
+    "dailyLimitReached": "Come back tomorrow!",
+    "streak": "Streak",
+    "days": "days",
+    "totalSessions": "Total Sessions"
+  },
+  "fortuneCookie": {
+    "title": "Fortune Cookie",
+    "subtitle": "Crack open your daily fortune",
+    "crack": "Crack Cookie",
+    "cracking": "Cracking...",
+    "alreadyCracked": "Already cracked today!",
+    "yourFortune": "Your Fortune",
+    "earned": "You earned {points} karma!",
+    "comeBack": "Come back tomorrow for another fortune",
+    "totalCracked": "Cookies Cracked"
+  },
+  "destinyWheel": {
+    "title": "Destiny Wheel",
+    "subtitle": "Spin for your daily reward",
+    "spin": "Spin the Wheel",
+    "spinning": "Spinning...",
+    "alreadySpun": "Already spun today!",
+    "reward": "You won: {reward}",
+    "earned": "+{points} Karma!",
+    "comeBack": "Come back tomorrow for another spin",
+    "totalSpins": "Total Spins"
+  },
+  "meditation": {
+    "title": "Meditation Timer",
+    "subtitle": "Find your inner peace",
+    "start": "Begin Meditation",
+    "pause": "Pause",
+    "resume": "Resume",
+    "stop": "End Session",
+    "complete": "Session Complete!",
+    "earned": "You earned {points} karma!",
+    "streakBonus": "🔥 Streak bonus! +{bonus} extra karma",
+    "breatheIn": "Breathe In",
+    "breatheOut": "Breathe Out",
+    "hold": "Hold",
+    "duration": "Duration",
+    "minutes": "min",
+    "sounds": {
+      "title": "Ambient Sound",
+      "none": "Silence",
+      "rain": "Rain",
+      "ocean": "Ocean Waves",
+      "bells": "Temple Bells",
+      "bowl": "Singing Bowl"
+    },
+    "stats": {
+      "totalMinutes": "Total Minutes",
+      "totalSessions": "Sessions",
+      "streak": "Day Streak",
+      "todaySessions": "Today"
+    }
+  }
+}

@@ -14,6 +14,9 @@ import { CsrfGuard } from "./common/csrf.guard";
 import { StripeModule } from "./stripe/stripe.module";
 import { ArcadeModule } from "./arcade/arcade.module";
 import { MuyuModule } from "./arcade/muyu/muyu.module";
+import { FortuneCookieModule } from "./arcade/fortune-cookie/fortune-cookie.module";
+import { DestinyWheelModule } from "./arcade/destiny-wheel/destiny-wheel.module";
+import { MeditationModule } from "./arcade/meditation/meditation.module";
 import { FriendsModule } from "./friends/friends.module";
 import { AdminModule } from "./admin/admin.module";
 import { EmailModule } from "./email/email.module";
@@ -34,9 +37,10 @@ import { MetricsMiddleware } from "./common/metrics.middleware";
 import { MetricsModule } from "./metrics/metrics.module";
 import { LevelsModule } from "./levels/levels.module";
 import { EventsModule } from "./events/events.module";
+import { ChallengesModule } from "./challenges/challenges.module";
 
 @Module({
-  imports: [RedisModule, CacheModule, DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule, ReferralsModule, GiftsModule, LeaderboardModule, MetricsModule, FollowsModule, CommentsModule, ReportsModule, SearchModule, LevelsModule, EventsModule],
+  imports: [RedisModule, CacheModule, DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FortuneCookieModule, DestinyWheelModule, MeditationModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule, ReferralsModule, GiftsModule, LeaderboardModule, MetricsModule, FollowsModule, CommentsModule, ReportsModule, SearchModule, LevelsModule, EventsModule, ChallengesModule],
   providers: [
     {
       provide: APP_GUARD,
