@@ -8,11 +8,11 @@ COPY . .
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Build core-api
-RUN pnpm --filter @cyberfaith/core-api build
+# Build all packages then core-api
+RUN pnpm --filter @cyberfaith/core-api... build
 
-# Production — run from the monorepo root
+# Production — use tsx to handle TS workspace packages at runtime
 EXPOSE 3001
 ENV PORT=3001
 WORKDIR /app/apps/core-api
-CMD ["node", "dist/main"]
+CMD ["node", "--import", "tsx", "dist/main.js"]
