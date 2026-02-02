@@ -15,7 +15,10 @@
       "journal": "Journal",
       "arcade": "Arcade",
       "admin": "Admin",
-      "compatibility": "Compatibility"
+      "compatibility": "Compatibility",
+      "settings": "Settings",
+      "insights": "Insights",
+      "birthChart": "Birth Chart"
     },
     "auth": {
       "signIn": "Sign In",
@@ -529,5 +532,189 @@
     "selectFriend": "Choose a friend to compare with",
     "loadingFriends": "Loading friends...",
     "noFriends": "No friends yet. Add some friends first!"
+  },
+  "referral": {
+    "title": "Invite Friends",
+    "subtitle": "Share your referral code and earn rewards together",
+    "yourCode": "Your Referral Code",
+    "copy": "Copy Code",
+    "copied": "Copied!",
+    "shareLink": "Share Link",
+    "stats": {
+      "title": "Referral Stats",
+      "totalReferred": "Friends Referred",
+      "karmaEarned": "Karma Earned",
+      "premiumDays": "Premium Days Earned"
+    },
+    "rewards": {
+      "title": "Rewards",
+      "referrerKarma": "+100 Karma for you",
+      "referrerPremium": "+3 Days Premium for you",
+      "referredKarma": "+50 Karma for your friend"
+    },
+    "apply": {
+      "title": "Have a Referral Code?",
+      "placeholder": "Enter referral code",
+      "submit": "Apply Code",
+      "success": "Referral code applied! You earned 50 karma!",
+      "error": "Invalid or already used code"
+    },
+    "history": {
+      "title": "Your Referrals",
+      "empty": "No referrals yet. Share your code!",
+      "completed": "Completed",
+      "pending": "Pending"
+    },
+    "profileCard": {
+      "title": "Invite Friends",
+      "description": "Share your code and both earn rewards!",
+      "button": "Get Referral Link"
+    }
+  },
+  "gift": {
+    "title": "Gift a Reading",
+    "subtitle": "Send a mystical reading to someone special",
+    "selectType": "Select Reading Type",
+    "types": {
+      "tarot": "Tarot Reading",
+      "mbti": "MBTI Analysis",
+      "zodiac": "Zodiac Reading",
+      "i-ching": "I Ching Reading",
+      "four-pillars": "Four Pillars"
+    },
+    "message": {
+      "label": "Personal Message",
+      "placeholder": "Write a message for your friend..."
+    },
+    "recipientEmail": {
+      "label": "Recipient Email (optional)",
+      "placeholder": "friend@example.com"
+    },
+    "cost": "Cost: 50 Karma (free for Premium)",
+    "send": "Send Gift",
+    "success": "Gift created! Share the link with your friend.",
+    "copyLink": "Copy Gift Link",
+    "redeem": {
+      "title": "You Received a Gift!",
+      "from": "From",
+      "message": "Message",
+      "unwrap": "Unwrap Gift",
+      "unwrapping": "Unwrapping...",
+      "redeemed": "Gift Redeemed!",
+      "alreadyRedeemed": "This gift has already been redeemed",
+      "startReading": "Start Your Reading"
+    },
+    "history": {
+      "title": "Gift History",
+      "sent": "Sent",
+      "received": "Received",
+      "empty": "No gifts yet",
+      "redeemed": "Redeemed",
+      "pending": "Pending"
+    },
+    "button": "🎁 Gift This Reading"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account preferences",
+    "loginRequired": "Sign in to access settings.",
+    "saved": "Settings saved!",
+    "saveFailed": "Failed to save settings.",
+    "saving": "Saving...",
+    "accountDeleted": "Account deleted successfully.",
+    "profile": {
+      "title": "Profile",
+      "displayName": "Display Name",
+      "zodiacSign": "Zodiac Sign",
+      "selectSign": "Select a sign...",
+      "mbtiType": "MBTI Type",
+      "selectMbti": "Select MBTI type...",
+      "avatar": "Avatar"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "emailDigest": "Email Digest",
+      "push": "Push Notifications",
+      "streakReminders": "Streak Reminders"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "theme": "Theme",
+      "themes": {
+        "dark": "Dark",
+        "light": "Light",
+        "system": "System"
+      },
+      "language": "Language"
+    },
+    "privacy": {
+      "title": "Privacy",
+      "profileVisible": "Profile visible to others",
+      "readingVisible": "Reading history visible to others"
+    },
+    "account": {
+      "title": "Danger Zone",
+      "description": "Once you delete your account, there is no going back. Your data will be anonymized.",
+      "deleteButton": "Delete Account",
+      "confirmTitle": "Delete Your Account?",
+      "confirmDescription": "This action is irreversible. All your data will be anonymized and your account deactivated.",
+      "typeToConfirm": "Type DELETE to confirm",
+      "confirmDelete": "Permanently Delete"
+    }
+  },
+  "insights": {
+    "title": "Personal Insights",
+    "subtitle": "Your spiritual journey at a glance",
+    "signInPrompt": "Sign in to view your personal insights and spiritual analytics.",
+    "signIn": "Sign In",
+    "loading": "Loading insights...",
+    "noData": "No insights data available yet. Start exploring readings!",
+    "stats": {
+      "totalReadings": "Total Readings",
+      "currentStreak": "Current Streak",
+      "bestStreak": "Best Streak",
+      "totalKarma": "Total Karma",
+      "favoriteType": "Favorite Type"
+    },
+    "charts": {
+      "weeklyActivity": "Reading Activity (Last 12 Weeks)",
+      "readingTypes": "Reading Type Breakdown",
+      "moodTrend": "Mood Trend"
+    },
+    "spiritualProfile": {
+      "title": "Your Spiritual Profile",
+      "activeDay": "Most Active Day",
+      "dominantMood": "Dominant Mood",
+      "exploredTypes": "Explored Types",
+      "dedicated": "You are a dedicated spiritual seeker, consistently exploring the cosmos for deeper meaning.",
+      "growing": "Your spiritual journey is blossoming. Keep exploring to unlock deeper insights.",
+      "beginning": "Welcome to your spiritual journey. Each reading brings new understanding."
+    }
+  },
+  "birthChart": {
+    "title": "Birth Chart",
+    "subtitle": "Map your celestial blueprint at the moment of your birth",
+    "form": {
+      "date": "Birth Date",
+      "time": "Birth Time",
+      "location": "Birth City",
+      "locationPlaceholder": "e.g. New York, Tokyo, London..."
+    },
+    "calculate": "Calculate Chart",
+    "calculating": "Calculating...",
+    "error": "Failed to calculate birth chart. Please check your inputs.",
+    "share": "Share Chart",
+    "element": "Dominant Element",
+    "modality": "Dominant Modality",
+    "wheel": {
+      "title": "Natal Chart Wheel"
+    },
+    "table": {
+      "title": "Planetary Positions",
+      "planet": "Planet",
+      "sign": "Sign",
+      "degree": "Degree",
+      "interpretation": "Interpretation"
+    }
   }
 }

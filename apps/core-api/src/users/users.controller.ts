@@ -1,12 +1,13 @@
-import { Controller, Get, Patch, Body, Req, UseGuards, Inject, NotFoundException, HttpStatus } from "@nestjs/common";
+import { Controller, Get, Patch, Delete, Body, Req, UseGuards, Inject, NotFoundException, HttpStatus } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
 import { DRIZZLE } from "../db/drizzle.provider";
-import { users } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { users, userSettings, readings, journalEntries, pointsTransactions } from "../db/schema";
+import { eq, sql, desc, count, and, gte } from "drizzle-orm";
 import { AppException } from "../common/app.exception";
 import { ErrorCode } from "../common/error-codes";
 import { SetZodiacDto } from "../horoscope/dto/zodiac.dto";
+import { UpdateSettingsDto } from "./dto/update-settings.dto";
 
 interface AuthRequest extends Request {
   user: { id: string; email: string };
@@ -58,5 +59,243 @@ export class UsersController {
     }
 
     return { success: true, data: updated };
+  }
+
+  @UseGuards(AuthGuard("jwt"))
+  @Get("settings")
+  async getSettings(@Req() req: AuthRequest) {
+    const [existing] = await this.db
+      .select()
+      .from(userSettings)
+      .where(eq(userSettings.userId, req.user.id));
+
+    if (!existing) {
+      // Return defaults
+      return {
+        success: true,
+        data: {
+          displayName: null,
+          mbtiType: null,
+          notificationEmailDigest: true,
+          notificationPush: true,
+          notificationStreakReminders: true,
+          theme: "dark",
+          language: "en",
+          privacyProfileVisible: true,
+          privacyReadingVisible: true,
+        },
+      };
+    }
+
+    const { id, createdAt, updatedAt, userId, ...settings } = existing;
+    return { success: true, data: settings };
+  }
+
+  @UseGuards(AuthGuard("jwt"))
+  @Patch("settings")
+  async updateSettings(@Req() req: AuthRequest, @Body() body: UpdateSettingsDto) {
+    const updates: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(body)) {
+      if (value !== undefined) updates[key] = value;
+    }
+    if (Object.keys(updates).length === 0) {
+      return { success: true, data: {} };
+    }
+
+    updates.updatedAt = new Date();
+
+    // Upsert: try update first, then insert
+    const [existing] = await this.db
+      .select({ id: userSettings.id })
+      .from(userSettings)
+      .where(eq(userSettings.userId, req.user.id));
+
+    if (existing) {
+      await this.db
+        .update(userSettings)
+        .set(updates)
+        .where(eq(userSettings.userId, req.user.id));
+    } else {
+      await this.db
+        .insert(userSettings)
+        .values({ userId: req.user.id, ...updates });
+    }
+
+    // Also update user display name and avatar on the users table if provided
+    const userUpdates: Record<string, unknown> = {};
+    if (body.displayName !== undefined) userUpdates.name = body.displayName;
+    if (Object.keys(userUpdates).length > 0) {
+      await this.db.update(users).set(userUpdates).where(eq(users.id, req.user.id));
+    }
+
+    return { success: true, data: updates };
+  }
+
+  @UseGuards(AuthGuard("jwt"))
+  @Delete("account")
+  async deleteAccount(@Req() req: AuthRequest) {
+    const now = new Date();
+    // Soft delete: set deletedAt and anonymize
+    await this.db
+      .update(users)
+      .set({
+        deletedAt: now,
+        name: "Deleted User",
+        email: `deleted_${req.user.id}@cyberfaith.app`,
+        avatarUrl: null,
+        googleId: null,
+        isActive: false,
+      })
+      .where(eq(users.id, req.user.id));
+
+    return { success: true, message: "Account scheduled for deletion" };
+  }
+
+  @UseGuards(AuthGuard("jwt"))
+  @Get("insights")
+  async insights(@Req() req: AuthRequest) {
+    const userId = req.user.id;
+    const now = new Date();
+    const twelveWeeksAgo = new Date(now.getTime() - 12 * 7 * 24 * 60 * 60 * 1000);
+
+    // Total readings by type
+    const readingsByType = await this.db
+      .select({ type: readings.type, count: count() })
+      .from(readings)
+      .where(eq(readings.userId, userId))
+      .groupBy(readings.type);
+
+    const totalReadings = readingsByType.reduce((sum: number, r: any) => sum + Number(r.count), 0);
+    const favoriteType = readingsByType.length > 0
+      ? readingsByType.reduce((a: any, b: any) => Number(a.count) > Number(b.count) ? a : b).type
+      : null;
+
+    // Mood distribution from journal entries
+    const moodDistribution = await this.db
+      .select({ mood: journalEntries.mood, count: count() })
+      .from(journalEntries)
+      .where(eq(journalEntries.userId, userId))
+      .groupBy(journalEntries.mood);
+
+    // Reading activity per week (last 12 weeks)
+    const weeklyActivity = await this.db
+      .select({
+        week: sql<string>`to_char(date_trunc('week', ${readings.createdAt}), 'YYYY-MM-DD')`.as("week"),
+        count: count(),
+      })
+      .from(readings)
+      .where(and(eq(readings.userId, userId), gte(readings.createdAt, twelveWeeksAgo)))
+      .groupBy(sql`date_trunc('week', ${readings.createdAt})`)
+      .orderBy(sql`date_trunc('week', ${readings.createdAt})`);
+
+    // Mood trend over time (weekly)
+    const moodTrend = await this.db
+      .select({
+        week: sql<string>`to_char(date_trunc('week', ${journalEntries.createdAt}), 'YYYY-MM-DD')`.as("week"),
+        mood: journalEntries.mood,
+        count: count(),
+      })
+      .from(journalEntries)
+      .where(and(eq(journalEntries.userId, userId), gte(journalEntries.createdAt, twelveWeeksAgo)))
+      .groupBy(sql`date_trunc('week', ${journalEntries.createdAt})`, journalEntries.mood)
+      .orderBy(sql`date_trunc('week', ${journalEntries.createdAt})`);
+
+    // Points earned over time (weekly)
+    const pointsOverTime = await this.db
+      .select({
+        week: sql<string>`to_char(date_trunc('week', ${pointsTransactions.createdAt}), 'YYYY-MM-DD')`.as("week"),
+        total: sql<number>`sum(${pointsTransactions.amount})`.as("total"),
+      })
+      .from(pointsTransactions)
+      .where(and(eq(pointsTransactions.userId, userId), gte(pointsTransactions.createdAt, twelveWeeksAgo)))
+      .groupBy(sql`date_trunc('week', ${pointsTransactions.createdAt})`)
+      .orderBy(sql`date_trunc('week', ${pointsTransactions.createdAt})`);
+
+    // Total karma (all-time points)
+    const [karmaRow] = await this.db
+      .select({ total: sql<number>`coalesce(sum(${pointsTransactions.amount}), 0)`.as("total") })
+      .from(pointsTransactions)
+      .where(eq(pointsTransactions.userId, userId));
+
+    // Most active day of week
+    const dayOfWeek = await this.db
+      .select({
+        day: sql<number>`extract(dow from ${readings.createdAt})`.as("day"),
+        count: count(),
+      })
+      .from(readings)
+      .where(eq(readings.userId, userId))
+      .groupBy(sql`extract(dow from ${readings.createdAt})`)
+      .orderBy(desc(count()));
+
+    const mostActiveDay = dayOfWeek.length > 0
+      ? ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][Number(dayOfWeek[0].day)]
+      : null;
+
+    // Streak calculation: consecutive days with at least one reading
+    const readingDates = await this.db
+      .select({ date: sql<string>`to_char(${readings.createdAt}::date, 'YYYY-MM-DD')`.as("date") })
+      .from(readings)
+      .where(eq(readings.userId, userId))
+      .groupBy(sql`${readings.createdAt}::date`)
+      .orderBy(desc(sql`${readings.createdAt}::date`));
+
+    let currentStreak = 0;
+    let bestStreak = 0;
+    let streak = 0;
+    const today = now.toISOString().slice(0, 10);
+    const dates = readingDates.map((r: any) => r.date);
+
+    if (dates.length > 0) {
+      // Check if today or yesterday is the start
+      const firstDate = dates[0];
+      const diffFromToday = Math.floor((now.getTime() - new Date(firstDate).getTime()) / (24 * 60 * 60 * 1000));
+      if (diffFromToday > 1) {
+        currentStreak = 0;
+      } else {
+        streak = 1;
+        for (let i = 1; i < dates.length; i++) {
+          const prev = new Date(dates[i - 1]).getTime();
+          const curr = new Date(dates[i]).getTime();
+          if (prev - curr === 24 * 60 * 60 * 1000) {
+            streak++;
+          } else {
+            break;
+          }
+        }
+        currentStreak = streak;
+      }
+
+      // Best streak
+      streak = 1;
+      bestStreak = 1;
+      for (let i = 1; i < dates.length; i++) {
+        const prev = new Date(dates[i - 1]).getTime();
+        const curr = new Date(dates[i]).getTime();
+        if (prev - curr === 24 * 60 * 60 * 1000) {
+          streak++;
+          bestStreak = Math.max(bestStreak, streak);
+        } else {
+          streak = 1;
+        }
+      }
+    }
+
+    return {
+      success: true,
+      data: {
+        totalReadings,
+        readingsByType: readingsByType.map((r: any) => ({ type: r.type, count: Number(r.count) })),
+        favoriteType,
+        moodDistribution: moodDistribution.map((m: any) => ({ mood: m.mood, count: Number(m.count) })),
+        weeklyActivity: weeklyActivity.map((w: any) => ({ week: w.week, count: Number(w.count) })),
+        moodTrend: moodTrend.map((m: any) => ({ week: m.week, mood: m.mood, count: Number(m.count) })),
+        pointsOverTime: pointsOverTime.map((p: any) => ({ week: p.week, total: Number(p.total) })),
+        totalKarma: Number(karmaRow?.total ?? 0),
+        currentStreak,
+        bestStreak,
+        mostActiveDay,
+      },
+    };
   }
 }

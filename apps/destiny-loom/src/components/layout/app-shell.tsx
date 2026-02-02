@@ -17,8 +17,11 @@ const navItems = [
   { key: "compatibility", href: "/compatibility", icon: "💞" },
   { key: "community", href: "/community", icon: "🌐" },
   { key: "journal", href: "/journal", icon: "📓" },
+  { key: "insights", href: "/insights", icon: "📊" },
+  { key: "birthChart", href: "/birth-chart", icon: "🌌" },
   { key: "arcade", href: "/arcade", icon: "🕹️" },
   { key: "profile", href: "/profile", icon: "👤" },
+  { key: "settings", href: "/settings", icon: "⚙️" },
 ] as const;
 
 const adminNavItem = { key: "admin", href: "/admin", icon: "⚡" } as const;

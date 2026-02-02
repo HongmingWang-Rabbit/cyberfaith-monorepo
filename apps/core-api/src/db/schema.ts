@@ -1,5 +1,5 @@
 import { pgTable, idColumn, timestampColumns, varchar, text, integer, boolean, jsonb, uniqueIndex, timestamp } from "@cyberfaith/db-utils";
-import { pgEnum } from "drizzle-orm/pg-core";
+import { pgEnum, uuid } from "drizzle-orm/pg-core";
 
 export const userRoleEnum = pgEnum("user_role", ["user", "admin"]);
 
@@ -18,6 +18,52 @@ export const users = pgTable("users", {
   emailNotifications: boolean("email_notifications").default(true).notNull(),
   role: userRoleEnum("role").default("user").notNull(),
   zodiacSign: varchar("zodiac_sign", { length: 20 }),
+  referralCode: varchar("referral_code", { length: 20 }).unique(),
+  premiumUntil: timestamp("premium_until"),
+  karma: integer("karma").default(0).notNull(),
+  deletedAt: timestamp("deleted_at"),
+});
+
+export const userSettings = pgTable("user_settings", {
+  id: idColumn(),
+  ...timestampColumns(),
+  userId: varchar("user_id", { length: 36 }).notNull().unique(),
+  displayName: varchar("display_name", { length: 255 }),
+  mbtiType: varchar("mbti_type", { length: 4 }),
+  notificationEmailDigest: boolean("notification_email_digest").default(true).notNull(),
+  notificationPush: boolean("notification_push").default(true).notNull(),
+  notificationStreakReminders: boolean("notification_streak_reminders").default(true).notNull(),
+  theme: varchar("theme", { length: 10 }).default("dark").notNull(),
+  language: varchar("language", { length: 5 }).default("en").notNull(),
+  privacyProfileVisible: boolean("privacy_profile_visible").default(true).notNull(),
+  privacyReadingVisible: boolean("privacy_reading_visible").default(true).notNull(),
+});
+
+export const referralStatusEnum = pgEnum("referral_status", ["pending", "completed"]);
+
+export const referrals = pgTable("referrals", {
+  id: idColumn(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  referrerId: varchar("referrer_id", { length: 36 }).notNull(),
+  referredUserId: varchar("referred_user_id", { length: 36 }).notNull(),
+  code: varchar("code", { length: 20 }).notNull(),
+  status: referralStatusEnum("status").default("pending").notNull(),
+  karmaAwarded: integer("karma_awarded").default(0).notNull(),
+  premiumDaysAwarded: integer("premium_days_awarded").default(0).notNull(),
+});
+
+export const giftReadings = pgTable("gift_readings", {
+  id: idColumn(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  senderId: varchar("sender_id", { length: 36 }).notNull(),
+  recipientEmail: varchar("recipient_email", { length: 255 }),
+  recipientUserId: varchar("recipient_user_id", { length: 36 }),
+  readingType: varchar("reading_type", { length: 20 }).notNull(),
+  message: text("message"),
+  redeemCode: varchar("redeem_code", { length: 36 }).notNull().unique(),
+  redeemed: boolean("redeemed").default(false).notNull(),
+  redeemedAt: timestamp("redeemed_at"),
+  redeemedByUserId: varchar("redeemed_by_user_id", { length: 36 }),
 });
 
 export const pointsTransactions = pgTable("points_transactions", {

@@ -15,7 +15,10 @@
       "journal": "日记",
       "arcade": "游戏厅",
       "admin": "管理后台",
-      "compatibility": "星座配对"
+      "compatibility": "星座配对",
+      "settings": "设置",
+      "insights": "数据洞察",
+      "birthChart": "星盘"
     },
     "auth": {
       "signIn": "登录",
@@ -529,5 +532,189 @@
     "selectFriend": "选择一位好友进行配对",
     "loadingFriends": "加载好友列表...",
     "noFriends": "还没有好友，先添加一些好友吧！"
+  },
+  "referral": {
+    "title": "邀请好友",
+    "subtitle": "分享你的推荐码，一起获得奖励",
+    "yourCode": "你的推荐码",
+    "copy": "复制",
+    "copied": "已复制！",
+    "shareLink": "分享链接",
+    "stats": {
+      "title": "推荐统计",
+      "totalReferred": "已推荐好友",
+      "karmaEarned": "获得功德",
+      "premiumDays": "获得高级天数"
+    },
+    "rewards": {
+      "title": "奖励",
+      "referrerKarma": "你获得 +100 功德",
+      "referrerPremium": "你获得 +3 天高级会员",
+      "referredKarma": "好友获得 +50 功德"
+    },
+    "apply": {
+      "title": "有推荐码？",
+      "placeholder": "输入推荐码",
+      "submit": "使用推荐码",
+      "success": "推荐码已使用！你获得了 50 功德！",
+      "error": "无效或已使用的推荐码"
+    },
+    "history": {
+      "title": "你的推荐",
+      "empty": "还没有推荐。分享你的推荐码吧！",
+      "completed": "已完成",
+      "pending": "待定"
+    },
+    "profileCard": {
+      "title": "邀请好友",
+      "description": "分享推荐码，双方都能获得奖励！",
+      "button": "获取推荐链接"
+    }
+  },
+  "gift": {
+    "title": "赠送解读",
+    "subtitle": "为特别的人送上一次神秘解读",
+    "selectType": "选择解读类型",
+    "types": {
+      "tarot": "塔罗牌解读",
+      "mbti": "MBTI 分析",
+      "zodiac": "星座解读",
+      "i-ching": "易经解读",
+      "four-pillars": "八字解读"
+    },
+    "message": {
+      "label": "个人留言",
+      "placeholder": "给朋友写一条留言..."
+    },
+    "recipientEmail": {
+      "label": "收件人邮箱（可选）",
+      "placeholder": "friend@example.com"
+    },
+    "cost": "费用：50 功德（高级会员免费）",
+    "send": "发送礼物",
+    "success": "礼物已创建！将链接分享给朋友。",
+    "copyLink": "复制礼物链接",
+    "redeem": {
+      "title": "你收到了一份礼物！",
+      "from": "来自",
+      "message": "留言",
+      "unwrap": "打开礼物",
+      "unwrapping": "正在打开...",
+      "redeemed": "礼物已领取！",
+      "alreadyRedeemed": "这份礼物已经被领取了",
+      "startReading": "开始你的解读"
+    },
+    "history": {
+      "title": "礼物记录",
+      "sent": "已发送",
+      "received": "已收到",
+      "empty": "还没有礼物",
+      "redeemed": "已领取",
+      "pending": "待领取"
+    },
+    "button": "🎁 赠送此解读"
+  },
+  "settings": {
+    "title": "设置",
+    "subtitle": "管理您的账户偏好",
+    "loginRequired": "请登录以访问设置。",
+    "saved": "设置已保存！",
+    "saveFailed": "保存设置失败。",
+    "saving": "保存中...",
+    "accountDeleted": "账户已成功删除。",
+    "profile": {
+      "title": "个人资料",
+      "displayName": "显示名称",
+      "zodiacSign": "星座",
+      "selectSign": "选择星座...",
+      "mbtiType": "MBTI 类型",
+      "selectMbti": "选择 MBTI 类型...",
+      "avatar": "头像"
+    },
+    "notifications": {
+      "title": "通知",
+      "emailDigest": "邮件摘要",
+      "push": "推送通知",
+      "streakReminders": "连续打卡提醒"
+    },
+    "appearance": {
+      "title": "外观",
+      "theme": "主题",
+      "themes": {
+        "dark": "深色",
+        "light": "浅色",
+        "system": "跟随系统"
+      },
+      "language": "语言"
+    },
+    "privacy": {
+      "title": "隐私",
+      "profileVisible": "个人资料对他人可见",
+      "readingVisible": "占卜记录对他人可见"
+    },
+    "account": {
+      "title": "危险区域",
+      "description": "删除账户后将无法恢复。您的数据将被匿名化处理。",
+      "deleteButton": "删除账户",
+      "confirmTitle": "确认删除账户？",
+      "confirmDescription": "此操作不可逆。您的所有数据将被匿名化，账户将被停用。",
+      "typeToConfirm": "输入 DELETE 确认",
+      "confirmDelete": "永久删除"
+    }
+  },
+  "insights": {
+    "title": "个人洞察",
+    "subtitle": "你的灵性旅程一览",
+    "signInPrompt": "登录查看你的个人洞察和灵性分析。",
+    "signIn": "登录",
+    "loading": "加载中...",
+    "noData": "暂无数据。开始探索占卜吧！",
+    "stats": {
+      "totalReadings": "总占卜次数",
+      "currentStreak": "当前连续",
+      "bestStreak": "最佳连续",
+      "totalKarma": "总业力值",
+      "favoriteType": "最常用类型"
+    },
+    "charts": {
+      "weeklyActivity": "占卜活动（近12周）",
+      "readingTypes": "占卜类型分布",
+      "moodTrend": "心情趋势"
+    },
+    "spiritualProfile": {
+      "title": "你的灵性档案",
+      "activeDay": "最活跃的日子",
+      "dominantMood": "主导心情",
+      "exploredTypes": "已探索类型",
+      "dedicated": "你是一位忠诚的灵性探索者，持续探索宇宙以寻求更深层的意义。",
+      "growing": "你的灵性之旅正在绽放。继续探索以解锁更深层的洞察。",
+      "beginning": "欢迎来到你的灵性旅程。每次占卜都带来新的理解。"
+    }
+  },
+  "birthChart": {
+    "title": "星盘",
+    "subtitle": "绘制你出生时刻的天体蓝图",
+    "form": {
+      "date": "出生日期",
+      "time": "出生时间",
+      "location": "出生城市",
+      "locationPlaceholder": "例如：北京、上海、纽约..."
+    },
+    "calculate": "计算星盘",
+    "calculating": "计算中...",
+    "error": "星盘计算失败，请检查输入。",
+    "share": "分享星盘",
+    "element": "主导元素",
+    "modality": "主导模式",
+    "wheel": {
+      "title": "本命盘"
+    },
+    "table": {
+      "title": "行星位置",
+      "planet": "行星",
+      "sign": "星座",
+      "degree": "度数",
+      "interpretation": "解读"
+    }
   }
 }
