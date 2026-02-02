@@ -4,7 +4,7 @@
  */
 export function saveReadingAsync(
   authHeader: string | null,
-  type: "mbti" | "tarot" | "i-ching" | "four-pillars" | "zodiac",
+  type: "mbti" | "tarot" | "i-ching" | "four-pillars" | "zodiac" | "dream",
   input: unknown,
   result: unknown,
   locale?: string | null

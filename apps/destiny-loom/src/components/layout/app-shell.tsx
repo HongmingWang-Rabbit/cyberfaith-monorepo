@@ -13,7 +13,10 @@ const navItems = [
   { key: "zodiac", href: "/zodiac", icon: "⭐" },
   { key: "iching", href: "/i-ching", icon: "☯️" },
   { key: "fourPillars", href: "/four-pillars", icon: "🏛️" },
+  { key: "dream", href: "/dream", icon: "🌙" },
+  { key: "compatibility", href: "/compatibility", icon: "💞" },
   { key: "community", href: "/community", icon: "🌐" },
+  { key: "journal", href: "/journal", icon: "📓" },
   { key: "arcade", href: "/arcade", icon: "🕹️" },
   { key: "profile", href: "/profile", icon: "👤" },
 ] as const;

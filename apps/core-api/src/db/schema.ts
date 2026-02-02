@@ -130,6 +130,29 @@ export const pushSubscriptions = pgTable("push_subscriptions", {
   auth: text("auth").notNull(),
 });
 
+export const compatibilityResults = pgTable("compatibility_results", {
+  id: idColumn(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  sign1: varchar("sign1", { length: 20 }).notNull(),
+  sign2: varchar("sign2", { length: 20 }).notNull(),
+  mbtiType1: varchar("mbti_type1", { length: 4 }),
+  mbtiType2: varchar("mbti_type2", { length: 4 }),
+  content: jsonb("content").notNull(),
+}, (table) => ({
+  uniquePair: uniqueIndex("compatibility_pair_unique").on(table.sign1, table.sign2, table.mbtiType1, table.mbtiType2),
+}));
+
+export const journalMoodEnum = pgEnum("journal_mood", ["happy", "neutral", "sad", "anxious", "hopeful", "confused"]);
+
+export const journalEntries = pgTable("journal_entries", {
+  id: idColumn(),
+  ...timestampColumns(),
+  readingId: varchar("reading_id", { length: 36 }).notNull(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  content: text("content").notNull(),
+  mood: journalMoodEnum("mood"),
+});
+
 export const friendshipStatusEnum = pgEnum("friendship_status", ["pending", "accepted", "rejected"]);
 
 export const friendships = pgTable("friendships", {
