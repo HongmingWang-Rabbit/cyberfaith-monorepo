@@ -7,7 +7,8 @@
     "build": "nest build",
     "start": "node dist/main",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts"
   },
   "dependencies": {
     "@cyberfaith/db-utils": "workspace:*",
@@ -29,7 +30,8 @@
     "postgres": "^3.4.5",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "stripe": "^20.3.0"
+    "stripe": "^20.3.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@cyberfaith/config-typescript": "workspace:*",
