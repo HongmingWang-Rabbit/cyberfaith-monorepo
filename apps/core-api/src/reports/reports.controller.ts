@@ -5,8 +5,8 @@ import {
 import { AuthGuard } from "@nestjs/passport";
 import { AdminGuard } from "../admin/admin.guard";
 import { DRIZZLE } from "../db/drizzle.provider";
-import { reports, users } from "../db/schema";
-import { eq, desc, count } from "drizzle-orm";
+import { reports, users, comments } from "../db/schema";
+import { eq, and, desc, count } from "drizzle-orm";
 import { AppException } from "../common/app.exception";
 import { ErrorCode } from "../common/error-codes";
 import { CreateReportDto, UpdateReportStatusDto } from "./dto";
@@ -34,6 +34,20 @@ export class ReportsController {
         details: body.details ?? null,
       })
       .returning();
+
+    // Auto-hide comments with 3+ reports
+    if (body.targetType === "comment") {
+      const [reportCount] = await this.db
+        .select({ count: count() })
+        .from(reports)
+        .where(and(eq(reports.targetType, "comment"), eq(reports.targetId, body.targetId)));
+      if (Number(reportCount?.count ?? 0) >= 3) {
+        await this.db
+          .update(comments)
+          .set({ deletedAt: new Date() })
+          .where(eq(comments.id, body.targetId));
+      }
+    }
 
     return { success: true, data: report };
   }

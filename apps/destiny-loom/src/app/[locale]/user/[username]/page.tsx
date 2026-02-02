@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ProfileFollowButton, ProfileReportButton } from "./client-parts";
+import { ProfileFollowButton, ProfileReportButton, ProfileBadges } from "./client-parts";
 
 const CORE_API_URL = process.env.CORE_API_URL || "http://localhost:4000";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -157,6 +157,14 @@ export default async function PublicProfilePage({ params }: Props) {
                     ))}
                   </div>
                 </div>
+              </>
+            )}
+
+            {/* Badges */}
+            {profile.id && (
+              <>
+                <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+                <ProfileBadges userId={profile.id} />
               </>
             )}
 

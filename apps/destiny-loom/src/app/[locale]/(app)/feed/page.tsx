@@ -64,6 +64,15 @@ export default function FeedPage() {
     if (isAuthenticated && token) loadPage(1);
   }, [isAuthenticated, token, loadPage]);
 
+  // Real-time polling: refresh first page every 30s
+  useEffect(() => {
+    if (!isAuthenticated || !token) return;
+    const interval = setInterval(() => {
+      if (page === 1) loadPage(1);
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [isAuthenticated, token, page, loadPage]);
+
   // Infinite scroll
   useEffect(() => {
     if (!observerRef.current || !hasMore) return;
