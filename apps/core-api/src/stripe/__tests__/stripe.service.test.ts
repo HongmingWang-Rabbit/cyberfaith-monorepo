@@ -34,6 +34,7 @@ describe("StripeService", () => {
   let mockDb: any;
 
   beforeEach(() => {
+    process.env.STRIPE_SECRET_KEY = "sk_test_fake";
     mockDb = {
       select: vi.fn().mockReturnThis(),
       from: vi.fn().mockReturnThis(),
