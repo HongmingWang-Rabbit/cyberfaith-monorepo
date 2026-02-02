@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getNumerologyPrompt } from "@/lib/prompts";
 import { calculateNumerology } from "@/lib/numerology";
-import { errorResponse, withRateLimitHeaders, parseBody, getAIProvider, getUserTier } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, parseBody, getUserTier } from "@/lib/api-utils";
 import { saveReadingAsync } from "@/lib/save-reading";
+import { proxyToAI } from "@/lib/ai-proxy";
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
     if (!fullName || typeof fullName !== "string" || fullName.trim().length < 2) {
       return withRateLimitHeaders(errorResponse("Full name is required (min 2 characters)", 400));
     }
-
     if (!birthdate || !/^\d{4}-\d{2}-\d{2}$/.test(birthdate)) {
       return withRateLimitHeaders(errorResponse("Birthdate is required (YYYY-MM-DD)", 400));
     }
@@ -26,44 +25,26 @@ export async function POST(request: NextRequest) {
     const numbers = calculateNumerology(fullName.trim(), birthdate);
     const authHeader = request.headers.get("authorization");
     const tier = await getUserTier(authHeader);
-    const { provider: ai, unavailableResponse, tierConfig } = getAIProvider(tier);
-    if (!ai) return withRateLimitHeaders(unavailableResponse!);
 
-    const prompt = getNumerologyPrompt(
-      fullName.trim(),
-      numbers.lifePathNumber,
-      numbers.expressionNumber,
-      numbers.soulUrgeNumber,
-      locale,
-    );
-
-    const systemPrompt = `You are CyberFaith's Numerology Oracle — decoding destiny through digital numerical frequencies. ${tierConfig.systemPromptSuffix}`;
-
-    const aiResult = await ai.generateWithUsage(prompt, {
-      temperature: 0.8,
-      maxTokens: tierConfig.maxTokens,
-      systemPrompt,
-    });
-
-    let interpretation;
-    try {
-      interpretation = JSON.parse(aiResult.text);
-    } catch {
-      interpretation = { overview: aiResult.text };
-    }
-
-    const responseData = {
-      numbers,
-      interpretation,
+    const { data, error: aiError, status } = await proxyToAI("numerology", {
       fullName: fullName.trim(),
-      birthdate,
-      aiTier: tier,
+      lifePathNumber: numbers.lifePathNumber,
+      expressionNumber: numbers.expressionNumber,
+      soulUrgeNumber: numbers.soulUrgeNumber,
+      locale, tier,
+    }, authHeader);
+
+    if (aiError) return withRateLimitHeaders(errorResponse(aiError, status || 503));
+
+    const interpretation = data.result;
+    const responseData = {
+      numbers, interpretation, fullName: fullName.trim(), birthdate, aiTier: tier,
     };
 
     saveReadingAsync(authHeader, "numerology" as any, { fullName, birthdate }, responseData, locale);
 
     return withRateLimitHeaders(
-      NextResponse.json({ ...responseData, usage: aiResult.usage }),
+      NextResponse.json({ ...responseData, usage: data.usage }),
     );
   } catch (error: unknown) {
     console.error("Numerology reading error:", error);

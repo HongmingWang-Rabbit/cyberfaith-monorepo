@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDailyAffirmationPrompt } from "@/lib/prompts";
-import { errorResponse, withRateLimitHeaders, getAIProvider, getUserTier } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, getUserTier } from "@/lib/api-utils";
+import { proxyToAI } from "@/lib/ai-proxy";
 
 // Simple in-memory cache: userId -> { date, data }
 const cache = new Map<string, { date: string; data: unknown }>();
@@ -46,31 +46,19 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const { provider: ai, unavailableResponse, tierConfig } = getAIProvider(tier);
-    if (!ai) return withRateLimitHeaders(unavailableResponse!);
+    const { data, error: aiError, status } = await proxyToAI("affirmations", {
+      zodiacSign, recentMood, locale, tier,
+    }, authHeader);
 
-    const prompt = getDailyAffirmationPrompt(zodiacSign, recentMood, locale);
-    const systemPrompt = `You are CyberFaith's Affirmation Weaver — channeling cosmic energy into empowering digital mantras. ${tierConfig.systemPromptSuffix}`;
+    if (aiError) return withRateLimitHeaders(errorResponse(aiError, status || 503));
 
-    const aiResult = await ai.generateWithUsage(prompt, {
-      temperature: 0.9,
-      maxTokens: tierConfig.maxTokens,
-      systemPrompt,
-    });
-
-    let affirmations;
-    try {
-      affirmations = JSON.parse(aiResult.text);
-    } catch {
-      affirmations = { affirmations: [{ text: aiResult.text, theme: "wisdom", emoji: "✨" }] };
-    }
-
+    const affirmations = data.result;
     const responseData = {
       ...affirmations,
       date: today,
       zodiacSign,
       aiTier: tier,
-      usage: aiResult.usage,
+      usage: data.usage,
     };
 
     // Cache for the day

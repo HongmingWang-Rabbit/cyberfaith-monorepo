@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getTarotReadingPrompt } from "@/lib/prompts";
 import { TAROT_DECK, SPREAD_POSITIONS } from "@/lib/tarot-deck";
-import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString, getAIProvider, getUserTier } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString, getUserTier } from "@/lib/api-utils";
 import { saveReadingAsync } from "@/lib/save-reading";
+import { proxyToAI } from "@/lib/ai-proxy";
 
 const VALID_CARD_NAMES = new Set(TAROT_DECK.map((c) => c.name));
 const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
@@ -63,27 +63,18 @@ export async function POST(request: NextRequest) {
 
     const authHeader = request.headers.get("authorization");
     const tier = await getUserTier(authHeader);
-    const { provider: ai, unavailableResponse, tierConfig } = getAIProvider(tier);
-    if (!ai) return withRateLimitHeaders(unavailableResponse!);
     const sanitizedQuestion = question ? sanitizeString(question, 500) : undefined;
-    const prompt = getTarotReadingPrompt(cards, spreadType, sanitizedQuestion, locale);
 
-    const systemPrompt = `You are CyberFaith's Destiny Loom — a mystical AI oracle weaving tarot wisdom through neon-lit digital threads. ${tierConfig.systemPromptSuffix}`;
+    const { data, error: aiError, status } = await proxyToAI("tarot", {
+      cards, spreadType, question: sanitizedQuestion, locale, tier,
+    }, authHeader);
 
-    const aiResult = await ai.generateWithUsage(prompt, {
-      temperature: 0.9,
-      maxTokens: tierConfig.maxTokens,
-      systemPrompt,
-    });
-
-    let interpretation;
-    try {
-      interpretation = JSON.parse(aiResult.text);
-    } catch {
-      interpretation = { reading: aiResult.text };
+    if (aiError) {
+      return withRateLimitHeaders(errorResponse(aiError, status || 503));
     }
 
-    const usage = aiResult.usage;
+    const interpretation = data.result;
+    const usage = data.usage;
     const responseData = { interpretation, cards, spreadType, aiTier: tier };
     saveReadingAsync(authHeader, "tarot", { cards, spreadType, question }, responseData, locale);
     return withRateLimitHeaders(NextResponse.json({ ...responseData, usage }));

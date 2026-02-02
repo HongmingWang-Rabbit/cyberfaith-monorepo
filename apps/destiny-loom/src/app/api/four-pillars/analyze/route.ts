@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getFourPillarsPrompt } from "@/lib/prompts";
 import type { FourPillarsResult } from "@/lib/four-pillars";
-import { errorResponse, withRateLimitHeaders, parseBody, getAIProvider, getUserTier } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, parseBody, getUserTier } from "@/lib/api-utils";
 import { saveReadingAsync } from "@/lib/save-reading";
+import { proxyToAI } from "@/lib/ai-proxy";
 
 const VALID_LOCALES = new Set(["en", "zh", "zh-CN", "zh-TW"]);
 const VALID_GENDERS = new Set(["male", "female", "other"]);
@@ -23,37 +23,24 @@ export async function POST(request: NextRequest) {
         errorResponse("Invalid pillars", 400, "Valid pillars object with year, month, day, hour is required")
       );
     }
-
     if (gender && !VALID_GENDERS.has(gender)) {
       return withRateLimitHeaders(errorResponse("Invalid gender", 400, "Must be male, female, or other"));
     }
-
     if (locale && !VALID_LOCALES.has(locale)) {
       return withRateLimitHeaders(errorResponse("Invalid locale", 400, "Must be one of: en, zh, zh-CN, zh-TW"));
     }
 
     const authHeader = request.headers.get("authorization");
     const tier = await getUserTier(authHeader);
-    const { provider: ai, unavailableResponse, tierConfig } = getAIProvider(tier);
-    if (!ai) return withRateLimitHeaders(unavailableResponse!);
-    const prompt = getFourPillarsPrompt(pillars, gender || "other", locale);
 
-    const systemPrompt = `You are CyberFaith's Destiny Loom — a BaZi master weaving fate analysis through neon-lit digital threads. ${tierConfig.systemPromptSuffix}`;
+    const { data, error: aiError, status } = await proxyToAI("four-pillars", {
+      pillars, gender: gender || "other", locale, tier,
+    }, authHeader);
 
-    const aiResult = await ai.generateWithUsage(prompt, {
-      temperature: 0.85,
-      maxTokens: tierConfig.maxTokens,
-      systemPrompt,
-    });
+    if (aiError) return withRateLimitHeaders(errorResponse(aiError, status || 503));
 
-    let interpretation;
-    try {
-      interpretation = JSON.parse(aiResult.text);
-    } catch {
-      interpretation = { reading: aiResult.text };
-    }
-
-    const usage = aiResult.usage;
+    const interpretation = data.result;
+    const usage = data.usage;
     const responseData = { interpretation, pillars, aiTier: tier };
     saveReadingAsync(authHeader, "four-pillars", { pillars, gender }, responseData, locale);
     return withRateLimitHeaders(NextResponse.json({ ...responseData, usage }));

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDreamInterpretationPrompt } from "@/lib/prompts";
-import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString, getAIProvider, getUserTier } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, parseBody, sanitizeString, getUserTier } from "@/lib/api-utils";
 import { saveReadingAsync } from "@/lib/save-reading";
+import { proxyToAI } from "@/lib/ai-proxy";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +15,6 @@ export async function POST(request: NextRequest) {
         errorResponse("Dream description is required (minimum 10 characters)", 400)
       );
     }
-
     if (dreamText.length > 3000) {
       return withRateLimitHeaders(
         errorResponse("Dream description too long (maximum 3000 characters)", 400)
@@ -24,28 +23,16 @@ export async function POST(request: NextRequest) {
 
     const authHeader = request.headers.get("authorization");
     const tier = await getUserTier(authHeader);
-    const { provider: ai, unavailableResponse, tierConfig } = getAIProvider(tier);
-    if (!ai) return withRateLimitHeaders(unavailableResponse!);
-
     const sanitized = sanitizeString(dreamText, 3000);
-    const prompt = getDreamInterpretationPrompt(sanitized, locale);
 
-    const systemPrompt = `You are CyberFaith's Dream Oracle — a mystical AI that interprets dreams through the lens of psychology and digital mysticism. ${tierConfig.systemPromptSuffix}`;
+    const { data, error: aiError, status } = await proxyToAI("dream", {
+      dreamText: sanitized, locale, tier,
+    }, authHeader);
 
-    const aiResult = await ai.generateWithUsage(prompt, {
-      temperature: 0.9,
-      maxTokens: tierConfig.maxTokens,
-      systemPrompt,
-    });
+    if (aiError) return withRateLimitHeaders(errorResponse(aiError, status || 503));
 
-    let interpretation;
-    try {
-      interpretation = JSON.parse(aiResult.text);
-    } catch {
-      interpretation = { reading: aiResult.text };
-    }
-
-    const usage = aiResult.usage;
+    const interpretation = data.result;
+    const usage = data.usage;
     const responseData = { interpretation, dreamText: sanitized, aiTier: tier };
     saveReadingAsync(authHeader, "dream", { dreamText: sanitized }, responseData, locale);
     return withRateLimitHeaders(NextResponse.json({ ...responseData, usage }));

@@ -39,9 +39,10 @@ import { LevelsModule } from "./levels/levels.module";
 import { EventsModule } from "./events/events.module";
 import { ChallengesModule } from "./challenges/challenges.module";
 import { BadgesModule } from "./badges/badges.module";
+import { AiModule } from "./ai/ai.module";
 
 @Module({
-  imports: [RedisModule, CacheModule, DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FortuneCookieModule, DestinyWheelModule, MeditationModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule, ReferralsModule, GiftsModule, LeaderboardModule, MetricsModule, FollowsModule, CommentsModule, ReportsModule, SearchModule, LevelsModule, EventsModule, ChallengesModule, BadgesModule],
+  imports: [RedisModule, CacheModule, DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FortuneCookieModule, DestinyWheelModule, MeditationModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule, ReferralsModule, GiftsModule, LeaderboardModule, MetricsModule, FollowsModule, CommentsModule, ReportsModule, SearchModule, LevelsModule, EventsModule, ChallengesModule, BadgesModule, AiModule],
   providers: [
     {
       provide: APP_GUARD,

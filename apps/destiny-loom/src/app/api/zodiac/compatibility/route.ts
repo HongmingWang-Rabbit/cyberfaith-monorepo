@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCompatibilityPrompt } from "@/lib/prompts";
-import { errorResponse, withRateLimitHeaders, parseBody, getAIProvider } from "@/lib/api-utils";
+import { errorResponse, withRateLimitHeaders, parseBody } from "@/lib/api-utils";
+import { proxyToAI } from "@/lib/ai-proxy";
 
 const VALID_SIGNS = new Set([
   "aries", "taurus", "gemini", "cancer", "leo", "virgo",
@@ -72,32 +72,19 @@ export async function POST(request: NextRequest) {
       // Cache miss or core-api unavailable — proceed with AI
     }
 
-    const { provider: ai, unavailableResponse } = getAIProvider();
-    if (!ai) return withRateLimitHeaders(unavailableResponse!);
+    const authHeader = request.headers.get("authorization");
 
-    const mbtiContext = mbtiType1 || mbtiType2
-      ? `\n\nAlso factor in MBTI types: ${mbtiType1 ? `Person 1 is ${mbtiType1}` : ""}${mbtiType1 && mbtiType2 ? ", " : ""}${mbtiType2 ? `Person 2 is ${mbtiType2}` : ""}.
-Include how their MBTI types interact with their zodiac compatibility.`
-      : "";
+    const { data, error: aiError, status } = await proxyToAI("zodiac-compatibility", {
+      sign1: sign1.toLowerCase(),
+      sign2: sign2.toLowerCase(),
+      mbtiType1: mbtiType1?.toUpperCase(),
+      mbtiType2: mbtiType2?.toUpperCase(),
+      locale,
+    }, authHeader);
 
-    const prompt = getCompatibilityPrompt(sign1.toLowerCase(), sign2.toLowerCase(), locale) + mbtiContext +
-      `\n\nAlso include these additional fields in the JSON:
-  "loveScore": 0-100,
-  "friendshipScore": 0-100,
-  "workScore": 0-100`;
+    if (aiError) return withRateLimitHeaders(errorResponse(aiError, status || 503));
 
-    const aiResult = await ai.generateWithUsage(prompt, {
-      temperature: 0.85,
-      maxTokens: 2048,
-      systemPrompt: "You are CyberFaith's Celestial Navigator — analyzing cosmic bonds between souls.",
-    });
-
-    let compatibility;
-    try {
-      compatibility = JSON.parse(aiResult.text);
-    } catch {
-      compatibility = { analysis: aiResult.text, overallScore: 50 };
-    }
+    const compatibility = data.result;
 
     // Save to cache asynchronously
     fetch(`${CORE_API_URL}/readings/compatibility/save`, {
@@ -117,7 +104,7 @@ Include how their MBTI types interact with their zodiac compatibility.`
         compatibility,
         sign1: sign1.toLowerCase(),
         sign2: sign2.toLowerCase(),
-        usage: aiResult.usage,
+        usage: data.usage,
         cached: false,
       }),
     );
