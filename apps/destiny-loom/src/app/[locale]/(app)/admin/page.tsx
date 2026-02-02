@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { AdminUsersTable } from "./users-table";
 import { AdminReadingsTable } from "./readings-table";
+import { AdminReportsTable } from "./reports-table";
 
 interface Stats {
   totalUsers: number;
@@ -37,7 +38,7 @@ export default function AdminDashboard() {
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState<"dashboard" | "users" | "readings" | "metrics">("dashboard");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "users" | "readings" | "metrics" | "reports">("dashboard");
 
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || !(user as any)?.role || (user as any)?.role !== "admin")) {
@@ -96,6 +97,7 @@ export default function AdminDashboard() {
     { key: "metrics" as const, label: "Metrics", icon: "⚡" },
     { key: "users" as const, label: t("tabs.users"), icon: "👥" },
     { key: "readings" as const, label: t("tabs.readings"), icon: "🔮" },
+    { key: "reports" as const, label: t("tabs.reports"), icon: "🚩" },
   ];
 
   return (
@@ -209,6 +211,7 @@ export default function AdminDashboard() {
 
       {/* Readings tab */}
       {activeTab === "readings" && <AdminReadingsTable />}
+      {activeTab === "reports" && <AdminReportsTable />}
     </div>
   );
 }
