@@ -23,13 +23,16 @@ import { ReferralsModule } from "./referrals/referrals.module";
 import { GiftsModule } from "./gifts/gifts.module";
 import { CacheModule } from "./cache/cache.module";
 import { LeaderboardModule } from "./leaderboard/leaderboard.module";
+import { FollowsModule } from "./follows/follows.module";
+import { CommentsModule } from "./comments/comments.module";
+import { ReportsModule } from "./reports/reports.module";
 import { RedisModule } from "./redis/redis.module";
 import { RedisService } from "./redis/redis.service";
 import { MetricsMiddleware } from "./common/metrics.middleware";
 import { MetricsModule } from "./metrics/metrics.module";
 
 @Module({
-  imports: [RedisModule, CacheModule, DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule, ReferralsModule, GiftsModule, LeaderboardModule, MetricsModule],
+  imports: [RedisModule, CacheModule, DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule, ReferralsModule, GiftsModule, LeaderboardModule, MetricsModule, FollowsModule, CommentsModule, ReportsModule],
   providers: [
     {
       provide: APP_GUARD,

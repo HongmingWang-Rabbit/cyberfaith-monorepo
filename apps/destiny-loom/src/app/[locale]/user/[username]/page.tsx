@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { ProfileFollowButton, ProfileReportButton } from "./client-parts";
 
 const CORE_API_URL = process.env.CORE_API_URL || "http://localhost:4000";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -22,9 +23,12 @@ interface ProfileData {
   zodiacSign: string | null;
   karma: number;
   readingCount: number;
+  followerCount: number;
+  followingCount: number;
   achievements: { name: string; description: string; icon: string | null; category: string | null; unlockedAt: string }[];
   recentReadings: { id: string; type: string; result: any; createdAt: string }[];
   joinDate: string;
+  id?: string;
 }
 
 async function fetchProfile(username: string): Promise<ProfileData | null> {
@@ -103,6 +107,11 @@ export default async function PublicProfilePage({ params }: Props) {
                 <p className="text-sm text-muted-foreground">@{profile.username}</p>
                 <p className="text-xs text-muted-foreground mt-1">Joined {joinDate}</p>
               </div>
+              {/* Follow + Report */}
+              <div className="flex items-center gap-2 justify-center">
+                {profile.id && <ProfileFollowButton userId={profile.id} />}
+                {profile.id && <ProfileReportButton userId={profile.id} />}
+              </div>
             </div>
 
             {/* Stats */}
@@ -118,6 +127,14 @@ export default async function PublicProfilePage({ params }: Props) {
               <div className="text-center">
                 <div className="text-2xl font-bold text-highlight">{profile.achievements.length}</div>
                 <div className="text-xs text-muted-foreground">Achievements</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-foreground">{profile.followerCount}</div>
+                <div className="text-xs text-muted-foreground">Followers</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-foreground">{profile.followingCount}</div>
+                <div className="text-xs text-muted-foreground">Following</div>
               </div>
             </div>
 

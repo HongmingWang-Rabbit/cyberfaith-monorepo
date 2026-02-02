@@ -2,7 +2,7 @@ import { Controller, Get, Patch, Delete, Body, Req, Param, UseGuards, Inject, No
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
 import { DRIZZLE } from "../db/drizzle.provider";
-import { users, userSettings, userAchievements, achievements, readings, journalEntries, pointsTransactions } from "../db/schema";
+import { users, userSettings, userAchievements, achievements, readings, journalEntries, pointsTransactions, userFollows } from "../db/schema";
 import { eq, sql, desc, count, and, gte } from "drizzle-orm";
 import { AppException } from "../common/app.exception";
 import { ErrorCode } from "../common/error-codes";
@@ -81,15 +81,29 @@ export class UsersController {
       .orderBy(desc(readings.createdAt))
       .limit(10);
 
+    // Get follower/following counts
+    const [followerCount] = await this.db
+      .select({ count: count() })
+      .from(userFollows)
+      .where(eq(userFollows.followingId, user.id));
+
+    const [followingCount] = await this.db
+      .select({ count: count() })
+      .from(userFollows)
+      .where(eq(userFollows.followerId, user.id));
+
     return {
       success: true,
       data: {
+        id: user.id,
         displayName: user.name,
         username: user.username,
         avatarUrl: user.avatarUrl,
         zodiacSign: user.zodiacSign,
         karma: user.karma,
         readingCount: Number(readingCount?.count ?? 0),
+        followerCount: Number(followerCount?.count ?? 0),
+        followingCount: Number(followingCount?.count ?? 0),
         achievements: userAchievementsList,
         recentReadings: publicReadings,
         joinDate: user.createdAt,

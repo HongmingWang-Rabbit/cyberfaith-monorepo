@@ -399,7 +399,8 @@
     "tabs": {
       "dashboard": "Dashboard",
       "users": "Users",
-      "readings": "Readings"
+      "readings": "Readings",
+      "reports": "Reports"
     },
     "stats": {
       "totalUsers": "Total Users",
@@ -439,6 +440,24 @@
     },
     "pagination": {
       "showing": "{from}-{to} of {total}"
+    },
+    "reports": {
+      "title": "Reports",
+      "empty": "No reports found",
+      "status": "Status",
+      "reason": "Reason",
+      "reporter": "Reporter",
+      "target": "Target",
+      "targetType": "Type",
+      "details": "Details",
+      "createdAt": "Reported",
+      "actions": "Actions",
+      "markReviewed": "Mark Reviewed",
+      "dismiss": "Dismiss",
+      "filterAll": "All",
+      "filterPending": "Pending",
+      "filterReviewed": "Reviewed",
+      "filterDismissed": "Dismissed"
     }
   },
   "dream": {
@@ -854,5 +873,49 @@
       "compatibility": "Compatibility",
       "meditation": "Meditation"
     }
+  },
+  "feed": {
+    "title": "Activity Feed",
+    "subtitle": "See what people you follow are up to",
+    "empty": "Your feed is empty. Follow some users to see their activity!",
+    "loading": "Loading feed...",
+    "readingBy": "{name} shared a {type} reading",
+    "achievementBy": "{name} unlocked {achievement}",
+    "noMore": "You're all caught up!"
+  },
+  "follow": {
+    "follow": "Follow",
+    "unfollow": "Unfollow",
+    "following": "Following",
+    "followers": "Followers",
+    "followersCount": "{count} Followers",
+    "followingCount": "{count} Following"
+  },
+  "comments": {
+    "title": "Comments",
+    "placeholder": "Write a comment...",
+    "submit": "Post",
+    "reply": "Reply",
+    "replyTo": "Replying to {name}",
+    "delete": "Delete",
+    "deleted": "[deleted]",
+    "empty": "No comments yet. Be the first!",
+    "loading": "Loading comments...",
+    "loginToComment": "Log in to comment",
+    "maxLength": "Max 500 characters"
+  },
+  "report": {
+    "title": "Report",
+    "subtitle": "Why are you reporting this?",
+    "reason": {
+      "spam": "Spam",
+      "inappropriate": "Inappropriate content",
+      "harassment": "Harassment",
+      "other": "Other"
+    },
+    "detailsPlaceholder": "Additional details (optional)...",
+    "submit": "Submit Report",
+    "success": "Report submitted. Thank you!",
+    "cancel": "Cancel"
   }
 }

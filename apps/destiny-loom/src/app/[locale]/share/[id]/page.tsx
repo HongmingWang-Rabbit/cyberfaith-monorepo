@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ReadingArticleJsonLd } from "@/components/seo/json-ld";
+import { SharePageComments, SharePageReportButton } from "./client-parts";
 
 const CORE_API_URL = process.env.CORE_API_URL || "http://localhost:4000";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -204,6 +205,15 @@ export default async function SharePage({ params }: Props) {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Comments & Report */}
+        <div className="rounded-2xl border border-primary/20 bg-card/80 backdrop-blur-sm shadow-xl shadow-primary/5 p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <span />
+            <SharePageReportButton readingId={id} />
+          </div>
+          <SharePageComments readingId={id} />
         </div>
 
         {/* Powered by footer */}

@@ -15,14 +15,29 @@ interface Stats {
   estimatedMonthlyRevenue: number;
 }
 
+interface Metrics {
+  requestsLastHour: number;
+  requestsLastDay: number;
+  totalRequests: number;
+  errorCount: number;
+  errorRate: string;
+  averageResponseMs: number;
+  activeUsers24h: number;
+  dbQueryCount: number;
+  cacheHitRate: string;
+  cacheHits: number;
+  cacheMisses: number;
+}
+
 export default function AdminDashboard() {
   const t = useTranslations("admin");
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [stats, setStats] = useState<Stats | null>(null);
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState<"dashboard" | "users" | "readings">("dashboard");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "users" | "readings" | "metrics">("dashboard");
 
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || !(user as any)?.role || (user as any)?.role !== "admin")) {
@@ -42,6 +57,15 @@ export default function AdminDashboard() {
         if (!res.ok) throw new Error("Failed to fetch stats");
         const data = await res.json();
         setStats(data.data);
+
+        // Also fetch metrics
+        const metricsRes = await fetch("/api/admin/metrics", {
+          headers: { Authorization: `Bearer ${tokens.accessToken}` },
+        });
+        if (metricsRes.ok) {
+          const metricsData = await metricsRes.json();
+          setMetrics(metricsData.data);
+        }
       } catch (e: any) {
         setError(e.message);
       } finally {
@@ -69,6 +93,7 @@ export default function AdminDashboard() {
 
   const tabs = [
     { key: "dashboard" as const, label: t("tabs.dashboard"), icon: "📊" },
+    { key: "metrics" as const, label: "Metrics", icon: "⚡" },
     { key: "users" as const, label: t("tabs.users"), icon: "👥" },
     { key: "readings" as const, label: t("tabs.readings"), icon: "🔮" },
   ];
@@ -146,6 +171,34 @@ export default function AdminDashboard() {
               <BarChart value={stats.activeSubscriptions} max={stats.totalUsers} label={t("stats.proUsers")} color="bg-primary" />
               <BarChart value={stats.totalUsers - stats.activeSubscriptions} max={stats.totalUsers} label={t("stats.freeUsers")} color="bg-muted-foreground" />
               <BarChart value={stats.readingsToday} max={Math.max(stats.totalReadings / 30, 1)} label={t("stats.todayActivity")} color="bg-accent" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Metrics tab */}
+      {activeTab === "metrics" && metrics && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard icon="📨" label="Requests (last hour)" value={metrics.requestsLastHour} color="from-blue-500 to-cyan-600" />
+            <StatCard icon="📊" label="Requests (last day)" value={metrics.requestsLastDay} color="from-violet-500 to-purple-600" />
+            <StatCard icon="⚡" label="Avg Response (ms)" value={metrics.averageResponseMs} color="from-emerald-500 to-green-600" />
+            <StatCard icon="👤" label="Active Users (24h)" value={metrics.activeUsers24h} color="from-amber-500 to-orange-600" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="p-5 rounded-xl border border-border bg-card/50 backdrop-blur-sm">
+              <div className="text-sm text-muted-foreground mb-1">Error Rate</div>
+              <div className="text-2xl font-bold text-red-400">{metrics.errorRate}</div>
+              <div className="text-xs text-muted-foreground mt-1">{metrics.errorCount} errors / {metrics.totalRequests} total</div>
+            </div>
+            <div className="p-5 rounded-xl border border-border bg-card/50 backdrop-blur-sm">
+              <div className="text-sm text-muted-foreground mb-1">Cache Hit Rate</div>
+              <div className="text-2xl font-bold text-primary">{metrics.cacheHitRate}</div>
+              <div className="text-xs text-muted-foreground mt-1">{metrics.cacheHits} hits / {metrics.cacheMisses} misses</div>
+            </div>
+            <div className="p-5 rounded-xl border border-border bg-card/50 backdrop-blur-sm">
+              <div className="text-sm text-muted-foreground mb-1">DB Queries</div>
+              <div className="text-2xl font-bold">{metrics.dbQueryCount.toLocaleString()}</div>
             </div>
           </div>
         </div>

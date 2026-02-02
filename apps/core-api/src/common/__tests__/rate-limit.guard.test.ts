@@ -11,23 +11,23 @@ function makeContext(ip = "127.0.0.1") {
 }
 
 describe("RateLimitGuard", () => {
-  it("allows requests within limit", () => {
-    const guard = new RateLimitGuard(3, 60_000);
-    expect(guard.canActivate(makeContext())).toBe(true);
-    expect(guard.canActivate(makeContext())).toBe(true);
-    expect(guard.canActivate(makeContext())).toBe(true);
+  it("allows requests within limit", async () => {
+    const guard = new RateLimitGuard(undefined, 3, 60_000);
+    expect(await guard.canActivate(makeContext())).toBe(true);
+    expect(await guard.canActivate(makeContext())).toBe(true);
+    expect(await guard.canActivate(makeContext())).toBe(true);
   });
 
-  it("blocks requests exceeding limit", () => {
-    const guard = new RateLimitGuard(2, 60_000);
-    guard.canActivate(makeContext());
-    guard.canActivate(makeContext());
-    expect(() => guard.canActivate(makeContext())).toThrow(HttpException);
+  it("blocks requests exceeding limit", async () => {
+    const guard = new RateLimitGuard(undefined, 2, 60_000);
+    await guard.canActivate(makeContext());
+    await guard.canActivate(makeContext());
+    await expect(guard.canActivate(makeContext())).rejects.toThrow(HttpException);
   });
 
-  it("tracks different IPs separately", () => {
-    const guard = new RateLimitGuard(1, 60_000);
-    expect(guard.canActivate(makeContext("1.1.1.1"))).toBe(true);
-    expect(guard.canActivate(makeContext("2.2.2.2"))).toBe(true);
+  it("tracks different IPs separately", async () => {
+    const guard = new RateLimitGuard(undefined, 1, 60_000);
+    expect(await guard.canActivate(makeContext("1.1.1.1"))).toBe(true);
+    expect(await guard.canActivate(makeContext("2.2.2.2"))).toBe(true);
   });
 });

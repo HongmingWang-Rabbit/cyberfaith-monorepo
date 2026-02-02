@@ -399,7 +399,8 @@
     "tabs": {
       "dashboard": "仪表盘",
       "users": "用户管理",
-      "readings": "内容审核"
+      "readings": "内容审核",
+      "reports": "举报"
     },
     "stats": {
       "totalUsers": "总用户数",
@@ -439,6 +440,24 @@
     },
     "pagination": {
       "showing": "{from}-{to} / 共 {total}"
+    },
+    "reports": {
+      "title": "举报管理",
+      "empty": "暂无举报",
+      "status": "状态",
+      "reason": "原因",
+      "reporter": "举报人",
+      "target": "目标",
+      "targetType": "类型",
+      "details": "详情",
+      "createdAt": "举报时间",
+      "actions": "操作",
+      "markReviewed": "标记已审核",
+      "dismiss": "驳回",
+      "filterAll": "全部",
+      "filterPending": "待处理",
+      "filterReviewed": "已审核",
+      "filterDismissed": "已驳回"
     }
   },
   "dream": {
@@ -854,5 +873,49 @@
       "compatibility": "配对",
       "meditation": "冥想"
     }
+  },
+  "feed": {
+    "title": "动态",
+    "subtitle": "查看你关注的人的最新动态",
+    "empty": "你的动态为空。关注一些用户来查看他们的动态！",
+    "loading": "加载中...",
+    "readingBy": "{name} 分享了一个{type}解读",
+    "achievementBy": "{name} 解锁了 {achievement}",
+    "noMore": "已经看完了！"
+  },
+  "follow": {
+    "follow": "关注",
+    "unfollow": "取消关注",
+    "following": "正在关注",
+    "followers": "粉丝",
+    "followersCount": "{count} 粉丝",
+    "followingCount": "{count} 关注"
+  },
+  "comments": {
+    "title": "评论",
+    "placeholder": "写评论...",
+    "submit": "发布",
+    "reply": "回复",
+    "replyTo": "回复 {name}",
+    "delete": "删除",
+    "deleted": "[已删除]",
+    "empty": "暂无评论，来第一个评论吧！",
+    "loading": "加载评论中...",
+    "loginToComment": "登录后评论",
+    "maxLength": "最多500字"
+  },
+  "report": {
+    "title": "举报",
+    "subtitle": "为什么要举报？",
+    "reason": {
+      "spam": "垃圾信息",
+      "inappropriate": "不当内容",
+      "harassment": "骚扰",
+      "other": "其他"
+    },
+    "detailsPlaceholder": "补充说明（可选）...",
+    "submit": "提交举报",
+    "success": "举报已提交，感谢！",
+    "cancel": "取消"
   }
 }

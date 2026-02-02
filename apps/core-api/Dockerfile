@@ -15,4 +15,4 @@ RUN pnpm --filter @cyberfaith/core-api... build
 EXPOSE 3001
 ENV PORT=3001
 WORKDIR /app/apps/core-api
-CMD ["node", "--import", "tsx", "dist/main.js"]
+CMD ["sh", "start.sh"]

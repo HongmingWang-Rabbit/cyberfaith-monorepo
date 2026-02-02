@@ -20,6 +20,8 @@ import { AppException } from "../common/app.exception";
 import { ErrorCode } from "../common/error-codes";
 import { AdminUsersQueryDto, AdminReadingsQueryDto, UpdateUserDto } from "./dto";
 import { NotificationsService } from "../notifications/notifications.service";
+import { MetricsService } from "../metrics/metrics.service";
+import { CacheService } from "../cache/cache.service";
 
 @Controller("admin")
 @UseGuards(AuthGuard("jwt"), AdminGuard)
@@ -27,7 +29,23 @@ export class AdminController {
   constructor(
     @Inject(DRIZZLE) private db: any,
     private notificationsService: NotificationsService,
+    private metricsService: MetricsService,
+    private cacheService: CacheService,
   ) {}
+
+  @Get("metrics")
+  async getMetrics() {
+    const metrics = await this.metricsService.getMetrics();
+    return {
+      success: true,
+      data: {
+        ...metrics,
+        cacheHitRate: (this.cacheService.hitRate * 100).toFixed(2) + "%",
+        cacheHits: this.cacheService.totalHits,
+        cacheMisses: this.cacheService.totalMisses,
+      },
+    };
+  }
 
   @Get("stats")
   async getStats() {

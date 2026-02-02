@@ -74,7 +74,10 @@ export const pointsTransactions = pgTable("points_transactions", {
   amount: integer("amount").notNull(),
   reason: varchar("reason", { length: 50 }).notNull(), // reading_completed|achievement_unlocked|daily_login|streak_bonus
   metadata: jsonb("metadata"),
-});
+}, (table) => ({
+  // EXPLAIN ANALYZE: enables index scan on "WHERE user_id = ? ORDER BY created_at DESC"
+  userCreatedAtIdx: index("points_tx_user_id_created_at_idx").on(table.userId, table.createdAt),
+}));
 
 // Keep old alias for backward compat
 export const points = pointsTransactions;
@@ -88,7 +91,10 @@ export const readings = pgTable("readings", {
   result: jsonb("result"),
   locale: varchar("locale", { length: 10 }),
   isPublic: boolean("is_public").default(false).notNull(),
-});
+}, (table) => ({
+  // EXPLAIN ANALYZE: enables index scan on "WHERE user_id = ? ORDER BY created_at DESC"
+  userCreatedAtIdx: index("readings_user_id_created_at_idx").on(table.userId, table.createdAt),
+}));
 
 export const achievements = pgTable("achievements", {
   id: idColumn(),
@@ -109,6 +115,8 @@ export const readingReactions = pgTable("reading_reactions", {
   emoji: varchar("emoji", { length: 10 }).notNull(),
 }, (table) => ({
   uniqueReaction: uniqueIndex("reading_reaction_unique").on(table.readingId, table.userId, table.emoji),
+  // EXPLAIN ANALYZE: enables index scan on "WHERE reading_id = ? ORDER BY created_at DESC"
+  readingCreatedAtIdx: index("reading_reactions_reading_id_created_at_idx").on(table.readingId, table.createdAt),
 }));
 
 export const userAchievements = pgTable("user_achievements", {
@@ -198,7 +206,10 @@ export const journalEntries = pgTable("journal_entries", {
   userId: varchar("user_id", { length: 36 }).notNull(),
   content: text("content").notNull(),
   mood: journalMoodEnum("mood"),
-});
+}, (table) => ({
+  // EXPLAIN ANALYZE: enables index scan on "WHERE user_id = ? ORDER BY created_at DESC"
+  userCreatedAtIdx: index("journal_entries_user_id_created_at_idx").on(table.userId, table.createdAt),
+}));
 
 export const friendshipStatusEnum = pgEnum("friendship_status", ["pending", "accepted", "rejected"]);
 
@@ -210,6 +221,9 @@ export const friendships = pgTable("friendships", {
   status: friendshipStatusEnum("status").default("pending").notNull(),
 }, (table) => ({
   uniqueFriendship: uniqueIndex("friendship_unique").on(table.requesterId, table.addresseeId),
+  // EXPLAIN ANALYZE: enables index scan on friend lookups by either party
+  requesterIdx: index("friendships_requester_id_idx").on(table.requesterId),
+  addresseeIdx: index("friendships_addressee_id_idx").on(table.addresseeId),
 }));
 
 // ─── User Follows ─────────────────────────────────────────
