@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { FriendsService } from "../friends.service";
-import { BadRequestException, NotFoundException } from "@nestjs/common";
+import { AppException } from "../../common/app.exception";
+import { ErrorCode } from "../../common/error-codes";
 
 describe("FriendsService", () => {
   let service: FriendsService;
@@ -19,7 +20,6 @@ describe("FriendsService", () => {
     chain.update = vi.fn().mockReturnValue(chain);
     chain.set = vi.fn().mockReturnValue(chain);
     chain.delete = vi.fn().mockReturnValue(chain);
-    // Make chain itself thenable for cases where it's awaited directly
     chain.then = (resolve: any) => resolve(resolvedValue);
     return chain;
   };
@@ -31,14 +31,15 @@ describe("FriendsService", () => {
   describe("sendRequest", () => {
     it("throws if sending to self", async () => {
       service = new FriendsService(mockDb);
-      await expect(service.sendRequest("u1", "u1")).rejects.toThrow(BadRequestException);
+      await expect(service.sendRequest("u1", "u1")).rejects.toThrow(AppException);
+      try { await service.sendRequest("u1", "u1"); } catch (e: any) {
+        expect(e.errorCode).toBe(ErrorCode.CANNOT_FRIEND_SELF);
+      }
     });
 
     it("creates a new friend request", async () => {
       const friendship = { id: "f1", requesterId: "u1", addresseeId: "u2", status: "pending" };
-      // First call: check existing - returns empty
       mockDb.where.mockResolvedValueOnce([]);
-      // Second call: insert returning
       mockDb.returning.mockResolvedValueOnce([friendship]);
 
       service = new FriendsService(mockDb);
@@ -49,13 +50,19 @@ describe("FriendsService", () => {
     it("throws if already friends", async () => {
       mockDb.where.mockResolvedValueOnce([{ id: "f1", status: "accepted" }]);
       service = new FriendsService(mockDb);
-      await expect(service.sendRequest("u1", "u2")).rejects.toThrow(BadRequestException);
+      await expect(service.sendRequest("u1", "u2")).rejects.toThrow(AppException);
+      try { await service.sendRequest("u1", "u2"); } catch (e: any) {
+        expect(e.errorCode).toBe(ErrorCode.ALREADY_FRIENDS);
+      }
     });
 
     it("throws if request already pending", async () => {
       mockDb.where.mockResolvedValueOnce([{ id: "f1", status: "pending" }]);
       service = new FriendsService(mockDb);
-      await expect(service.sendRequest("u1", "u2")).rejects.toThrow(BadRequestException);
+      await expect(service.sendRequest("u1", "u2")).rejects.toThrow(AppException);
+      try { await service.sendRequest("u1", "u2"); } catch (e: any) {
+        expect(e.errorCode).toBe(ErrorCode.FRIEND_REQUEST_EXISTS);
+      }
     });
   });
 
@@ -74,13 +81,22 @@ describe("FriendsService", () => {
     it("throws if request not found", async () => {
       mockDb.where.mockResolvedValueOnce([]);
       service = new FriendsService(mockDb);
-      await expect(service.acceptRequest("f1", "u2")).rejects.toThrow(NotFoundException);
+      await expect(service.acceptRequest("f1", "u2")).rejects.toThrow(AppException);
+      try { await service.acceptRequest("f1", "u2"); } catch (e: any) {
+        expect(e.errorCode).toBe(ErrorCode.FRIEND_REQUEST_NOT_FOUND);
+      }
     });
 
     it("throws if request is not pending", async () => {
-      mockDb.where.mockResolvedValueOnce([{ id: "f1", addresseeId: "u2", status: "accepted" }]);
+      mockDb.where.mockResolvedValue([{ id: "f1", addresseeId: "u2", status: "accepted" }]);
       service = new FriendsService(mockDb);
-      await expect(service.acceptRequest("f1", "u2")).rejects.toThrow(BadRequestException);
+      try {
+        await service.acceptRequest("f1", "u2");
+        expect.unreachable("should have thrown");
+      } catch (e: any) {
+        expect(e).toBeInstanceOf(AppException);
+        expect(e.errorCode).toBe(ErrorCode.REQUEST_NOT_PENDING);
+      }
     });
   });
 
@@ -99,7 +115,7 @@ describe("FriendsService", () => {
     it("throws if not found", async () => {
       mockDb.where.mockResolvedValueOnce([]);
       service = new FriendsService(mockDb);
-      await expect(service.rejectRequest("f1", "u2")).rejects.toThrow(NotFoundException);
+      await expect(service.rejectRequest("f1", "u2")).rejects.toThrow(AppException);
     });
   });
 
@@ -114,7 +130,7 @@ describe("FriendsService", () => {
     it("throws if not found", async () => {
       mockDb.where.mockResolvedValueOnce([]);
       service = new FriendsService(mockDb);
-      await expect(service.removeFriend("f1", "u1")).rejects.toThrow(NotFoundException);
+      await expect(service.removeFriend("f1", "u1")).rejects.toThrow(AppException);
     });
   });
 
@@ -131,7 +147,7 @@ describe("FriendsService", () => {
     it("throws if friendship not found", async () => {
       mockDb.where.mockResolvedValueOnce([]);
       service = new FriendsService(mockDb);
-      await expect(service.getFriendReadings("f1", "u1")).rejects.toThrow(NotFoundException);
+      await expect(service.getFriendReadings("f1", "u1")).rejects.toThrow(AppException);
     });
   });
 });

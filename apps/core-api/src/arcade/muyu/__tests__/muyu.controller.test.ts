@@ -36,18 +36,13 @@ describe("MuyuController", () => {
       expect(mockService.recordTaps).toHaveBeenCalledWith("user-1", 10, undefined);
     });
 
-    it("clamps tapCount to max 100", async () => {
+    it("passes tapCount directly (validation handled by DTO pipe)", async () => {
       const req = { user: { id: "user-1", email: "test@test.com" } } as any;
-      await controller.tap(req, { tapCount: 999 });
+      // Note: In production, ValidationPipe rejects invalid tapCount before reaching controller.
+      // Controller now passes tapCount as-is since DTO enforces @Min(1) @Max(100).
+      await controller.tap(req, { tapCount: 50 });
 
-      expect(mockService.recordTaps).toHaveBeenCalledWith("user-1", 100, undefined);
-    });
-
-    it("clamps tapCount to min 1", async () => {
-      const req = { user: { id: "user-1", email: "test@test.com" } } as any;
-      await controller.tap(req, { tapCount: -5 });
-
-      expect(mockService.recordTaps).toHaveBeenCalledWith("user-1", 1, undefined);
+      expect(mockService.recordTaps).toHaveBeenCalledWith("user-1", 50, undefined);
     });
 
     it("passes duration when provided", async () => {

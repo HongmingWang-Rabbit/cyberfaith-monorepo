@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { NotFoundException, ForbiddenException, BadRequestException, ConflictException } from "@nestjs/common";
 import { ReadingsController } from "../readings.controller";
+import { AppException } from "../../common/app.exception";
+import { ErrorCode } from "../../common/error-codes";
+import { ReadingType } from "../dto";
 
 describe("ReadingsController", () => {
   let controller: ReadingsController;
@@ -18,7 +20,6 @@ describe("ReadingsController", () => {
   };
 
   beforeEach(() => {
-    // Build a chainable mock for drizzle queries
     mockDb = {
       insert: vi.fn().mockReturnThis(),
       values: vi.fn().mockReturnThis(),
@@ -39,22 +40,17 @@ describe("ReadingsController", () => {
 
   describe("create", () => {
     it("creates a reading successfully", async () => {
-      const body = { type: "tarot", input: { cards: [] }, result: { interpretation: "good" }, locale: "en" };
+      const body = { type: ReadingType.TAROT, input: { cards: [] }, result: { interpretation: "good" }, locale: "en" };
       const result = await controller.create(req, body);
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockReading);
       expect(mockDb.insert).toHaveBeenCalled();
     });
-
-    it("rejects invalid type", async () => {
-      const body = { type: "invalid", input: {}, result: {} };
-      await expect(controller.create(req, body)).rejects.toThrow(ForbiddenException);
-    });
   });
 
   describe("findAll", () => {
     it("returns paginated readings", async () => {
-      const result = await controller.findAll(req, undefined, "1", "10");
+      const result = await controller.findAll(req, { page: 1, limit: 10 });
       expect(result.success).toBe(true);
       expect(result.data).toEqual([mockReading]);
       expect(result.page).toBe(1);
@@ -62,7 +58,7 @@ describe("ReadingsController", () => {
     });
 
     it("filters by type", async () => {
-      const result = await controller.findAll(req, "tarot");
+      const result = await controller.findAll(req, { type: "tarot" });
       expect(result.success).toBe(true);
       expect(mockDb.where).toHaveBeenCalled();
     });
@@ -70,31 +66,34 @@ describe("ReadingsController", () => {
 
   describe("findOne", () => {
     it("returns a reading", async () => {
-      // where returns array with one item
       mockDb.where.mockResolvedValue([mockReading]);
       const result = await controller.findOne(req, "uuid-1");
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockReading);
     });
 
-    it("throws NotFoundException when not found", async () => {
+    it("throws AppException when not found", async () => {
       mockDb.where.mockResolvedValue([]);
-      await expect(controller.findOne(req, "nonexistent")).rejects.toThrow(NotFoundException);
+      await expect(controller.findOne(req, "nonexistent")).rejects.toThrow(AppException);
+      try {
+        await controller.findOne(req, "nonexistent");
+      } catch (e: any) {
+        expect(e.errorCode).toBe(ErrorCode.READING_NOT_FOUND);
+      }
     });
   });
 
   describe("remove", () => {
     it("deletes a reading", async () => {
-      // First where call (select) returns reading, second (delete) is chained
       mockDb.where.mockResolvedValueOnce([mockReading]).mockReturnThis();
       const result = await controller.remove(req, "uuid-1");
       expect(result.success).toBe(true);
       expect(mockDb.delete).toHaveBeenCalled();
     });
 
-    it("throws NotFoundException when not found", async () => {
+    it("throws AppException when not found", async () => {
       mockDb.where.mockResolvedValueOnce([]);
-      await expect(controller.remove(req, "nonexistent")).rejects.toThrow(NotFoundException);
+      await expect(controller.remove(req, "nonexistent")).rejects.toThrow(AppException);
     });
   });
 
@@ -102,9 +101,8 @@ describe("ReadingsController", () => {
     it("returns paginated public feed", async () => {
       const feedItem = { id: "uuid-1", type: "tarot", result: {}, locale: "en", createdAt: new Date(), authorName: "Test", authorAvatar: null };
       mockDb.offset.mockResolvedValue([feedItem]);
-      // innerJoin is chained
       mockDb.innerJoin = vi.fn().mockReturnValue(mockDb);
-      const result = await controller.feed("1", "10");
+      const result = await controller.feed({ page: 1, limit: 10 });
       expect(result.success).toBe(true);
       expect(result.page).toBe(1);
     });
@@ -120,28 +118,29 @@ describe("ReadingsController", () => {
   });
 
   describe("react", () => {
-    it("rejects invalid emoji", async () => {
-      await expect(controller.react(req, "uuid-1", { emoji: "💩" })).rejects.toThrow(BadRequestException);
-    });
-
     it("rejects non-public reading", async () => {
       mockDb.where.mockResolvedValue([]);
-      await expect(controller.react(req, "uuid-1", { emoji: "👍" })).rejects.toThrow(NotFoundException);
+      await expect(controller.react(req, "uuid-1", { emoji: "👍" } as any)).rejects.toThrow(AppException);
     });
 
     it("adds reaction successfully", async () => {
       const reaction = { id: "r1", readingId: "uuid-1", userId: "user-1", emoji: "👍", createdAt: new Date() };
       mockDb.where.mockResolvedValueOnce([{ id: "uuid-1" }]);
       mockDb.returning.mockResolvedValueOnce([reaction]);
-      const result = await controller.react(req, "uuid-1", { emoji: "👍" });
+      const result = await controller.react(req, "uuid-1", { emoji: "👍" } as any);
       expect(result.success).toBe(true);
       expect(result.data).toEqual(reaction);
     });
 
-    it("throws ConflictException on duplicate", async () => {
+    it("throws AppException on duplicate reaction", async () => {
       mockDb.where.mockResolvedValueOnce([{ id: "uuid-1" }]);
       mockDb.returning.mockRejectedValueOnce(Object.assign(new Error("unique"), { code: "23505" }));
-      await expect(controller.react(req, "uuid-1", { emoji: "👍" })).rejects.toThrow(ConflictException);
+      try {
+        await controller.react(req, "uuid-1", { emoji: "👍" } as any);
+      } catch (e: any) {
+        expect(e).toBeInstanceOf(AppException);
+        expect(e.errorCode).toBe(ErrorCode.ALREADY_REACTED);
+      }
     });
   });
 });

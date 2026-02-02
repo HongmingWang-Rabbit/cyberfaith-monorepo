@@ -8,13 +8,16 @@ import {
   Body,
   UseGuards,
   Inject,
-  NotFoundException,
+  HttpStatus,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { AdminGuard } from "./admin.guard";
 import { DRIZZLE } from "../db/drizzle.provider";
-import { users, readings, arcadePlays, pointsTransactions } from "../db/schema";
+import { users, readings, arcadePlays } from "../db/schema";
 import { eq, and, gte, desc, sql, ilike, or, count } from "drizzle-orm";
+import { AppException } from "../common/app.exception";
+import { ErrorCode } from "../common/error-codes";
+import { AdminUsersQueryDto, AdminReadingsQueryDto, UpdateUserDto } from "./dto";
 
 @Controller("admin")
 @UseGuards(AuthGuard("jwt"), AdminGuard)
@@ -26,7 +29,7 @@ export class AdminController {
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
 
-    const [[totalUsers], [totalReadings], [readingsToday], [activeSubs], [revenueStats]] =
+    const [[totalUsers], [totalReadings], [readingsToday], [activeSubs]] =
       await Promise.all([
         this.db.select({ count: sql<number>`count(*)::int` }).from(users),
         this.db.select({ count: sql<number>`count(*)::int` }).from(readings),
@@ -36,12 +39,6 @@ export class AdminController {
           .where(gte(readings.createdAt, startOfDay)),
         this.db
           .select({ count: sql<number>`count(*)::int` })
-          .from(users)
-          .where(eq(users.subscriptionTier, "pro")),
-        this.db
-          .select({
-            totalRevenue: sql<number>`coalesce(count(*)::int * 9.99, 0)`,
-          })
           .from(users)
           .where(eq(users.subscriptionTier, "pro")),
       ]);
@@ -59,21 +56,17 @@ export class AdminController {
   }
 
   @Get("users")
-  async getUsers(
-    @Query("page") page?: string,
-    @Query("limit") limit?: string,
-    @Query("search") search?: string,
-  ) {
-    const pageNum = Math.max(1, parseInt(page || "1", 10) || 1);
-    const limitNum = Math.min(100, Math.max(1, parseInt(limit || "20", 10) || 20));
+  async getUsers(@Query() query: AdminUsersQueryDto) {
+    const pageNum = query.page ?? 1;
+    const limitNum = query.limit ?? 20;
     const offset = (pageNum - 1) * limitNum;
 
     const conditions: any[] = [];
-    if (search) {
+    if (query.search) {
       conditions.push(
         or(
-          ilike(users.email, `%${search}%`),
-          ilike(users.name, `%${search}%`),
+          ilike(users.email, `%${query.search}%`),
+          ilike(users.name, `%${query.search}%`),
         ),
       );
     }
@@ -113,22 +106,15 @@ export class AdminController {
   }
 
   @Patch("users/:id")
-  async updateUser(
-    @Param("id") id: string,
-    @Body() body: { role?: "user" | "admin"; subscriptionTier?: string },
-  ) {
+  async updateUser(@Param("id") id: string, @Body() body: UpdateUserDto) {
     const [existing] = await this.db.select().from(users).where(eq(users.id, id));
     if (!existing) {
-      throw new NotFoundException("User not found");
+      throw new AppException(ErrorCode.USER_NOT_FOUND, "User not found", HttpStatus.NOT_FOUND);
     }
 
     const updates: Record<string, any> = {};
-    if (body.role && ["user", "admin"].includes(body.role)) {
-      updates.role = body.role;
-    }
-    if (body.subscriptionTier && ["free", "pro"].includes(body.subscriptionTier)) {
-      updates.subscriptionTier = body.subscriptionTier;
-    }
+    if (body.role) updates.role = body.role;
+    if (body.subscriptionTier) updates.subscriptionTier = body.subscriptionTier;
 
     if (Object.keys(updates).length === 0) {
       return { success: true, data: existing };
@@ -144,20 +130,15 @@ export class AdminController {
   }
 
   @Get("readings")
-  async getReadings(
-    @Query("page") page?: string,
-    @Query("limit") limit?: string,
-    @Query("type") type?: string,
-    @Query("isPublic") isPublic?: string,
-  ) {
-    const pageNum = Math.max(1, parseInt(page || "1", 10) || 1);
-    const limitNum = Math.min(100, Math.max(1, parseInt(limit || "20", 10) || 20));
+  async getReadings(@Query() query: AdminReadingsQueryDto) {
+    const pageNum = query.page ?? 1;
+    const limitNum = query.limit ?? 20;
     const offset = (pageNum - 1) * limitNum;
 
     const conditions: any[] = [];
-    if (type) conditions.push(eq(readings.type, type));
-    if (isPublic === "true") conditions.push(eq(readings.isPublic, true));
-    if (isPublic === "false") conditions.push(eq(readings.isPublic, false));
+    if (query.type) conditions.push(eq(readings.type, query.type));
+    if (query.isPublic === "true") conditions.push(eq(readings.isPublic, true));
+    if (query.isPublic === "false") conditions.push(eq(readings.isPublic, false));
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
@@ -198,7 +179,7 @@ export class AdminController {
   async deleteReading(@Param("id") id: string) {
     const [existing] = await this.db.select().from(readings).where(eq(readings.id, id));
     if (!existing) {
-      throw new NotFoundException("Reading not found");
+      throw new AppException(ErrorCode.READING_NOT_FOUND, "Reading not found", HttpStatus.NOT_FOUND);
     }
 
     await this.db.delete(readings).where(eq(readings.id, id));

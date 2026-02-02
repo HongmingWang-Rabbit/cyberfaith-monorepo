@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AdminController } from "../admin.controller";
-import { ForbiddenException, NotFoundException } from "@nestjs/common";
+import { AppException } from "../../common/app.exception";
 
 function makeMockDb() {
   const mockSelect = vi.fn();
@@ -95,7 +95,7 @@ describe("AdminController", () => {
       db.where.mockResolvedValue([]);
 
       await expect(controller.updateUser("missing-id", { role: "admin" })).rejects.toThrow(
-        NotFoundException,
+        AppException,
       );
     });
   });
@@ -106,7 +106,7 @@ describe("AdminController", () => {
       db.from.mockReturnValue(db);
       db.where.mockResolvedValue([]);
 
-      await expect(controller.deleteReading("missing-id")).rejects.toThrow(NotFoundException);
+      await expect(controller.deleteReading("missing-id")).rejects.toThrow(AppException);
     });
   });
 

@@ -35,16 +35,27 @@ export class AllExceptionsFilter implements ExceptionFilter {
       } else if (typeof exResponse === "object" && exResponse !== null) {
         const r = exResponse as Record<string, any>;
         // class-validator pipes return { message: string[] }
-        message = Array.isArray(r.message) ? r.message.join("; ") : r.message || message;
+        // class-validator via ValidationPipe: { message: string[], error: "Bad Request", statusCode: 400 }
+        // or nested: { message: { message: string[] } }
+        const msg = r.message;
+        if (Array.isArray(msg)) {
+          message = msg.join("; ");
+        } else if (typeof msg === "object" && msg !== null && Array.isArray(msg.message)) {
+          message = msg.message.join("; ");
+        } else if (typeof msg === "string") {
+          message = msg;
+        }
         errorCode = r.error || errorCode;
       }
-      // Map standard HTTP errors to error codes
-      if (errorCode === ErrorCode.INTERNAL_ERROR || errorCode === "Bad Request") {
+      // Map standard NestJS error strings to our error codes
+      const isAppErrorCode = Object.values(ErrorCode).includes(errorCode as ErrorCode);
+      if (!isAppErrorCode || errorCode === ErrorCode.INTERNAL_ERROR) {
         if (statusCode === 400) errorCode = ErrorCode.VALIDATION_ERROR;
         else if (statusCode === 401) errorCode = ErrorCode.UNAUTHORIZED;
         else if (statusCode === 403) errorCode = ErrorCode.FORBIDDEN;
         else if (statusCode === 404) errorCode = ErrorCode.NOT_FOUND;
         else if (statusCode === 429) errorCode = ErrorCode.RATE_LIMIT_EXCEEDED;
+        else errorCode = ErrorCode.INTERNAL_ERROR;
       }
     } else if (exception instanceof Error) {
       message = exception.message;

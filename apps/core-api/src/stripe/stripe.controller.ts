@@ -5,12 +5,13 @@ import {
   Req,
   Res,
   UseGuards,
-  HttpException,
   HttpStatus,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import type { Request, Response } from "express";
 import { StripeService } from "./stripe.service";
+import { AppException } from "../common/app.exception";
+import { ErrorCode } from "../common/error-codes";
 
 @Controller("stripe")
 export class StripeController {
@@ -21,7 +22,7 @@ export class StripeController {
   async createCheckout(@Req() req: Request) {
     const user = req.user as { id: string; email: string };
     if (!user) {
-      throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+      throw new AppException(ErrorCode.UNAUTHORIZED, "Unauthorized", HttpStatus.UNAUTHORIZED);
     }
     const url = await this.stripeService.createCheckoutSession(user.id, user.email);
     return { url };
@@ -38,7 +39,7 @@ export class StripeController {
   async webhook(@Req() req: Request, @Res() res: Response) {
     const signature = req.headers["stripe-signature"] as string;
     if (!signature) {
-      return res.status(400).json({ error: "Missing stripe-signature header" });
+      throw new AppException(ErrorCode.MISSING_STRIPE_SIGNATURE, "Missing stripe-signature header", HttpStatus.BAD_REQUEST);
     }
 
     try {
@@ -48,7 +49,7 @@ export class StripeController {
       );
       return res.json(result);
     } catch (err: any) {
-      return res.status(400).json({ error: err.message });
+      throw new AppException(ErrorCode.INVALID_STRIPE_SIGNATURE, err.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

@@ -2,6 +2,7 @@ import { Controller, Get, NotFoundException, Req, Res, UseGuards } from "@nestjs
 import { AuthGuard } from "@nestjs/passport";
 import type { Request, Response } from "express";
 import { AuthService } from "./auth.service";
+import { AuthRateLimitGuard } from "../common/rate-limit.guard";
 
 interface AuthRequest extends Request {
   user: { id: string; email: string };
@@ -16,17 +17,16 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Get("google")
-  @UseGuards(AuthGuard("google"))
+  @UseGuards(AuthRateLimitGuard, AuthGuard("google"))
   googleLogin() {
     // Redirects to Google
   }
 
   @Get("google/callback")
-  @UseGuards(AuthGuard("google"))
+  @UseGuards(AuthRateLimitGuard, AuthGuard("google"))
   async googleCallback(@Req() req: GoogleAuthRequest, @Res() res: Response) {
     const user = await this.authService.findOrCreateGoogleUser(req.user);
     const token = await this.authService.issueToken(user);
-    // Redirect to frontend with token
     const redirectUrl = process.env.DESTINY_LOOM_URL || "http://localhost:3002";
     res.redirect(`${redirectUrl}/auth/callback?token=${token.access_token}`);
   }

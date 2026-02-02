@@ -19,9 +19,7 @@ export class RateLimitGuard implements CanActivate {
     this.maxRequests = maxRequests;
     this.windowMs = windowMs;
 
-    // Periodic cleanup of expired entries to prevent memory leaks
     this.cleanupInterval = setInterval(() => this.cleanup(), windowMs * 2);
-    // Allow Node to exit even if interval is active
     if (this.cleanupInterval.unref) {
       this.cleanupInterval.unref();
     }
@@ -35,7 +33,6 @@ export class RateLimitGuard implements CanActivate {
     const entry = this.store.get(ip);
 
     if (!entry || now > entry.resetAt) {
-      // Evict expired entries if store is too large
       if (this.store.size >= this.maxStoreSize) {
         this.cleanup();
       }
@@ -46,7 +43,10 @@ export class RateLimitGuard implements CanActivate {
     entry.count++;
 
     if (entry.count > this.maxRequests) {
-      throw new HttpException("Too Many Requests", HttpStatus.TOO_MANY_REQUESTS);
+      throw new HttpException(
+        { statusCode: HttpStatus.TOO_MANY_REQUESTS, message: "Too Many Requests", error: "RATE_LIMIT_EXCEEDED" },
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
     }
 
     return true;
@@ -59,5 +59,16 @@ export class RateLimitGuard implements CanActivate {
         this.store.delete(ip);
       }
     }
+  }
+}
+
+/**
+ * Stricter rate-limit guard for auth endpoints (login/register).
+ * 10 requests per 60 seconds per IP.
+ */
+@Injectable()
+export class AuthRateLimitGuard extends RateLimitGuard {
+  constructor() {
+    super(10, 60_000);
   }
 }

@@ -1,4 +1,4 @@
-import { Inject, Injectable, BadRequestException, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, HttpStatus } from "@nestjs/common";
 import { eq, desc } from "drizzle-orm";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { DRIZZLE } from "../db/db.module";
@@ -6,6 +6,8 @@ import { arcadePlays, games } from "../db/schema";
 import { PointsService } from "../points/points.service";
 import { getGameEngine } from "./engines";
 import type { GameConfig } from "./engines";
+import { AppException } from "../common/app.exception";
+import { ErrorCode } from "../common/error-codes";
 
 @Injectable()
 export class ArcadeService {
@@ -14,7 +16,6 @@ export class ArcadeService {
     private pointsService: PointsService,
   ) {}
 
-  /** List all active games */
   async listGames() {
     const rows = await this.db
       .select()
@@ -25,7 +26,6 @@ export class ArcadeService {
     return rows;
   }
 
-  /** Get a single game by slug */
   async getGameBySlug(slug: string) {
     const [game] = await this.db
       .select()
@@ -35,50 +35,40 @@ export class ArcadeService {
     return game ?? null;
   }
 
-  /**
-   * Generic play: look up game from DB, validate config,
-   * check balance, run engine, record result.
-   */
   async play(userId: string, gameSlug: string, input?: Record<string, any>) {
-    // 1. Look up game in DB
     const game = await this.getGameBySlug(gameSlug);
     if (!game) {
-      throw new NotFoundException("Game not found: " + gameSlug);
+      throw new AppException(ErrorCode.GAME_NOT_FOUND, "Game not found: " + gameSlug, HttpStatus.NOT_FOUND);
     }
     if (game.status !== "active") {
-      throw new BadRequestException("Game is not active: " + gameSlug);
+      throw new AppException(ErrorCode.GAME_NOT_ACTIVE, "Game is not active: " + gameSlug);
     }
 
-    // 2. Get engine
     const engine = getGameEngine(gameSlug);
     if (!engine) {
-      throw new BadRequestException("No engine registered for game: " + gameSlug);
+      throw new AppException(ErrorCode.GAME_NOT_FOUND, "No engine registered for game: " + gameSlug);
     }
 
-    // 3. Read config
     const config = game.config as GameConfig;
     const cost = config.minBet;
     if (!cost || cost <= 0) {
-      throw new BadRequestException("Invalid game config: minBet must be > 0");
+      throw new AppException(ErrorCode.INVALID_GAME_CONFIG, "Invalid game config: minBet must be > 0");
     }
 
-    // 4. Check balance
     const { total } = await this.pointsService.getUserPoints(userId);
     if (total < cost) {
-      throw new BadRequestException(
+      throw new AppException(
+        ErrorCode.INSUFFICIENT_POINTS,
         `Not enough points. Need ${cost}, have ${total}`,
       );
     }
 
-    // 5. Deduct cost
     await this.pointsService.awardPoints(userId, -cost, "arcade_play", {
       gameSlug,
     });
 
-    // 6. Run engine
     const result = engine(config, input);
 
-    // 7. Award winnings
     if (result.pointsWon > 0) {
       await this.pointsService.awardPoints(userId, result.pointsWon, "arcade_win", {
         gameSlug,
@@ -86,7 +76,6 @@ export class ArcadeService {
       });
     }
 
-    // 8. Record play
     const [play] = await this.db
       .insert(arcadePlays)
       .values({
@@ -107,7 +96,6 @@ export class ArcadeService {
     };
   }
 
-  /** Play history for a user */
   async getHistory(userId: string, limit = 20, page = 1) {
     const offset = (page - 1) * limit;
     const rows = await this.db
