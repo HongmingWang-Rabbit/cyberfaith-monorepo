@@ -1082,5 +1082,17 @@
     "unlockButton": "立即解锁",
     "subscribedReveal": "这是你的完整解读",
     "loginFirst": "登录以解锁高级解读"
+  },
+  "errors": {
+    "title": "宇宙信号中断",
+    "description": "星际矩阵出现了故障，星辰很快会重新排列。",
+    "retry": "重新连接",
+    "goHome": "返回首页"
+  },
+  "offline": {
+    "banner": "您已离线 — 缓存的读数仍然可用",
+    "syncing": "正在同步 {count} 个排队项目...",
+    "syncNow": "立即同步",
+    "pendingSync": "{count} 个待同步"
   }
 }

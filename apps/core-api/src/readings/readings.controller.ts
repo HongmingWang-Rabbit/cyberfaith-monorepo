@@ -9,11 +9,13 @@ import {
   Query,
   Req,
   UseGuards,
+  UseInterceptors,
   Inject,
   NotFoundException,
   ConflictException,
   BadRequestException,
 } from "@nestjs/common";
+import { HttpCacheInterceptor, CacheTTL } from "../cache/cache.interceptor";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
 import { DRIZZLE } from "../db/drizzle.provider";
@@ -27,6 +29,7 @@ import { HttpStatus } from "@nestjs/common";
 import { CreateReadingDto, TogglePublicDto, ReactDto, FeedQueryDto, ReadingsQueryDto, CreateJournalEntryDto, UpdateJournalEntryDto } from "./dto";
 import { calculateBirthChart, type BirthChartInput } from "./birth-chart.util";
 import { FeaturedReadingService } from "./featured.service";
+import { CacheService } from "../cache/cache.service";
 
 interface AuthRequest extends Request {
   user: { id: string; email: string };
@@ -38,9 +41,12 @@ export class ReadingsController {
   constructor(
     @Inject(DRIZZLE) private db: PostgresJsDatabase,
     private featuredService: FeaturedReadingService,
+    private cacheService: CacheService,
   ) {}
 
   @Get("featured")
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheTTL(300) // 5 minutes
   async getFeatured() {
     const data = await this.featuredService.getFeaturedReading();
     return { success: true, data };
@@ -82,6 +88,8 @@ export class ReadingsController {
   }
 
   @Get("feed")
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheTTL(60) // 1 minute for feed
   async feed(@Query() query: FeedQueryDto) {
     const pageNum = query.page ?? 1;
     const limitNum = Math.min(50, query.limit ?? 20);
@@ -180,6 +188,10 @@ export class ReadingsController {
         isPublic: body.isPublic ?? false,
       })
       .returning();
+
+    // Invalidate feed/featured caches when new reading is created
+    await this.cacheService.invalidatePattern("http:.*feed.*");
+    await this.cacheService.invalidatePattern("http:.*featured.*");
 
     return { success: true, data: reading };
   }

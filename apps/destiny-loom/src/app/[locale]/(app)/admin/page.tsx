@@ -4,13 +4,15 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@cyberfaith/auth-client";
 import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { AdminUsersTable } from "./users-table";
-import { AdminReadingsTable } from "./readings-table";
-import { AdminReportsTable } from "./reports-table";
-import { AdminAnalyticsTab } from "./analytics-tab";
-import { AdminEventsTab } from "./events-tab";
-import { AdminNotificationsTab } from "./notifications-tab";
-import { AdminAuditLogTab } from "./audit-log-tab";
+import dynamic from "next/dynamic";
+
+const AdminUsersTable = dynamic(() => import("./users-table").then(m => m.AdminUsersTable), { ssr: false });
+const AdminReadingsTable = dynamic(() => import("./readings-table").then(m => m.AdminReadingsTable), { ssr: false });
+const AdminReportsTable = dynamic(() => import("./reports-table").then(m => m.AdminReportsTable), { ssr: false });
+const AdminAnalyticsTab = dynamic(() => import("./analytics-tab").then(m => m.AdminAnalyticsTab), { ssr: false });
+const AdminEventsTab = dynamic(() => import("./events-tab").then(m => m.AdminEventsTab), { ssr: false });
+const AdminNotificationsTab = dynamic(() => import("./notifications-tab").then(m => m.AdminNotificationsTab), { ssr: false });
+const AdminAuditLogTab = dynamic(() => import("./audit-log-tab").then(m => m.AdminAuditLogTab), { ssr: false });
 
 type TabKey = "overview" | "users" | "readings" | "analytics" | "reports" | "events" | "notifications" | "metrics" | "audit";
 

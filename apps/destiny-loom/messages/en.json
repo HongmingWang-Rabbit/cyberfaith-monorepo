@@ -1083,5 +1083,17 @@
     "unlockButton": "Unlock Now",
     "subscribedReveal": "Here is your full reading",
     "loginFirst": "Sign in to unlock premium readings"
+  },
+  "errors": {
+    "title": "The Cosmic Signal Was Disrupted",
+    "description": "A glitch in the astral matrix. The stars will realign shortly.",
+    "retry": "Retry the Connection",
+    "goHome": "Return Home"
+  },
+  "offline": {
+    "banner": "You're offline — cached readings are still available",
+    "syncing": "Syncing {count} queued items...",
+    "syncNow": "Sync now",
+    "pendingSync": "{count} pending sync"
   }
 }
