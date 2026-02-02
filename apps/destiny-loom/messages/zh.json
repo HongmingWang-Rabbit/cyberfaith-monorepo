@@ -372,7 +372,21 @@
     "proFeature2": "详细分析",
     "proFeature3": "高级AI模型 (GPT-4o、Claude、Gemini Pro)",
     "proFeature4": "优先支持",
-    "proFeature5": "更深入、更详细的解读"
+    "proFeature5": "更深入、更详细的解读",
+    "annual": "年",
+    "monthly": "月付",
+    "annually": "年付",
+    "savePercent": "节省 {percent}%",
+    "premium": {
+      "name": "尊享版"
+    },
+    "upgradePremium": "升级尊享版",
+    "premiumFeature1": "包含专业版所有功能",
+    "premiumFeature2": "赠送解读给好友",
+    "premiumFeature3": "新功能抢先体验",
+    "premiumFeature4": "专属尊享主题",
+    "premiumFeature5": "个人命运顾问",
+    "bestValue": "最超值"
   },
   "community": {
     "title": "社区动态",
@@ -1059,5 +1073,14 @@
     "markComplete": "标记完成",
     "completing": "完成中...",
     "karma": "功德"
+  },
+  "paywall": {
+    "title": "高级解读",
+    "teaser": "此解读包含关于你命运的深层洞察...",
+    "unlockTitle": "解锁完整解读",
+    "unlockDescription": "升级到专业版或尊享版以查看完整分析",
+    "unlockButton": "立即解锁",
+    "subscribedReveal": "这是你的完整解读",
+    "loginFirst": "登录以解锁高级解读"
   }
 }

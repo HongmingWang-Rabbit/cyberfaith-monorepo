@@ -12,6 +12,14 @@ interface PlanetPosition {
   interpretation: string;
 }
 
+interface Aspect {
+  planet1: string;
+  planet2: string;
+  type: "conjunction" | "opposition" | "trine" | "square" | "sextile";
+  angle: number;
+  orb: number;
+}
+
 interface BirthChartData {
   input: { date: string; time: string; location: string };
   planets: PlanetPosition[];

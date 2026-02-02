@@ -372,7 +372,21 @@
     "proFeature2": "Detailed analysis",
     "proFeature3": "Premium AI models (GPT-4o, Claude, Gemini Pro)",
     "proFeature4": "Priority support",
-    "proFeature5": "Deeper, more detailed readings"
+    "proFeature5": "Deeper, more detailed readings",
+    "annual": "yr",
+    "monthly": "Monthly",
+    "annually": "Annual",
+    "savePercent": "Save {percent}%",
+    "premium": {
+      "name": "Premium"
+    },
+    "upgradePremium": "Go Premium",
+    "premiumFeature1": "Everything in Pro",
+    "premiumFeature2": "Gift readings to friends",
+    "premiumFeature3": "Early access to new features",
+    "premiumFeature4": "Exclusive premium themes",
+    "premiumFeature5": "Personal destiny advisor",
+    "bestValue": "BEST VALUE"
   },
   "community": {
     "title": "Community Feed",
@@ -1060,5 +1074,14 @@
     "markComplete": "Mark as Complete",
     "completing": "Completing...",
     "karma": "karma"
+  },
+  "paywall": {
+    "title": "Premium Reading",
+    "teaser": "This reading contains deep insights about your destiny...",
+    "unlockTitle": "Unlock Full Reading",
+    "unlockDescription": "Upgrade to Pro or Premium to see the complete analysis",
+    "unlockButton": "Unlock Now",
+    "subscribedReveal": "Here is your full reading",
+    "loginFirst": "Sign in to unlock premium readings"
   }
 }
