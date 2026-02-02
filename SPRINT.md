@@ -195,7 +195,29 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 - [ ] Daily affirmations — personalized based on zodiac + mood journal trends
 
 ### Platform Hardening
-- [ ] Error boundary improvements — graceful fallbacks on every page
-- [ ] Offline mode — cache recent readings, queue actions for sync
-- [ ] Performance audit — lighthouse scores, bundle analysis, image optimization
-- [ ] API response caching (Redis or in-memory) for expensive AI calls
+- [x] Error boundary improvements — graceful fallbacks on every page
+- [x] Offline mode — cache recent readings, queue actions for sync
+- [x] Performance audit — lighthouse scores, bundle analysis, image optimization
+- [x] API response caching (Redis or in-memory) for expensive AI calls
+
+---
+
+## Sprint 7: Community & Polish
+
+### Community
+- [ ] Activity feed — follow/unfollow users, see friends' readings/achievements
+- [ ] Comments on public readings (with moderation)
+- [ ] Report/flag system for community content
+- [ ] User badges — custom titles for milestones (100 readings, 1000 karma, etc.)
+
+### Polish
+- [ ] Animated page transitions (framer-motion)
+- [ ] Onboarding wizard v2 — guided first-time experience
+- [ ] Mobile bottom nav (responsive, replaces sidebar on small screens)
+- [ ] Haptic feedback on mobile interactions (arcade games, card flips)
+
+### Infrastructure
+- [ ] Redis for session storage + rate limiting + caching
+- [ ] Monitoring dashboard (health metrics, error rates, response times)
+- [ ] Database indexes audit for query performance
+- [ ] Automated DB migrations on Railway deploy
