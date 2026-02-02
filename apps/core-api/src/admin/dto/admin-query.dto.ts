@@ -33,4 +33,8 @@ export class UpdateUserDto {
   @IsIn(["free", "pro"])
   @ApiPropertyOptional({ enum: ["free", "pro"] })
   subscriptionTier?: string;
+
+  @IsOptional()
+  @ApiPropertyOptional({ description: "Ban/unban user" })
+  isActive?: boolean;
 }

@@ -63,6 +63,17 @@ export function AdminUsersTable() {
     fetchUsers();
   };
 
+  const toggleBan = async (id: string, isActive: boolean) => {
+    const token = getToken();
+    if (!token) return;
+    const endpoint = isActive ? "ban" : "unban";
+    await fetch(`/api/admin/users/${id}/${endpoint}`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    fetchUsers();
+  };
+
   const totalPages = Math.ceil(total / 20);
 
   return (
@@ -125,8 +136,18 @@ export function AdminUsersTable() {
                 <td className="p-3 text-muted-foreground text-xs">
                   {new Date(u.createdAt).toLocaleDateString()}
                 </td>
-                <td className="p-3">
+                <td className="p-3 flex items-center gap-2">
                   <span className={`inline-block w-2 h-2 rounded-full ${u.isActive ? "bg-green-400" : "bg-red-400"}`} />
+                  <button
+                    onClick={() => toggleBan(u.id, u.isActive)}
+                    className={`px-2 py-0.5 rounded text-xs border transition-colors ${
+                      u.isActive
+                        ? "text-red-400 border-red-400/30 hover:bg-red-400/10"
+                        : "text-green-400 border-green-400/30 hover:bg-green-400/10"
+                    }`}
+                  >
+                    {u.isActive ? t("users.ban") : t("users.unban")}
+                  </button>
                 </td>
               </tr>
             ))}

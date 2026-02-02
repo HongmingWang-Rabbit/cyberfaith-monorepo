@@ -65,6 +65,17 @@ export function AdminReadingsTable() {
     fetchReadings();
   };
 
+  const toggleVisibility = async (id: string, isPublic: boolean) => {
+    const token = getToken();
+    if (!token) return;
+    await fetch(`/api/admin/readings/${id}/visibility`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ isPublic: !isPublic }),
+    });
+    fetchReadings();
+  };
+
   const totalPages = Math.ceil(total / 20);
   const types = ["mbti", "tarot", "i-ching", "four-pillars", "zodiac"];
 
@@ -129,7 +140,17 @@ export function AdminReadingsTable() {
                 <td className="p-3 text-muted-foreground text-xs">
                   {new Date(r.createdAt).toLocaleString()}
                 </td>
-                <td className="p-3">
+                <td className="p-3 flex gap-2">
+                  <button
+                    onClick={() => toggleVisibility(r.id, r.isPublic)}
+                    className={`px-2 py-1 rounded text-xs border transition-colors ${
+                      r.isPublic
+                        ? "text-amber-400 border-amber-400/30 hover:bg-amber-400/10"
+                        : "text-green-400 border-green-400/30 hover:bg-green-400/10"
+                    }`}
+                  >
+                    {r.isPublic ? t("readings.hide") : t("readings.unhide")}
+                  </button>
                   <button
                     onClick={() => deleteReading(r.id)}
                     className="px-2 py-1 rounded text-xs text-red-400 border border-red-400/30 hover:bg-red-400/10 transition-colors"

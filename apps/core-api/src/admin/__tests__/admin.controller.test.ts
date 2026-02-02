@@ -59,7 +59,9 @@ describe("AdminController", () => {
     const mockMetricsService = { getMetrics: vi.fn().mockResolvedValue({}) } as any;
     const mockCacheService = { hitRate: 0, totalHits: 0, totalMisses: 0 } as any;
     const mockTokenBlacklistService = { invalidateAllTokens: vi.fn().mockResolvedValue(undefined) } as any;
-    controller = new AdminController(db, mockNotificationsService, mockMetricsService, mockCacheService, mockTokenBlacklistService);
+    const mockAnalyticsService = { getAnalytics: vi.fn().mockResolvedValue({}) } as any;
+    const mockAuditService = { log: vi.fn().mockResolvedValue(undefined), getAuditLog: vi.fn().mockResolvedValue({ data: [], total: 0 }) } as any;
+    controller = new AdminController(db, mockNotificationsService, mockMetricsService, mockCacheService, mockTokenBlacklistService, mockAnalyticsService, mockAuditService);
   });
 
   describe("getStats", () => {
@@ -98,7 +100,7 @@ describe("AdminController", () => {
       db.from.mockReturnValue(db);
       db.where.mockResolvedValue([]);
 
-      await expect(controller.updateUser("missing-id", { role: "admin" })).rejects.toThrow(
+      await expect(controller.updateUser("missing-id", { role: "admin" }, { user: { id: "admin-1", email: "a@a.com" } } as any)).rejects.toThrow(
         AppException,
       );
     });
@@ -110,7 +112,7 @@ describe("AdminController", () => {
       db.from.mockReturnValue(db);
       db.where.mockResolvedValue([]);
 
-      await expect(controller.deleteReading("missing-id")).rejects.toThrow(AppException);
+      await expect(controller.deleteReading("missing-id", { user: { id: "admin-1", email: "a@a.com" } } as any)).rejects.toThrow(AppException);
     });
   });
 

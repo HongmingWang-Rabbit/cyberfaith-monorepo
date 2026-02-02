@@ -11,6 +11,7 @@ import {
   UseGuards,
   Inject,
   HttpStatus,
+  Req,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { AdminGuard } from "./admin.guard";
@@ -25,6 +26,16 @@ import { MetricsService } from "../metrics/metrics.service";
 import { CacheService } from "../cache/cache.service";
 import { randomBytes } from "crypto";
 import { TokenBlacklistService } from "../auth/token-blacklist.service";
+import { AdminAnalyticsService } from "./admin-analytics.service";
+import { AdminAuditService } from "./admin-audit.service";
+
+interface AuthRequest {
+  user: { id: string; email: string };
+}
+
+function getAdminId(req: AuthRequest): string {
+  return req.user?.id ?? "unknown";
+}
 
 @ApiTags("Admin")
 @Controller("admin")
@@ -36,6 +47,8 @@ export class AdminController {
     private metricsService: MetricsService,
     private cacheService: CacheService,
     private tokenBlacklistService: TokenBlacklistService,
+    private analyticsService: AdminAnalyticsService,
+    private auditService: AdminAuditService,
   ) {}
 
   @Get("metrics")
@@ -81,6 +94,23 @@ export class AdminController {
         estimatedMonthlyRevenue: activeSubs.count * 9.99,
       },
     };
+  }
+
+  @Get("analytics")
+  async getAnalytics(@Query("from") from?: string, @Query("to") to?: string) {
+    const fromDate = from ? new Date(from) : undefined;
+    const toDate = to ? new Date(to) : undefined;
+    const data = await this.analyticsService.getAnalytics(fromDate, toDate);
+    return { success: true, data };
+  }
+
+  @Get("audit-log")
+  async getAuditLog(@Query("page") page?: string, @Query("limit") limit?: string) {
+    const result = await this.auditService.getAuditLog(
+      page ? parseInt(page, 10) : 1,
+      limit ? parseInt(limit, 10) : 50,
+    );
+    return { success: true, ...result };
   }
 
   @Get("users")
@@ -134,7 +164,7 @@ export class AdminController {
   }
 
   @Patch("users/:id")
-  async updateUser(@Param("id") id: string, @Body() body: UpdateUserDto) {
+  async updateUser(@Param("id") id: string, @Body() body: UpdateUserDto, @Req() req: any) {
     const [existing] = await this.db.select().from(users).where(eq(users.id, id));
     if (!existing) {
       throw new AppException(ErrorCode.USER_NOT_FOUND, "User not found", HttpStatus.NOT_FOUND);
@@ -143,6 +173,7 @@ export class AdminController {
     const updates: Record<string, any> = {};
     if (body.role) updates.role = body.role;
     if (body.subscriptionTier) updates.subscriptionTier = body.subscriptionTier;
+    if (typeof body.isActive === "boolean") updates.isActive = body.isActive;
 
     if (Object.keys(updates).length === 0) {
       return { success: true, data: existing };
@@ -154,6 +185,42 @@ export class AdminController {
       .where(eq(users.id, id))
       .returning();
 
+    await this.auditService.log(getAdminId(req), "update_user", "user", id, updates);
+
+    return { success: true, data: updated };
+  }
+
+  @Patch("users/:id/ban")
+  async banUser(@Param("id") id: string, @Req() req: any) {
+    const [existing] = await this.db.select().from(users).where(eq(users.id, id));
+    if (!existing) {
+      throw new AppException(ErrorCode.USER_NOT_FOUND, "User not found", HttpStatus.NOT_FOUND);
+    }
+
+    const [updated] = await this.db
+      .update(users)
+      .set({ isActive: false })
+      .where(eq(users.id, id))
+      .returning();
+
+    await this.auditService.log(getAdminId(req), "ban_user", "user", id);
+    return { success: true, data: updated };
+  }
+
+  @Patch("users/:id/unban")
+  async unbanUser(@Param("id") id: string, @Req() req: any) {
+    const [existing] = await this.db.select().from(users).where(eq(users.id, id));
+    if (!existing) {
+      throw new AppException(ErrorCode.USER_NOT_FOUND, "User not found", HttpStatus.NOT_FOUND);
+    }
+
+    const [updated] = await this.db
+      .update(users)
+      .set({ isActive: true })
+      .where(eq(users.id, id))
+      .returning();
+
+    await this.auditService.log(getAdminId(req), "unban_user", "user", id);
     return { success: true, data: updated };
   }
 
@@ -203,14 +270,32 @@ export class AdminController {
     };
   }
 
+  @Patch("readings/:id/visibility")
+  async toggleReadingVisibility(@Param("id") id: string, @Body() body: { isPublic: boolean }, @Req() req: any) {
+    const [existing] = await this.db.select().from(readings).where(eq(readings.id, id));
+    if (!existing) {
+      throw new AppException(ErrorCode.READING_NOT_FOUND, "Reading not found", HttpStatus.NOT_FOUND);
+    }
+
+    const [updated] = await this.db
+      .update(readings)
+      .set({ isPublic: body.isPublic })
+      .where(eq(readings.id, id))
+      .returning();
+
+    await this.auditService.log(getAdminId(req), body.isPublic ? "unhide_reading" : "hide_reading", "reading", id);
+    return { success: true, data: updated };
+  }
+
   @Delete("readings/:id")
-  async deleteReading(@Param("id") id: string) {
+  async deleteReading(@Param("id") id: string, @Req() req: any) {
     const [existing] = await this.db.select().from(readings).where(eq(readings.id, id));
     if (!existing) {
       throw new AppException(ErrorCode.READING_NOT_FOUND, "Reading not found", HttpStatus.NOT_FOUND);
     }
 
     await this.db.delete(readings).where(eq(readings.id, id));
+    await this.auditService.log(getAdminId(req), "delete_reading", "reading", id);
     return { success: true };
   }
 
@@ -230,13 +315,10 @@ export class AdminController {
   }
 
   @Post("rotate-jwt-secret")
-  async rotateJwtSecret() {
+  async rotateJwtSecret(@Req() req: any) {
     const newSecret = randomBytes(64).toString("hex");
-
-    // In production, this would update the secret in a secrets manager.
-    // For now, we log the new secret and mark all existing tokens as invalid
-    // by bumping a global invalidation timestamp.
     await this.tokenBlacklistService.invalidateAllTokens();
+    await this.auditService.log(getAdminId(req), "rotate_jwt_secret");
 
     return {
       success: true,
@@ -249,12 +331,13 @@ export class AdminController {
   }
 
   @Post("send-push")
-  async sendPush(@Body() body: { title: string; body: string; url?: string }) {
+  async sendPush(@Body() body: { title: string; body: string; url?: string }, @Req() req: any) {
     const result = await this.notificationsService.sendToAll(
       body.title || "CyberFaith",
       body.body || "You have a new notification!",
       body.url,
     );
+    await this.auditService.log(getAdminId(req), "send_push", undefined, undefined, { title: body.title });
     return { success: true, data: result };
   }
 }

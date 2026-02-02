@@ -399,10 +399,15 @@
     "subtitle": "系统监控与内容审核",
     "loading": "加载中...",
     "tabs": {
-      "dashboard": "仪表盘",
-      "users": "用户管理",
-      "readings": "内容审核",
-      "reports": "举报"
+      "overview": "概览",
+      "users": "用户",
+      "readings": "占卜",
+      "analytics": "数据分析",
+      "reports": "举报",
+      "events": "活动",
+      "notifications": "通知",
+      "metrics": "指标",
+      "audit": "审计日志"
     },
     "stats": {
       "totalUsers": "总用户数",
@@ -424,7 +429,9 @@
       "readings": "解读数",
       "joined": "注册时间",
       "actions": "状态",
-      "noResults": "未找到用户"
+      "noResults": "未找到用户",
+      "ban": "封禁",
+      "unban": "解封"
     },
     "readings": {
       "allTypes": "全部类型",
@@ -438,7 +445,9 @@
       "actions": "操作",
       "delete": "删除",
       "confirmDelete": "确定要删除这条解读吗？",
-      "noResults": "未找到解读"
+      "noResults": "未找到解读",
+      "hide": "隐藏",
+      "unhide": "取消隐藏"
     },
     "pagination": {
       "showing": "{from}-{to} / 共 {total}"
@@ -460,6 +469,60 @@
       "filterPending": "待处理",
       "filterReviewed": "已审核",
       "filterDismissed": "已驳回"
+    },
+    "analytics": {
+      "from": "从",
+      "to": "到",
+      "mrr": "月经常性收入",
+      "subscribers": "总订阅数",
+      "churned": "流失用户",
+      "userGrowth": "用户增长（每日注册）",
+      "readingVolume": "占卜量（按类型）",
+      "conversionFunnel": "转化漏斗",
+      "funnelSignup": "注册",
+      "funnelFirstReading": "首次占卜",
+      "funnelSecondReading": "二次占卜",
+      "funnelSubscribed": "订阅",
+      "retention": "队列留存",
+      "topReadings": "热门占卜（按互动量）"
+    },
+    "events": {
+      "title": "季节活动",
+      "create": "创建活动",
+      "cancel": "取消",
+      "name": "名称",
+      "description": "描述",
+      "type": "类型",
+      "start": "开始",
+      "end": "结束",
+      "status": "状态",
+      "active": "进行中",
+      "inactive": "已结束",
+      "empty": "暂无活动",
+      "save": "创建活动"
+    },
+    "notifications": {
+      "sendPush": "发送推送通知",
+      "titlePlaceholder": "通知标题...",
+      "bodyPlaceholder": "通知内容...",
+      "urlPlaceholder": "URL（可选）",
+      "send": "发送给所有人",
+      "sent": "发送成功！",
+      "error": "发送失败",
+      "scheduledJobs": "定时通知任务",
+      "noJobs": "暂无定时任务",
+      "status": "状态",
+      "lastRun": "上次运行",
+      "trigger": "立即触发"
+    },
+    "auditLog": {
+      "title": "管理员审计日志",
+      "time": "时间",
+      "admin": "管理员",
+      "action": "操作",
+      "target": "目标",
+      "details": "详情",
+      "empty": "暂无审计记录"
     }
   },
   "dream": {

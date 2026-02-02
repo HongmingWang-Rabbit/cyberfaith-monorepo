@@ -7,6 +7,12 @@ import { useRouter } from "@/i18n/navigation";
 import { AdminUsersTable } from "./users-table";
 import { AdminReadingsTable } from "./readings-table";
 import { AdminReportsTable } from "./reports-table";
+import { AdminAnalyticsTab } from "./analytics-tab";
+import { AdminEventsTab } from "./events-tab";
+import { AdminNotificationsTab } from "./notifications-tab";
+import { AdminAuditLogTab } from "./audit-log-tab";
+
+type TabKey = "overview" | "users" | "readings" | "analytics" | "reports" | "events" | "notifications" | "metrics" | "audit";
 
 interface Stats {
   totalUsers: number;
@@ -38,7 +44,7 @@ export default function AdminDashboard() {
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState<"dashboard" | "users" | "readings" | "metrics" | "reports">("dashboard");
+  const [activeTab, setActiveTab] = useState<TabKey>("overview");
 
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || !(user as any)?.role || (user as any)?.role !== "admin")) {
@@ -52,20 +58,17 @@ export default function AdminDashboard() {
         const stored = localStorage.getItem("cyberfaith_auth");
         if (!stored) return;
         const { tokens } = JSON.parse(stored);
-        const res = await fetch("/api/admin/stats", {
-          headers: { Authorization: `Bearer ${tokens.accessToken}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch stats");
-        const data = await res.json();
-        setStats(data.data);
-
-        // Also fetch metrics
-        const metricsRes = await fetch("/api/admin/metrics", {
-          headers: { Authorization: `Bearer ${tokens.accessToken}` },
-        });
+        const [statsRes, metricsRes] = await Promise.all([
+          fetch("/api/admin/stats", { headers: { Authorization: `Bearer ${tokens.accessToken}` } }),
+          fetch("/api/admin/metrics", { headers: { Authorization: `Bearer ${tokens.accessToken}` } }),
+        ]);
+        if (statsRes.ok) {
+          const data = await statsRes.json();
+          setStats(data.data);
+        }
         if (metricsRes.ok) {
-          const metricsData = await metricsRes.json();
-          setMetrics(metricsData.data);
+          const data = await metricsRes.json();
+          setMetrics(data.data);
         }
       } catch (e: any) {
         setError(e.message);
@@ -92,12 +95,16 @@ export default function AdminDashboard() {
     );
   }
 
-  const tabs = [
-    { key: "dashboard" as const, label: t("tabs.dashboard"), icon: "📊" },
-    { key: "metrics" as const, label: "Metrics", icon: "⚡" },
-    { key: "users" as const, label: t("tabs.users"), icon: "👥" },
-    { key: "readings" as const, label: t("tabs.readings"), icon: "🔮" },
-    { key: "reports" as const, label: t("tabs.reports"), icon: "🚩" },
+  const tabs: { key: TabKey; label: string; icon: string }[] = [
+    { key: "overview", label: t("tabs.overview"), icon: "📊" },
+    { key: "users", label: t("tabs.users"), icon: "👥" },
+    { key: "readings", label: t("tabs.readings"), icon: "🔮" },
+    { key: "analytics", label: t("tabs.analytics"), icon: "📈" },
+    { key: "reports", label: t("tabs.reports"), icon: "🚩" },
+    { key: "events", label: t("tabs.events"), icon: "🎉" },
+    { key: "notifications", label: t("tabs.notifications"), icon: "📣" },
+    { key: "metrics", label: t("tabs.metrics"), icon: "⚡" },
+    { key: "audit", label: t("tabs.audit"), icon: "📋" },
   ];
 
   return (
@@ -114,12 +121,12 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tab navigation */}
-      <div className="flex gap-2 border-b border-border pb-2">
+      <div className="flex gap-1 border-b border-border pb-2 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2 rounded-t-lg text-sm font-medium transition-all ${
+            className={`px-3 py-2 rounded-t-lg text-sm font-medium transition-all whitespace-nowrap ${
               activeTab === tab.key
                 ? "bg-primary/15 text-primary border-b-2 border-primary"
                 : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -130,50 +137,43 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      {/* Dashboard tab */}
-      {activeTab === "dashboard" && stats && (
+      {/* Overview tab */}
+      {activeTab === "overview" && stats && (
         <div className="space-y-6">
-          {/* Stat cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard
-              icon="👥"
-              label={t("stats.totalUsers")}
-              value={stats.totalUsers}
-              color="from-violet-500 to-purple-600"
-            />
-            <StatCard
-              icon="🔮"
-              label={t("stats.totalReadings")}
-              value={stats.totalReadings}
-              color="from-cyan-500 to-blue-600"
-            />
-            <StatCard
-              icon="📅"
-              label={t("stats.readingsToday")}
-              value={stats.readingsToday}
-              color="from-emerald-500 to-green-600"
-            />
-            <StatCard
-              icon="💎"
-              label={t("stats.activeSubs")}
-              value={stats.activeSubscriptions}
-              color="from-amber-500 to-orange-600"
-            />
+            <StatCard icon="👥" label={t("stats.totalUsers")} value={stats.totalUsers} color="from-violet-500 to-purple-600" />
+            <StatCard icon="🔮" label={t("stats.totalReadings")} value={stats.totalReadings} color="from-cyan-500 to-blue-600" />
+            <StatCard icon="📅" label={t("stats.readingsToday")} value={stats.readingsToday} color="from-emerald-500 to-green-600" />
+            <StatCard icon="💎" label={t("stats.activeSubs")} value={stats.activeSubscriptions} color="from-amber-500 to-orange-600" />
           </div>
 
-          {/* Revenue card */}
-          <div className="p-6 rounded-xl border border-border bg-card/50 backdrop-blur-sm">
-            <h3 className="text-lg font-semibold mb-4">💰 {t("stats.revenue")}</h3>
-            <div className="text-3xl font-bold text-primary">
-              ${stats.estimatedMonthlyRevenue.toFixed(2)}
-              <span className="text-sm text-muted-foreground font-normal ml-2">{t("stats.perMonth")}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="p-6 rounded-xl border border-border bg-card/50 backdrop-blur-sm">
+              <h3 className="text-lg font-semibold mb-4">💰 {t("stats.revenue")}</h3>
+              <div className="text-3xl font-bold text-primary">
+                ${stats.estimatedMonthlyRevenue.toFixed(2)}
+                <span className="text-sm text-muted-foreground font-normal ml-2">{t("stats.perMonth")}</span>
+              </div>
+              <div className="mt-6 flex items-end gap-2 h-32">
+                <BarChart value={stats.activeSubscriptions} max={stats.totalUsers} label={t("stats.proUsers")} color="bg-primary" />
+                <BarChart value={stats.totalUsers - stats.activeSubscriptions} max={stats.totalUsers} label={t("stats.freeUsers")} color="bg-muted-foreground" />
+                <BarChart value={stats.readingsToday} max={Math.max(stats.totalReadings / 30, 1)} label={t("stats.todayActivity")} color="bg-accent" />
+              </div>
             </div>
-            {/* Simple bar chart */}
-            <div className="mt-6 flex items-end gap-2 h-32">
-              <BarChart value={stats.activeSubscriptions} max={stats.totalUsers} label={t("stats.proUsers")} color="bg-primary" />
-              <BarChart value={stats.totalUsers - stats.activeSubscriptions} max={stats.totalUsers} label={t("stats.freeUsers")} color="bg-muted-foreground" />
-              <BarChart value={stats.readingsToday} max={Math.max(stats.totalReadings / 30, 1)} label={t("stats.todayActivity")} color="bg-accent" />
-            </div>
+
+            {metrics && (
+              <div className="p-6 rounded-xl border border-border bg-card/50 backdrop-blur-sm space-y-4">
+                <h3 className="text-lg font-semibold">⚡ {t("tabs.metrics")}</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <MiniStat label="Requests/hr" value={String(metrics.requestsLastHour)} />
+                  <MiniStat label="Avg Response" value={`${metrics.averageResponseMs}ms`} />
+                  <MiniStat label="Error Rate" value={metrics.errorRate} />
+                  <MiniStat label="Cache Hit" value={metrics.cacheHitRate} />
+                  <MiniStat label="Active 24h" value={String(metrics.activeUsers24h)} />
+                  <MiniStat label="DB Queries" value={metrics.dbQueryCount.toLocaleString()} />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -206,12 +206,13 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Users tab */}
       {activeTab === "users" && <AdminUsersTable />}
-
-      {/* Readings tab */}
       {activeTab === "readings" && <AdminReadingsTable />}
+      {activeTab === "analytics" && <AdminAnalyticsTab />}
       {activeTab === "reports" && <AdminReportsTable />}
+      {activeTab === "events" && <AdminEventsTab />}
+      {activeTab === "notifications" && <AdminNotificationsTab />}
+      {activeTab === "audit" && <AdminAuditLogTab />}
     </div>
   );
 }
@@ -225,6 +226,15 @@ function StatCard({ icon, label, value, color }: { icon: string; label: string; 
         <div className="text-2xl font-bold">{value.toLocaleString()}</div>
         <div className="text-xs text-muted-foreground mt-1">{label}</div>
       </div>
+    </div>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="p-3 rounded-lg border border-border/50 bg-muted/10">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-lg font-bold">{value}</div>
     </div>
   );
 }

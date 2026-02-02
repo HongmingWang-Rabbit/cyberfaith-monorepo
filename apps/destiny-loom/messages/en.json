@@ -399,10 +399,16 @@
     "subtitle": "System monitoring & moderation",
     "loading": "Loading...",
     "tabs": {
-      "dashboard": "Dashboard",
+      "overview": "Overview",
       "users": "Users",
       "readings": "Readings",
-      "reports": "Reports"
+      "analytics": "Analytics",
+      "reports": "Reports",
+      "events": "Events",
+      "notifications": "Notifications",
+      "metrics": "Metrics",
+      "audit": "Audit Log",
+      "dashboard": "Dashboard"
     },
     "stats": {
       "totalUsers": "Total Users",
@@ -424,7 +430,9 @@
       "readings": "Readings",
       "joined": "Joined",
       "actions": "Status",
-      "noResults": "No users found"
+      "noResults": "No users found",
+      "ban": "Ban",
+      "unban": "Unban"
     },
     "readings": {
       "allTypes": "All types",
@@ -438,7 +446,9 @@
       "actions": "Actions",
       "delete": "Delete",
       "confirmDelete": "Are you sure you want to delete this reading?",
-      "noResults": "No readings found"
+      "noResults": "No readings found",
+      "hide": "Hide",
+      "unhide": "Unhide"
     },
     "pagination": {
       "showing": "{from}-{to} of {total}"
@@ -460,6 +470,60 @@
       "filterPending": "Pending",
       "filterReviewed": "Reviewed",
       "filterDismissed": "Dismissed"
+    },
+    "analytics": {
+      "from": "From",
+      "to": "To",
+      "mrr": "Monthly Recurring Revenue",
+      "subscribers": "Total Subscribers",
+      "churned": "Churned Users",
+      "userGrowth": "User Growth (Daily Signups)",
+      "readingVolume": "Reading Volume by Type",
+      "conversionFunnel": "Conversion Funnel",
+      "funnelSignup": "Signups",
+      "funnelFirstReading": "First Reading",
+      "funnelSecondReading": "Second Reading",
+      "funnelSubscribed": "Subscribed",
+      "retention": "Cohort Retention",
+      "topReadings": "Top Readings (by engagement)"
+    },
+    "events": {
+      "title": "Seasonal Events",
+      "create": "Create Event",
+      "cancel": "Cancel",
+      "name": "Name",
+      "description": "Description",
+      "type": "Type",
+      "start": "Start",
+      "end": "End",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "empty": "No events found",
+      "save": "Create Event"
+    },
+    "notifications": {
+      "sendPush": "Send Push Notification",
+      "titlePlaceholder": "Notification title...",
+      "bodyPlaceholder": "Notification body...",
+      "urlPlaceholder": "URL (optional)",
+      "send": "Send to All",
+      "sent": "Sent successfully!",
+      "error": "Failed to send",
+      "scheduledJobs": "Scheduled Notification Jobs",
+      "noJobs": "No scheduled jobs",
+      "status": "Status",
+      "lastRun": "Last run",
+      "trigger": "Trigger Now"
+    },
+    "auditLog": {
+      "title": "Admin Audit Log",
+      "time": "Time",
+      "admin": "Admin",
+      "action": "Action",
+      "target": "Target",
+      "details": "Details",
+      "empty": "No audit entries"
     }
   },
   "dream": {
