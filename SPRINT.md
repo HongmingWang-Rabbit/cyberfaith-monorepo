@@ -151,3 +151,30 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 - [ ] Report/flag system for community content
 - [ ] Rate limiting dashboard (admin view of abuse patterns)
 - [ ] Database backup cron job (Neon snapshots)
+
+---
+
+## Sprint 5: Polish, Analytics & Monetization
+
+### User Experience
+- [ ] User settings page — notification prefs, language, theme toggle, privacy controls, delete account
+- [ ] Onboarding wizard v2 — pick zodiac sign, MBTI type, interests on first login
+- [ ] Animated page transitions (framer-motion route transitions)
+- [ ] Loading states & skeleton screens for all data-fetching pages
+
+### Analytics & Insights
+- [ ] Personal insights dashboard — reading patterns, most-used features, mood trends from journal
+- [ ] Birth chart SVG visualization (planets, houses, aspects)
+- [ ] Weekly recap email — your readings, streaks, compatibility highlights
+
+### Monetization
+- [ ] Stripe pricing page with tier comparison (free/pro/premium)
+- [ ] Premium reading unlock flow (paywall → checkout → reveal)
+- [ ] Referral system — invite friends, earn karma + free premium days
+- [ ] Gift readings — buy and send a reading to a friend
+
+### Content & Engagement
+- [ ] Seasonal events system — event banner, limited-time readings, special arcade rewards
+- [ ] Daily challenges — "Draw a tarot card for a stranger" with karma reward
+- [ ] Achievement showcase on profile — badge wall, share achievements
+- [ ] Palmistry module — upload palm photo, AI analysis
