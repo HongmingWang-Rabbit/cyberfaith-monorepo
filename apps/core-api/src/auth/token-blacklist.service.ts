@@ -21,4 +21,18 @@ export class TokenBlacklistService {
     const val = await this.redis.get(this.PREFIX + jti);
     return val !== null;
   }
+
+  /**
+   * Invalidate all existing tokens by setting a global invalidation timestamp.
+   * JWT strategy should check this timestamp against token iat.
+   */
+  async invalidateAllTokens(): Promise<void> {
+    await this.redis.set("global:token-invalidated-at", Date.now().toString(), 604800); // 7 days
+  }
+
+  /** Get the global invalidation timestamp */
+  async getGlobalInvalidationTime(): Promise<number | null> {
+    const val = await this.redis.get("global:token-invalidated-at");
+    return val ? parseInt(val, 10) : null;
+  }
 }

@@ -917,5 +917,26 @@
     "submit": "提交举报",
     "success": "举报已提交，感谢！",
     "cancel": "取消"
+  },
+  "search": {
+    "placeholder": "搜索解读、用户...",
+    "all": "全部",
+    "readings": "解读",
+    "users": "用户",
+    "searching": "搜索中...",
+    "noResults": "没有找到结果",
+    "recentSearches": "最近搜索",
+    "reading": "解读",
+    "by": "来自",
+    "shortcutHint": "切换搜索"
+  },
+  "notifications": {
+    "title": "通知",
+    "markAllRead": "全部标为已读",
+    "loading": "加载中...",
+    "empty": "暂无通知",
+    "viewAll": "查看所有通知",
+    "justNow": "刚刚",
+    "signInRequired": "登录后查看通知"
   }
 }

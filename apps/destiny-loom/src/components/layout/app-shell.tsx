@@ -7,6 +7,8 @@ import { useAuth } from "@cyberfaith/auth-client";
 import { useState, useRef, useEffect } from "react";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { PageTransition } from "@/components/layout/page-transition";
+import { SearchModal } from "@/components/search/search-modal";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 
 const navItems = [
   { key: "home", href: "/", icon: "🏠" },
@@ -37,6 +39,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, isAuthenticated, isLoading: authLoading, loginWithGoogle, logout } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,6 +50,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Cmd+K / Ctrl+K shortcut for search
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   return (
@@ -114,6 +129,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
           <div className="hidden md:block" />
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Search"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+            <NotificationBell />
             <LocaleSwitcher />
             {authLoading ? (
               <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
@@ -173,6 +198,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Mobile bottom nav */}
       <BottomNav />
+
+      {/* Search modal */}
+      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
 
       <style jsx>{`
         .cyber-grid {

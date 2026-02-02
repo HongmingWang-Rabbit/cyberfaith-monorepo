@@ -1,11 +1,12 @@
-import { Controller, Get, Patch, Delete, Body, Req, Param, UseGuards, Inject, NotFoundException, HttpStatus } from "@nestjs/common";
+import { Controller, Get, Patch, Delete, Body, Req, Param, UseGuards, Inject, NotFoundException, HttpStatus, Res } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { Request } from "express";
+import type { Request, Response } from "express";
 import { DRIZZLE } from "../db/drizzle.provider";
-import { users, userSettings, userAchievements, achievements, readings, journalEntries, pointsTransactions, userFollows } from "../db/schema";
-import { eq, sql, desc, count, and, gte } from "drizzle-orm";
+import { users, userSettings, userAchievements, achievements, readings, journalEntries, pointsTransactions, userFollows, friendships, comments } from "../db/schema";
+import { eq, sql, desc, count, and, gte, or } from "drizzle-orm";
 import { AppException } from "../common/app.exception";
 import { ErrorCode } from "../common/error-codes";
+import { sanitizeText } from "../common/sanitize";
 import { SetZodiacDto } from "../horoscope/dto/zodiac.dto";
 import { UpdateSettingsDto } from "./dto/update-settings.dto";
 
@@ -213,7 +214,7 @@ export class UsersController {
 
     // Also update user display name, username on the users table if provided
     const userUpdates: Record<string, unknown> = {};
-    if (body.displayName !== undefined) userUpdates.name = body.displayName;
+    if (body.displayName !== undefined) userUpdates.name = sanitizeText(body.displayName);
     if (body.username !== undefined) {
       // Check uniqueness
       const [existing] = await this.db
@@ -250,6 +251,47 @@ export class UsersController {
       .where(eq(users.id, req.user.id));
 
     return { success: true, message: "Account scheduled for deletion" };
+  }
+
+  @UseGuards(AuthGuard("jwt"))
+  @Get("data-export")
+  async dataExport(@Req() req: AuthRequest, @Res() res: Response) {
+    const userId = req.user.id;
+
+    const [userData, settingsData, userReadings, journal, points, friends, userComments] = await Promise.all([
+      this.db.select().from(users).where(eq(users.id, userId)),
+      this.db.select().from(userSettings).where(eq(userSettings.userId, userId)),
+      this.db.select().from(readings).where(eq(readings.userId, userId)).orderBy(desc(readings.createdAt)),
+      this.db.select().from(journalEntries).where(eq(journalEntries.userId, userId)).orderBy(desc(journalEntries.createdAt)),
+      this.db.select().from(pointsTransactions).where(eq(pointsTransactions.userId, userId)).orderBy(desc(pointsTransactions.createdAt)),
+      this.db.select().from(friendships).where(or(eq(friendships.requesterId, userId), eq(friendships.addresseeId, userId))),
+      this.db.select().from(comments).where(eq(comments.userId, userId)),
+    ]);
+
+    const user = userData[0];
+    const exportData = {
+      exportDate: new Date().toISOString(),
+      user: user ? {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        username: user.username,
+        zodiacSign: user.zodiacSign,
+        subscriptionTier: user.subscriptionTier,
+        karma: user.karma,
+        createdAt: user.createdAt,
+      } : null,
+      settings: settingsData[0] || null,
+      readings: userReadings,
+      journalEntries: journal,
+      pointsTransactions: points,
+      friendships: friends,
+      comments: userComments,
+    };
+
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Content-Disposition", `attachment; filename="cyberfaith-data-export-${new Date().toISOString().slice(0, 10)}.json"`);
+    return res.json(exportData);
   }
 
   @UseGuards(AuthGuard("jwt"))

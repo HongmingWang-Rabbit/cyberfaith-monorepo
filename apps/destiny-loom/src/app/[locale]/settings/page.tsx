@@ -394,6 +394,56 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
+      {/* GDPR Data Export */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            📦 Data Export
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            Download all your data in JSON format. This includes your profile, readings, journal entries, points, friends, and comments.
+          </p>
+          <div className="flex gap-3 flex-wrap">
+            <Button
+              size="sm"
+              onClick={async () => {
+                try {
+                  const token = session?.tokens?.accessToken;
+                  if (!token) return;
+                  const res = await fetch("/api/users/data-export", {
+                    headers: { authorization: `Bearer ${token}` },
+                  });
+                  if (res.ok) {
+                    const blob = await res.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `cyberfaith-data-export-${new Date().toISOString().slice(0, 10)}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showToast("Data exported successfully", "success");
+                  } else {
+                    showToast("Failed to export data", "error");
+                  }
+                } catch {
+                  showToast("Failed to export data", "error");
+                }
+              }}
+            >
+              Export My Data
+            </Button>
+            <a href="/en/privacy" className="text-sm text-primary underline hover:text-primary/80 self-center">
+              Privacy Policy
+            </a>
+            <a href="/en/terms" className="text-sm text-primary underline hover:text-primary/80 self-center">
+              Terms of Service
+            </a>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Account / Danger Zone */}
       <Card className="border-red-500/30">
         <CardHeader>

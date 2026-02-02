@@ -917,5 +917,26 @@
     "submit": "Submit Report",
     "success": "Report submitted. Thank you!",
     "cancel": "Cancel"
+  },
+  "search": {
+    "placeholder": "Search readings, users...",
+    "all": "All",
+    "readings": "Readings",
+    "users": "Users",
+    "searching": "Searching...",
+    "noResults": "No results found",
+    "recentSearches": "Recent searches",
+    "reading": "Reading",
+    "by": "by",
+    "shortcutHint": "to toggle search"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "loading": "Loading...",
+    "empty": "No notifications yet",
+    "viewAll": "View all notifications",
+    "justNow": "Just now",
+    "signInRequired": "Sign in to view notifications"
   }
 }

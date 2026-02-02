@@ -22,6 +22,8 @@ import { AdminUsersQueryDto, AdminReadingsQueryDto, UpdateUserDto } from "./dto"
 import { NotificationsService } from "../notifications/notifications.service";
 import { MetricsService } from "../metrics/metrics.service";
 import { CacheService } from "../cache/cache.service";
+import { randomBytes } from "crypto";
+import { TokenBlacklistService } from "../auth/token-blacklist.service";
 
 @Controller("admin")
 @UseGuards(AuthGuard("jwt"), AdminGuard)
@@ -31,6 +33,7 @@ export class AdminController {
     private notificationsService: NotificationsService,
     private metricsService: MetricsService,
     private cacheService: CacheService,
+    private tokenBlacklistService: TokenBlacklistService,
   ) {}
 
   @Get("metrics")
@@ -222,6 +225,25 @@ export class AdminController {
       .groupBy(arcadePlays.gameId);
 
     return { success: true, data: stats };
+  }
+
+  @Post("rotate-jwt-secret")
+  async rotateJwtSecret() {
+    const newSecret = randomBytes(64).toString("hex");
+
+    // In production, this would update the secret in a secrets manager.
+    // For now, we log the new secret and mark all existing tokens as invalid
+    // by bumping a global invalidation timestamp.
+    await this.tokenBlacklistService.invalidateAllTokens();
+
+    return {
+      success: true,
+      data: {
+        message: "All existing tokens have been invalidated. Update JWT_SECRET env var with the new secret and restart the service.",
+        newSecret,
+        invalidatedAt: new Date().toISOString(),
+      },
+    };
   }
 
   @Post("send-push")

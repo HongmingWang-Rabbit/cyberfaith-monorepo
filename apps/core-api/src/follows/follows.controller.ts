@@ -7,6 +7,7 @@ import { userFollows, users, readings, userAchievements, achievements } from "..
 import { eq, and, desc, count, sql, or } from "drizzle-orm";
 import { AppException } from "../common/app.exception";
 import { ErrorCode } from "../common/error-codes";
+import { InAppNotificationsService } from "../notifications/in-app-notifications.service";
 import { Request } from "express";
 
 interface AuthRequest extends Request {
@@ -15,7 +16,10 @@ interface AuthRequest extends Request {
 
 @Controller("users")
 export class FollowsController {
-  constructor(@Inject(DRIZZLE) private readonly db: any) {}
+  constructor(
+    @Inject(DRIZZLE) private readonly db: any,
+    private readonly inAppNotifications: InAppNotificationsService,
+  ) {}
 
   @UseGuards(AuthGuard("jwt"))
   @Post(":id/follow")
@@ -41,6 +45,16 @@ export class FollowsController {
       }
       throw err;
     }
+
+    // Get follower name for notification
+    const [follower] = await this.db.select({ name: users.name }).from(users).where(eq(users.id, req.user.id));
+    this.inAppNotifications.create(
+      targetId,
+      "follow",
+      `${follower?.name || "Someone"} followed you`,
+      undefined,
+      `/community/users/${req.user.id}`,
+    ).catch(() => {});
 
     return { success: true };
   }

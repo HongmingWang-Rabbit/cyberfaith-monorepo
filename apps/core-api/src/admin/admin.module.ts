@@ -3,9 +3,10 @@ import { AdminController } from "./admin.controller";
 import { AdminGuard } from "./admin.guard";
 import { DbModule } from "../db/db.module";
 import { NotificationsModule } from "../notifications/notifications.module";
+import { AuthModule } from "../auth/auth.module";
 
 @Module({
-  imports: [DbModule, NotificationsModule],
+  imports: [DbModule, NotificationsModule, AuthModule],
   controllers: [AdminController],
   providers: [AdminGuard],
   exports: [AdminGuard],

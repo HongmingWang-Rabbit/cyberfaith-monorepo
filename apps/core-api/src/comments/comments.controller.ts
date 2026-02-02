@@ -7,6 +7,8 @@ import { comments, readings, users } from "../db/schema";
 import { eq, and, desc, isNull, count } from "drizzle-orm";
 import { AppException } from "../common/app.exception";
 import { ErrorCode } from "../common/error-codes";
+import { InAppNotificationsService } from "../notifications/in-app-notifications.service";
+import { sanitizeText } from "../common/sanitize";
 import { CreateCommentDto } from "./dto";
 import { Request } from "express";
 
@@ -16,7 +18,10 @@ interface AuthRequest extends Request {
 
 @Controller("readings")
 export class CommentsOnReadingsController {
-  constructor(@Inject(DRIZZLE) private readonly db: any) {}
+  constructor(
+    @Inject(DRIZZLE) private readonly db: any,
+    private readonly inAppNotifications: InAppNotificationsService,
+  ) {}
 
   @UseGuards(AuthGuard("jwt"))
   @Post(":id/comments")
@@ -52,10 +57,26 @@ export class CommentsOnReadingsController {
       .values({
         readingId,
         userId: req.user.id,
-        content: body.content.slice(0, 500),
+        content: sanitizeText(body.content).slice(0, 500),
         parentId: body.parentId ?? null,
       })
       .returning();
+
+    // Notify reading owner about the comment
+    const [readingFull] = await this.db
+      .select({ userId: readings.userId })
+      .from(readings)
+      .where(eq(readings.id, readingId));
+    if (readingFull && readingFull.userId !== req.user.id) {
+      const [commenter] = await this.db.select({ name: users.name }).from(users).where(eq(users.id, req.user.id));
+      this.inAppNotifications.create(
+        readingFull.userId,
+        "comment",
+        `${commenter?.name || "Someone"} commented on your reading`,
+        sanitizeText(body.content).slice(0, 100),
+        `/community/readings/${readingId}`,
+      ).catch(() => {});
+    }
 
     return { success: true, data: comment };
   }

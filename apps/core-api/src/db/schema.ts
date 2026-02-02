@@ -252,6 +252,25 @@ export const comments = pgTable("comments", {
   parentIdx: index("comments_parent_idx").on(table.parentId),
 }));
 
+// ─── In-App Notifications ─────────────────────────────────
+export const notificationTypeEnum = pgEnum("notification_type", [
+  "follow", "comment", "reaction", "achievement", "gift", "system",
+]);
+
+export const inAppNotifications = pgTable("in_app_notifications", {
+  id: idColumn(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  type: notificationTypeEnum("type").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  message: text("message"),
+  linkUrl: varchar("link_url", { length: 500 }),
+  read: boolean("read").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userReadCreatedIdx: index("in_app_notif_user_read_created_idx").on(table.userId, table.read, table.createdAt),
+  userCreatedIdx: index("in_app_notif_user_created_idx").on(table.userId, table.createdAt),
+}));
+
 // ─── Reports ──────────────────────────────────────────────
 export const reportReasonEnum = pgEnum("report_reason", ["spam", "inappropriate", "harassment", "other"]);
 export const reportStatusEnum = pgEnum("report_status", ["pending", "reviewed", "dismissed"]);

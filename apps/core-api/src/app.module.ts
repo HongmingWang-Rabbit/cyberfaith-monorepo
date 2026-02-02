@@ -10,6 +10,7 @@ import { ReadingsModule } from "./readings/readings.module";
 import { LoggerMiddleware } from "./common/logger.middleware";
 import { CorsMiddleware } from "./common/cors.middleware";
 import { RateLimitGuard } from "./common/rate-limit.guard";
+import { CsrfGuard } from "./common/csrf.guard";
 import { StripeModule } from "./stripe/stripe.module";
 import { ArcadeModule } from "./arcade/arcade.module";
 import { MuyuModule } from "./arcade/muyu/muyu.module";
@@ -26,18 +27,23 @@ import { LeaderboardModule } from "./leaderboard/leaderboard.module";
 import { FollowsModule } from "./follows/follows.module";
 import { CommentsModule } from "./comments/comments.module";
 import { ReportsModule } from "./reports/reports.module";
+import { SearchModule } from "./search/search.module";
 import { RedisModule } from "./redis/redis.module";
 import { RedisService } from "./redis/redis.service";
 import { MetricsMiddleware } from "./common/metrics.middleware";
 import { MetricsModule } from "./metrics/metrics.module";
 
 @Module({
-  imports: [RedisModule, CacheModule, DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule, ReferralsModule, GiftsModule, LeaderboardModule, MetricsModule, FollowsModule, CommentsModule, ReportsModule],
+  imports: [RedisModule, CacheModule, DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule, ReferralsModule, GiftsModule, LeaderboardModule, MetricsModule, FollowsModule, CommentsModule, ReportsModule, SearchModule],
   providers: [
     {
       provide: APP_GUARD,
       useFactory: (redis: RedisService) => new RateLimitGuard(redis, 60, 60_000),
       inject: [RedisService],
+    },
+    {
+      provide: APP_GUARD,
+      useClass: CsrfGuard,
     },
   ],
 })
