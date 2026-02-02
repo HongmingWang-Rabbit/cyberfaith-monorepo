@@ -23,7 +23,8 @@
       "numerology": "Numerology",
       "fengShui": "Feng Shui",
       "affirmations": "Affirmations",
-      "readings": "Readings"
+      "readings": "Readings",
+      "events": "Events"
     },
     "auth": {
       "signIn": "Sign In",
@@ -938,5 +939,30 @@
     "viewAll": "View all notifications",
     "justNow": "Just now",
     "signInRequired": "Sign in to view notifications"
+  },
+  "events": {
+    "title": "Events",
+    "subtitle": "Seasonal events and special celebrations",
+    "loading": "Loading events...",
+    "activeEvents": "Active Events",
+    "upcomingEvents": "Upcoming Events",
+    "pastEvents": "Past Events",
+    "noEvents": "No events at the moment",
+    "live": "LIVE",
+    "karmaMultiplier": "Karma",
+    "viewDetails": "Details"
+  },
+  "featured": {
+    "badge": "Reading of the Day",
+    "by": "by",
+    "view": "View"
+  },
+  "levels": {
+    "title": "Level",
+    "progress": "Progress",
+    "nextLevel": "Next level",
+    "maxLevel": "Maximum level reached!",
+    "levelUp": "Level Up!",
+    "levelUpMessage": "Your spiritual journey continues to new heights!"
   }
 }

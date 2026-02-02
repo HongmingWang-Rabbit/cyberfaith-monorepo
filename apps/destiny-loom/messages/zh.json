@@ -23,7 +23,8 @@
       "numerology": "数字命理",
       "fengShui": "风水",
       "affirmations": "每日肯定",
-      "readings": "解读"
+      "readings": "解读",
+      "events": "活动"
     },
     "auth": {
       "signIn": "登录",
@@ -938,5 +939,30 @@
     "viewAll": "查看所有通知",
     "justNow": "刚刚",
     "signInRequired": "登录后查看通知"
+  },
+  "events": {
+    "title": "活动",
+    "subtitle": "季节性活动与特别庆典",
+    "loading": "正在加载活动...",
+    "activeEvents": "当前活动",
+    "upcomingEvents": "即将开始",
+    "pastEvents": "已结束活动",
+    "noEvents": "暂无活动",
+    "live": "进行中",
+    "karmaMultiplier": "业力",
+    "viewDetails": "详情"
+  },
+  "featured": {
+    "badge": "今日精选",
+    "by": "作者：",
+    "view": "查看"
+  },
+  "levels": {
+    "title": "等级",
+    "progress": "进度",
+    "nextLevel": "下一等级",
+    "maxLevel": "已达最高等级！",
+    "levelUp": "升级！",
+    "levelUpMessage": "你的灵性之旅已迈向新高度！"
   }
 }

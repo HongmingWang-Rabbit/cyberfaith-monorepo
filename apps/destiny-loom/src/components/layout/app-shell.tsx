@@ -28,6 +28,7 @@ const navItems = [
   { key: "affirmations", href: "/affirmations", icon: "💫" },
   { key: "birthChart", href: "/birth-chart", icon: "🌌" },
   { key: "arcade", href: "/arcade", icon: "🕹️" },
+  { key: "events", href: "/events", icon: "🎉" },
   { key: "profile", href: "/profile", icon: "👤" },
   { key: "settings", href: "/settings", icon: "⚙️" },
 ] as const;

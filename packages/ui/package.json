@@ -16,10 +16,17 @@
   },
   "devDependencies": {
     "@cyberfaith/config-typescript": "workspace:*",
+    "@storybook/addon-essentials": "^8.6.15",
+    "@storybook/blocks": "^8.6.15",
+    "@storybook/react": "^8.6.15",
+    "@storybook/react-vite": "^8.6.15",
+    "@storybook/test": "^8.6.15",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/react": "^19.0.2",
     "jsdom": "^27.4.0",
-    "typescript": "^5.7.2"
+    "storybook": "^8.6.15",
+    "typescript": "^5.7.2",
+    "vite": "^6"
   }
 }
