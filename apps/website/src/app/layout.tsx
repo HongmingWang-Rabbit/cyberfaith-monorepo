@@ -4,24 +4,26 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "CyberFaith — Digital Spirituality for the Modern Age",
+    default: "CyberFaith — AI-Powered Spiritual Guidance for the Modern Soul",
     template: "%s | CyberFaith",
   },
   description:
-    "Explore MBTI, Tarot, Zodiac, Four Pillars, and I Ching through a cyberpunk lens. Casual spirituality for the digital generation.",
+    "Discover your destiny with AI-powered Tarot, Zodiac, MBTI, I Ching, Four Pillars, Numerology, Feng Shui, and Dream Interpretation. Casual spirituality for the digital generation.",
   metadataBase: new URL("https://cyberfaith.app"),
+  keywords: ["tarot", "zodiac", "MBTI", "I Ching", "numerology", "feng shui", "dream interpretation", "AI spirituality", "digital divination"],
   openGraph: {
-    title: "CyberFaith — Digital Spirituality for the Modern Age",
-    description: "Casual spirituality for the digital generation. Decode your destiny with AI.",
+    title: "CyberFaith — Discover Your Destiny",
+    description: "AI-powered spiritual guidance for the modern soul. Tarot, Zodiac, MBTI, and more.",
     type: "website",
     siteName: "CyberFaith",
     url: "https://cyberfaith.app",
   },
   twitter: {
     card: "summary_large_image",
-    title: "CyberFaith — Digital Spirituality for the Modern Age",
-    description: "Casual spirituality for the digital generation.",
+    title: "CyberFaith — Discover Your Destiny",
+    description: "AI-powered spiritual guidance for the modern soul.",
   },
+  robots: { index: true, follow: true },
 };
 
 function Navbar() {
@@ -32,15 +34,21 @@ function Navbar() {
           Cyber<span className="text-primary">Faith</span>
         </Link>
         <div className="flex items-center gap-6 text-sm">
-          <Link href="/products" className="text-muted-foreground hover:text-primary transition-colors">
-            Products
-          </Link>
-          <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
+          <a href="#features" className="hidden sm:block text-muted-foreground hover:text-primary transition-colors">
+            Features
+          </a>
+          <a href="#demo" className="hidden sm:block text-muted-foreground hover:text-primary transition-colors">
+            How It Works
+          </a>
+          <a href="#pricing" className="hidden sm:block text-muted-foreground hover:text-primary transition-colors">
+            Pricing
+          </a>
+          <Link href="/about" className="hidden sm:block text-muted-foreground hover:text-primary transition-colors">
             About
           </Link>
           <a
             href="https://destiny-loom.cyberfaith.app"
-            className="rounded-md bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-medium text-white hover:shadow-[var(--glow-purple)] transition-all"
+            className="rounded-lg bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-sm font-semibold text-white hover:shadow-[var(--glow-purple)] transition-all"
           >
             Launch App
           </a>
@@ -53,35 +61,60 @@ function Navbar() {
 function Footer() {
   return (
     <footer className="border-t border-border/50 bg-secondary/50">
-      <div className="mx-auto max-w-6xl px-4 py-12">
-        <div className="grid gap-8 sm:grid-cols-3">
+      <div className="mx-auto max-w-6xl px-4 py-16">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Brand */}
           <div>
             <h3 className="text-lg font-bold mb-3">
               Cyber<span className="text-primary">Faith</span>
             </h3>
-            <p className="text-sm text-muted-foreground">
-              Digital spirituality for the modern age. Explore your inner world through technology.
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              AI-powered spiritual guidance for the modern soul. Explore your inner world through technology.
             </p>
           </div>
+          {/* Company */}
           <div>
-            <h4 className="text-sm font-semibold text-foreground mb-3">Products</h4>
+            <h4 className="text-sm font-semibold text-foreground mb-4">Company</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/products" className="hover:text-primary transition-colors">Destiny Loom</Link></li>
-              <li><Link href="/products" className="hover:text-primary transition-colors">Spirit Arcade</Link></li>
-              <li><Link href="/products" className="hover:text-primary transition-colors">Sanctum</Link></li>
+              <li><Link href="/about" className="hover:text-primary transition-colors">About</Link></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Terms of Service</a></li>
+              <li><a href="mailto:hello@cyberfaith.app" className="hover:text-primary transition-colors">Contact</a></li>
             </ul>
           </div>
+          {/* Social */}
           <div>
-            <h4 className="text-sm font-semibold text-foreground mb-3">Connect</h4>
+            <h4 className="text-sm font-semibold text-foreground mb-4">Connect</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><a href="#" className="hover:text-primary transition-colors">Twitter / X</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Discord</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">WeChat</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Instagram</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">TikTok</a></li>
             </ul>
           </div>
+          {/* Newsletter */}
+          <div>
+            <h4 className="text-sm font-semibold text-foreground mb-4">Stay Updated</h4>
+            <p className="text-sm text-muted-foreground mb-3">Get the latest readings and features.</p>
+            <form className="flex gap-2" action="#">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                aria-label="Email for newsletter"
+                className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50"
+              />
+              <button
+                type="submit"
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-dark transition-colors"
+              >
+                Subscribe
+              </button>
+            </form>
+          </div>
         </div>
-        <div className="mt-10 border-t border-border/50 pt-6 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} CyberFaith. All rights reserved.
+        <div className="mt-12 border-t border-border/50 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+          <p>© {new Date().getFullYear()} CyberFaith. All rights reserved.</p>
+          <p>Built with ✨ and AI</p>
         </div>
       </div>
     </footer>
@@ -94,7 +127,7 @@ function OrganizationJsonLd() {
     "@type": "Organization",
     name: "CyberFaith",
     url: "https://cyberfaith.app",
-    description: "Digital spirituality for the modern age.",
+    description: "AI-powered spiritual guidance for the modern soul.",
   };
   return (
     <script
