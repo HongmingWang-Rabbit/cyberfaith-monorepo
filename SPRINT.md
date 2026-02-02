@@ -116,4 +116,38 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 - [x] PWA support (installable, offline shell)
 - [x] Email notifications (weekly digest, welcome, streak reminders)
 - [x] Admin dashboard (user stats, moderation, role management)
-- [ ] API versioning (v1 prefix)
+- [x] API versioning (v1 prefix)
+- [x] SEO & performance optimization (meta, JSON-LD, sitemap, dynamic imports)
+- [x] Input validation & sanitization (class-validator DTOs)
+- [x] E2E test infrastructure (supertest, auth helpers, 6 test suites)
+- [x] CI/CD pipeline (GitHub Actions: typecheck → test → build → deploy)
+- [x] Daily horoscope feature + web push notifications
+- [x] Production deployment: Railway (core-api) + Vercel (destiny-loom) + Neon (Postgres)
+- [x] Stripe webhook integration
+
+---
+
+## Sprint 4: Retention & Content (NEXT)
+
+### Engagement
+- [ ] Compatibility matching — compare two users' readings (zodiac, MBTI)
+- [ ] Daily challenges — "Draw a tarot card for a stranger" with karma reward
+- [ ] Reading journal — personal notes on past readings, mood tracking
+- [ ] Seasonal events — Chinese New Year, Mercury retrograde, eclipses
+
+### Content Depth
+- [ ] Zodiac compatibility matrix (all 144 pairings with AI analysis)
+- [ ] Birth chart visualization (SVG wheel with planets/houses)
+- [ ] Palmistry module — camera-based palm reading with AI
+- [ ] Dream interpretation — text input → AI symbolic analysis
+
+### Spirit Arcade (v2)
+- [ ] Fortune Cookie — crack open for daily wisdom
+- [ ] Destiny Wheel — spin-to-win daily reward
+- [ ] Meditation Timer — ambient sounds, breathing guide, streak tracking
+
+### Platform
+- [ ] User settings page (notification prefs, language, theme, privacy)
+- [ ] Report/flag system for community content
+- [ ] Rate limiting dashboard (admin view of abuse patterns)
+- [ ] Database backup cron job (Neon snapshots)
