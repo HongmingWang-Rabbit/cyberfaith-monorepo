@@ -42,6 +42,13 @@ export class NotificationSchedulerService {
       lastRun: null,
       lastResult: null,
     },
+    weeklyDigestEmail: {
+      type: "weeklyDigestEmail",
+      description: "Weekly digest email — Monday 9:30am UTC",
+      cron: "30 9 * * 1",
+      lastRun: null,
+      lastResult: null,
+    },
   };
 
   constructor(
@@ -185,6 +192,35 @@ export class NotificationSchedulerService {
     return result;
   }
 
+  /** Weekly digest email on Monday 9:30am UTC (after push at 9am) */
+  @Cron("30 9 * * 1", { name: "weeklyDigestEmail" })
+  async handleWeeklyDigestEmail(): Promise<{ sent: number; failed: number }> {
+    this.logger.log("Running weekly digest email job");
+    const usersToEmail = await this.digestService.getUsersForDigest();
+
+    let sent = 0;
+    let failed = 0;
+
+    for (const user of usersToEmail) {
+      try {
+        const data = await this.digestService.generateDigest(user.id);
+        if (data) {
+          await this.emailService.sendWeeklyDigest(user.email, data);
+          sent++;
+        }
+      } catch (err) {
+        this.logger.warn(`Failed to send digest email to ${user.email}: ${err}`);
+        failed++;
+      }
+    }
+
+    const result = { sent, failed };
+    this.jobStatuses.weeklyDigestEmail.lastRun = new Date();
+    this.jobStatuses.weeklyDigestEmail.lastResult = result;
+    this.logger.log(`Weekly digest email: sent=${sent}, failed=${failed}`);
+    return result;
+  }
+
   /** Manually trigger a job by type */
   async triggerJob(type: string): Promise<{ sent: number; failed: number }> {
     switch (type) {
@@ -194,6 +230,8 @@ export class NotificationSchedulerService {
         return this.handleStreakAtRisk();
       case "weeklyDigestPush":
         return this.handleWeeklyDigestPush();
+      case "weeklyDigestEmail":
+        return this.handleWeeklyDigestEmail();
       default:
         throw new Error(`Unknown job type: ${type}`);
     }

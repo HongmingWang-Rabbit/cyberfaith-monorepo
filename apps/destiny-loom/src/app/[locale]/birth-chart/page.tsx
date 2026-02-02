@@ -52,6 +52,56 @@ const NEON_COLORS = {
   bg: "#0a0a1a",
 };
 
+/* ── Aspect utilities ──────────────────────────────────── */
+
+const ASPECT_DEFS: { type: Aspect["type"]; angle: number; orb: number; color: string; dash?: string; symbol: string }[] = [
+  { type: "conjunction", angle: 0, orb: 8, color: "#a855f7", symbol: "☌" },
+  { type: "opposition", angle: 180, orb: 8, color: "#ef4444", dash: "6,3", symbol: "☍" },
+  { type: "trine", angle: 120, orb: 8, color: "#22c55e", symbol: "△" },
+  { type: "square", angle: 90, orb: 7, color: "#f59e0b", dash: "4,4", symbol: "□" },
+  { type: "sextile", angle: 60, orb: 6, color: "#06b6d4", dash: "2,4", symbol: "⚹" },
+];
+
+function computeAspects(planets: PlanetPosition[]): Aspect[] {
+  const aspects: Aspect[] = [];
+  for (let i = 0; i < planets.length; i++) {
+    for (let j = i + 1; j < planets.length; j++) {
+      const deg1 = SIGN_ORDER.indexOf(planets[i].sign) * 30 + planets[i].degree;
+      const deg2 = SIGN_ORDER.indexOf(planets[j].sign) * 30 + planets[j].degree;
+      let diff = Math.abs(deg1 - deg2);
+      if (diff > 180) diff = 360 - diff;
+      for (const def of ASPECT_DEFS) {
+        const orb = Math.abs(diff - def.angle);
+        if (orb <= def.orb) {
+          aspects.push({ planet1: planets[i].planet, planet2: planets[j].planet, type: def.type, angle: def.angle, orb });
+          break;
+        }
+      }
+    }
+  }
+  return aspects;
+}
+
+/* ── Tooltip component ─────────────────────────────────── */
+
+function SvgTooltip({ x, y, text, visible }: { x: number; y: number; text: string; visible: boolean }) {
+  if (!visible) return null;
+  const lines = text.split("\n");
+  const w = Math.max(...lines.map(l => l.length)) * 6.5 + 16;
+  const h = lines.length * 14 + 12;
+  // Clamp within viewBox
+  const tx = Math.min(Math.max(x - w / 2, 4), 496 - w);
+  const ty = y - h - 8;
+  return (
+    <g style={{ pointerEvents: "none" }}>
+      <rect x={tx} y={ty} width={w} height={h} rx={6} fill="#1a1a2eee" stroke="#6d28d9" strokeWidth={0.5} />
+      {lines.map((line, i) => (
+        <text key={i} x={tx + 8} y={ty + 14 + i * 14} fontSize={10} fill="#e4e4e7">{line}</text>
+      ))}
+    </g>
+  );
+}
+
 /* ── Birth Chart Wheel SVG ─────────────────────────────── */
 
 function BirthChartWheel({ data }: { data: BirthChartData }) {
@@ -59,27 +109,36 @@ function BirthChartWheel({ data }: { data: BirthChartData }) {
   const cx = size / 2, cy = size / 2;
   const outerR = 220, signR = 195, innerR = 170, houseR = 80;
 
+  const [tooltip, setTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
+
+  // Compute planet pixel positions for aspect lines & tooltips
+  const planetPositions = data.planets.map((p, i) => {
+    const signIdx = SIGN_ORDER.indexOf(p.sign);
+    const totalDeg = signIdx * 30 + p.degree;
+    const angle = (totalDeg - 90) * Math.PI / 180;
+    const planetR = innerR - 30 - (i % 2) * 20;
+    return { planet: p, px: cx + planetR * Math.cos(angle), py: cy + planetR * Math.sin(angle), angle };
+  });
+
+  const posMap = Object.fromEntries(planetPositions.map(p => [p.planet.planet, p]));
+
+  // Compute aspects
+  const aspects = computeAspects(data.planets);
+
   // Sign positions on outer ring
   const signElements = SIGN_ORDER.map((sign, i) => {
     const startAngle = (i * 30 - 90) * Math.PI / 180;
     const midAngle = ((i * 30 + 15) - 90) * Math.PI / 180;
-    const endAngle = ((i + 1) * 30 - 90) * Math.PI / 180;
-
-    const x1o = cx + outerR * Math.cos(startAngle);
-    const y1o = cy + outerR * Math.sin(startAngle);
-    const x2o = cx + outerR * Math.cos(endAngle);
-    const y2o = cy + outerR * Math.sin(endAngle);
     const x1i = cx + innerR * Math.cos(startAngle);
     const y1i = cy + innerR * Math.sin(startAngle);
-
+    const x1o = cx + outerR * Math.cos(startAngle);
+    const y1o = cy + outerR * Math.sin(startAngle);
     const textX = cx + signR * Math.cos(midAngle);
     const textY = cy + signR * Math.sin(midAngle);
 
     return (
       <g key={sign}>
-        {/* Divider line */}
         <line x1={x1i} y1={y1i} x2={x1o} y2={y1o} stroke={NEON_COLORS.ring} strokeWidth={0.5} opacity={0.5} />
-        {/* Sign glyph */}
         <text x={textX} y={textY} textAnchor="middle" dominantBaseline="central" fontSize={16} fill={NEON_COLORS.primary}
           style={{ filter: `drop-shadow(0 0 4px ${NEON_COLORS.primary})` }}>
           {ZODIAC_GLYPHS[sign]}
@@ -108,34 +167,43 @@ function BirthChartWheel({ data }: { data: BirthChartData }) {
     );
   });
 
-  // Planet positions
-  const planetElements = data.planets.map((p, i) => {
-    const signIdx = SIGN_ORDER.indexOf(p.sign);
-    const totalDeg = signIdx * 30 + p.degree;
-    const angle = (totalDeg - 90) * Math.PI / 180;
-    const planetR = innerR - 30 - (i % 2) * 20; // stagger to avoid overlap
-    const px = cx + planetR * Math.cos(angle);
-    const py = cy + planetR * Math.sin(angle);
-
+  // Aspect lines between planets
+  const aspectElements = aspects.map((a, i) => {
+    const p1 = posMap[a.planet1];
+    const p2 = posMap[a.planet2];
+    if (!p1 || !p2) return null;
+    const def = ASPECT_DEFS.find(d => d.type === a.type)!;
     return (
-      <g key={p.planet}>
-        {/* Connection line */}
-        <line x1={cx + (innerR - 5) * Math.cos(angle)} y1={cy + (innerR - 5) * Math.sin(angle)}
-          x2={px} y2={py} stroke={NEON_COLORS.accent} strokeWidth={0.5} opacity={0.3} />
-        {/* Planet glyph */}
-        <circle cx={px} cy={py} r={12} fill={NEON_COLORS.bg} stroke={NEON_COLORS.accent} strokeWidth={1}
-          style={{ filter: `drop-shadow(0 0 6px ${NEON_COLORS.accent}40)` }} />
-        <text x={px} y={py} textAnchor="middle" dominantBaseline="central" fontSize={12} fill={NEON_COLORS.accent}
-          style={{ filter: `drop-shadow(0 0 3px ${NEON_COLORS.accent})` }}>
-          {PLANET_GLYPHS[p.planet] || "?"}
-        </text>
-      </g>
+      <line key={`aspect-${i}`} x1={p1.px} y1={p1.py} x2={p2.px} y2={p2.py}
+        stroke={def.color} strokeWidth={0.8} opacity={0.4}
+        strokeDasharray={def.dash || "none"}
+        onMouseEnter={() => setTooltip({ x: (p1.px + p2.px) / 2, y: (p1.py + p2.py) / 2, text: `${def.symbol} ${a.type}\n${a.planet1} – ${a.planet2}\norb: ${a.orb.toFixed(1)}°` })}
+        onMouseLeave={() => setTooltip(null)}
+        style={{ cursor: "pointer" }}
+      />
     );
   });
 
+  // Planet glyphs with tooltips
+  const planetElements = planetPositions.map(({ planet: p, px, py, angle }) => (
+    <g key={p.planet}
+      onMouseEnter={() => setTooltip({ x: px, y: py, text: `${PLANET_GLYPHS[p.planet] || "?"} ${p.planet}\n${ZODIAC_GLYPHS[p.sign]} ${p.sign} ${p.degree}°\n${p.interpretation.slice(0, 60)}` })}
+      onMouseLeave={() => setTooltip(null)}
+      style={{ cursor: "pointer" }}
+    >
+      <line x1={cx + (innerR - 5) * Math.cos(angle)} y1={cy + (innerR - 5) * Math.sin(angle)}
+        x2={px} y2={py} stroke={NEON_COLORS.accent} strokeWidth={0.5} opacity={0.3} />
+      <circle cx={px} cy={py} r={12} fill={NEON_COLORS.bg} stroke={NEON_COLORS.accent} strokeWidth={1}
+        style={{ filter: `drop-shadow(0 0 6px ${NEON_COLORS.accent}40)` }} />
+      <text x={px} y={py} textAnchor="middle" dominantBaseline="central" fontSize={12} fill={NEON_COLORS.accent}
+        style={{ filter: `drop-shadow(0 0 3px ${NEON_COLORS.accent})`, pointerEvents: "none" }}>
+        {PLANET_GLYPHS[p.planet] || "?"}
+      </text>
+    </g>
+  ));
+
   return (
     <svg viewBox={`0 0 ${size} ${size}`} className="w-full max-w-lg mx-auto" id="birth-chart-svg">
-      {/* Background glow */}
       <defs>
         <radialGradient id="chartGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor={NEON_COLORS.primary} stopOpacity={0.05} />
@@ -153,7 +221,7 @@ function BirthChartWheel({ data }: { data: BirthChartData }) {
 
       <circle cx={cx} cy={cy} r={outerR + 10} fill="url(#chartGlow)" />
 
-      {/* Outer ring */}
+      {/* Rings */}
       <circle cx={cx} cy={cy} r={outerR} fill="none" stroke={NEON_COLORS.primary} strokeWidth={2}
         style={{ filter: `drop-shadow(0 0 8px ${NEON_COLORS.primary}60)` }} />
       <circle cx={cx} cy={cy} r={innerR} fill="none" stroke={NEON_COLORS.ring} strokeWidth={1} opacity={0.6} />
@@ -161,11 +229,30 @@ function BirthChartWheel({ data }: { data: BirthChartData }) {
 
       {signElements}
       {houseElements}
+      {aspectElements}
       {planetElements}
 
       {/* Center dot */}
       <circle cx={cx} cy={cy} r={4} fill={NEON_COLORS.secondary}
         style={{ filter: `drop-shadow(0 0 6px ${NEON_COLORS.secondary})` }} />
+
+      {/* Tooltip overlay */}
+      {tooltip && <SvgTooltip x={tooltip.x} y={tooltip.y} text={tooltip.text} visible />}
+
+      {/* Aspect legend */}
+      {aspects.length > 0 && (
+        <g>
+          {ASPECT_DEFS.filter(d => aspects.some(a => a.type === d.type)).map((d, i) => (
+            <g key={d.type}>
+              <line x1={8} y1={size - 60 + i * 13} x2={20} y2={size - 60 + i * 13}
+                stroke={d.color} strokeWidth={1.5} strokeDasharray={d.dash || "none"} />
+              <text x={24} y={size - 57 + i * 13} fontSize={8} fill="#a3a3a3">
+                {d.symbol} {d.type}
+              </text>
+            </g>
+          ))}
+        </g>
+      )}
     </svg>
   );
 }
