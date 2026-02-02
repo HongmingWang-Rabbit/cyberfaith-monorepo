@@ -1,10 +1,12 @@
 import { Controller, Get, Post, Param, UseGuards, HttpStatus } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
 import { AdminGuard } from "../admin/admin.guard";
 import { NotificationSchedulerService } from "./notification-scheduler.service";
 import { AppException } from "../common/app.exception";
 import { ErrorCode } from "../common/error-codes";
 
+@ApiTags("Admin Notifications")
 @Controller("admin/notification-jobs")
 @UseGuards(AuthGuard("jwt"), AdminGuard)
 export class AdminNotificationsController {

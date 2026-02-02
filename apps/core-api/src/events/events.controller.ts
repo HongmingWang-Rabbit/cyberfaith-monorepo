@@ -1,9 +1,11 @@
 import { Controller, Get, Post, Body, UseGuards } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
 import { AdminGuard } from "../admin/admin.guard";
 import { EventsService } from "./events.service";
 import { CreateEventDto } from "./dto/create-event.dto";
 
+@ApiTags("Events")
 @Controller()
 export class EventsController {
   constructor(private eventsService: EventsService) {}

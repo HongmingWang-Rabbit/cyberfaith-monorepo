@@ -1,4 +1,5 @@
 import { Controller, Get, Req, UseGuards } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
 import { LevelsService, LEVEL_TIERS } from "./levels.service";
@@ -7,6 +8,7 @@ interface AuthRequest extends Request {
   user: { id: string; email: string };
 }
 
+@ApiTags("Levels")
 @Controller("users")
 export class LevelsController {
   constructor(private levelsService: LevelsService) {}
