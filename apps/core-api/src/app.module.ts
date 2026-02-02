@@ -19,9 +19,11 @@ import { EmailModule } from "./email/email.module";
 import { HoroscopeModule } from "./horoscope/horoscope.module";
 import { NotificationsModule } from "./notifications/notifications.module";
 import { CompatibilityModule } from "./compatibility/compatibility.module";
+import { ReferralsModule } from "./referrals/referrals.module";
+import { GiftsModule } from "./gifts/gifts.module";
 
 @Module({
-  imports: [DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule],
+  imports: [DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule, ReferralsModule, GiftsModule],
   providers: [
     {
       provide: APP_GUARD,

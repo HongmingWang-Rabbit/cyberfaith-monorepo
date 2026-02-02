@@ -12,6 +12,7 @@ import {
   Inject,
   NotFoundException,
   ConflictException,
+  BadRequestException,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { DRIZZLE } from "../db/drizzle.provider";
@@ -23,6 +24,7 @@ import { AppException } from "../common/app.exception";
 import { ErrorCode } from "../common/error-codes";
 import { HttpStatus } from "@nestjs/common";
 import { CreateReadingDto, TogglePublicDto, ReactDto, FeedQueryDto, ReadingsQueryDto, CreateJournalEntryDto, UpdateJournalEntryDto } from "./dto";
+import { calculateBirthChart, type BirthChartInput } from "./birth-chart.util";
 
 interface AuthRequest extends Request {
   user: { id: string; email: string };
@@ -31,6 +33,20 @@ interface AuthRequest extends Request {
 @Controller("readings")
 export class ReadingsController {
   constructor(@Inject(DRIZZLE) private db: PostgresJsDatabase) {}
+
+  @Get("birth-chart")
+  async birthChart(
+    @Query("date") date: string,
+    @Query("time") time: string,
+    @Query("location") location: string,
+  ) {
+    if (!date || !time) {
+      throw new BadRequestException("date and time are required (YYYY-MM-DD, HH:mm)");
+    }
+    const input: BirthChartInput = { date, time, location: location || "Unknown" };
+    const chart = calculateBirthChart(input);
+    return { success: true, data: chart };
+  }
 
   @Get("public/:id")
   async findPublic(@Param("id") id: string) {

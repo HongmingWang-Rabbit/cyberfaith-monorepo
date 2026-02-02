@@ -5,6 +5,8 @@ import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@cyberfaith/ui";
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@cyberfaith/auth-client";
+import { ReferralCard } from "@/components/referral-card";
+import { GiftHistorySection } from "@/components/gift-history";
 
 /* ── Types ─────────────────────────────────────────────── */
 
@@ -236,6 +238,12 @@ export default function ProfilePage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Referral Card */}
+      {isAuthenticated && <ReferralCard />}
+
+      {/* Gift History */}
+      {isAuthenticated && <GiftHistorySection />}
 
       {/* Stats */}
       <div>

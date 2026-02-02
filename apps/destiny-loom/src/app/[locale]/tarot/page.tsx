@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@cyberfaith/ui";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { GiftReadingButton } from "@/components/gift-reading-button";
 
 const spreads = [
   { key: "single", icon: "🎴", cards: 1, color: "primary" },
@@ -22,6 +23,9 @@ export default function TarotPage() {
         <p className="text-muted-foreground text-lg max-w-xl mx-auto">
           {t("subtitle")}
         </p>
+        <div className="mt-3">
+          <GiftReadingButton readingType="tarot" />
+        </div>
       </div>
 
       <div className="grid gap-6">
