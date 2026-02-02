@@ -56,6 +56,17 @@ export default function AffirmationsPage() {
     } catch {}
   }, []);
 
+  const shareAffirmation = async (aff: Affirmation) => {
+    const text = `✨ "${aff.text}" ${aff.emoji}\n\n— CyberFaith Daily Affirmation`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ text });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(text);
+    }
+  };
+
   const toggleFavorite = (index: number) => {
     setFavorites((prev) => {
       const next = new Set(prev);
@@ -174,6 +185,13 @@ export default function AffirmationsPage() {
               aria-label="Favorite"
             >
               {favorites.has(currentIndex) ? "❤️" : "🤍"}
+            </button>
+            <button
+              onClick={() => current && shareAffirmation(current)}
+              className="w-12 h-12 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-cyan-400 hover:border-cyan-400 transition-colors"
+              aria-label="Share"
+            >
+              📤
             </button>
             <span className="text-sm text-muted-foreground">
               {currentIndex + 1} / {data!.affirmations.length}

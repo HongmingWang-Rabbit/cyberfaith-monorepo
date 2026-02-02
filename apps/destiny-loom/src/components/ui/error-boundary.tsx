@@ -22,6 +22,18 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    // Report to console for debugging
+    console.error("[ErrorBoundary]", error, errorInfo.componentStack);
+
+    // Report to Sentry if available
+    if (typeof window !== "undefined" && (window as unknown as { Sentry?: { captureException: (e: Error, ctx?: unknown) => void } }).Sentry) {
+      (window as unknown as { Sentry: { captureException: (e: Error, ctx?: unknown) => void } }).Sentry.captureException(error, {
+        contexts: { react: { componentStack: errorInfo.componentStack } },
+      });
+    }
+  }
+
   handleRetry = () => {
     this.setState({ hasError: false, error: null });
   };
