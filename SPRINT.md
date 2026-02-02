@@ -102,8 +102,8 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 
 ### Monetization
 - [x] Stripe subscription integration (free/pro tiers)
-- [ ] Premium reading types (detailed reports)
-- [ ] Premium AI models for paying users
+- [x] Premium reading types (detailed reports)
+- [x] Premium AI models for paying users (tiered model selection)
 - [x] Usage limits for free tier (TierLimitGuard)
 
 ### Spirit Arcade (v1)
@@ -114,6 +114,6 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 
 ### Platform
 - [x] PWA support (installable, offline shell)
-- [ ] Email notifications (weekly digest)
-- [ ] Admin dashboard (user stats, moderation)
+- [x] Email notifications (weekly digest, welcome, streak reminders)
+- [x] Admin dashboard (user stats, moderation, role management)
 - [ ] API versioning (v1 prefix)
