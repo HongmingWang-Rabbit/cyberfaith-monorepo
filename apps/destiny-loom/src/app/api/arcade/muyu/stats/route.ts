@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       return withRateLimitHeaders(errorResponse("Unauthorized", 401));
     }
 
-    const res = await fetch(`${CORE_API_URL}/arcade/muyu/stats`, {
+    const res = await fetch(`${CORE_API_URL}/v1/arcade/muyu/stats`, {
       headers: { Authorization: auth },
     });
 

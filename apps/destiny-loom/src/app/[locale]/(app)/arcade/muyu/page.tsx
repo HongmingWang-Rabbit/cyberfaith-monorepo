@@ -3,10 +3,12 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
-import { MuyuFish } from "@/components/arcade/games/muyu/muyu-fish";
-import { MuyuStats } from "@/components/arcade/games/muyu/muyu-stats";
-import { MuyuSkinPicker } from "@/components/arcade/games/muyu/muyu-skin-picker";
+import dynamic from "next/dynamic";
 import { useMuyuSound } from "@/components/arcade/games/muyu/use-muyu-sound";
+
+const MuyuFish = dynamic(() => import("@/components/arcade/games/muyu/muyu-fish").then(m => m.MuyuFish), { ssr: false });
+const MuyuStats = dynamic(() => import("@/components/arcade/games/muyu/muyu-stats").then(m => m.MuyuStats), { ssr: false });
+const MuyuSkinPicker = dynamic(() => import("@/components/arcade/games/muyu/muyu-skin-picker").then(m => m.MuyuSkinPicker), { ssr: false });
 import type { MuyuSkin } from "@/components/arcade/games/muyu/skins";
 
 const T = {

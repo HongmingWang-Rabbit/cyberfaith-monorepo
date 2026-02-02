@@ -16,7 +16,7 @@ export async function PATCH(
     const { id } = await params;
     const body = await request.json();
 
-    const res = await fetch(`${CORE_API_URL}/readings/${id}/public`, {
+    const res = await fetch(`${CORE_API_URL}/v1/readings/${id}/public`, {
       method: "PATCH",
       headers: {
         Authorization: auth,

@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get("limit") || "50";
     const page = searchParams.get("page") || "1";
 
-    const url = new URL(`${CORE_API_URL}/readings`);
+    const url = new URL(`${CORE_API_URL}/v1/readings`);
     if (type) url.searchParams.set("type", type);
     url.searchParams.set("limit", limit);
     url.searchParams.set("page", page);
@@ -52,7 +52,7 @@ export async function DELETE(request: NextRequest) {
       return withRateLimitHeaders(errorResponse("Missing reading id", 400));
     }
 
-    const res = await fetch(`${CORE_API_URL}/readings/${id}`, {
+    const res = await fetch(`${CORE_API_URL}/v1/readings/${id}`, {
       method: "DELETE",
       headers: { Authorization: auth },
     });

@@ -10,7 +10,7 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const res = await fetch(`${CORE_API_URL}/readings/public/${id}`, {
+    const res = await fetch(`${CORE_API_URL}/v1/readings/public/${id}`, {
       next: { revalidate: 60 }, // cache for 1 minute
     });
 

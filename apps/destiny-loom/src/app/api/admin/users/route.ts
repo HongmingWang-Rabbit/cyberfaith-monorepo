@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   if (!auth) return errorResponse("Unauthorized", 401);
 
   const { searchParams } = new URL(request.url);
-  const url = new URL(`${CORE_API_URL}/admin/users`);
+  const url = new URL(`${CORE_API_URL}/v1/admin/users`);
   for (const [k, v] of searchParams.entries()) url.searchParams.set(k, v);
 
   const res = await fetch(url.toString(), {

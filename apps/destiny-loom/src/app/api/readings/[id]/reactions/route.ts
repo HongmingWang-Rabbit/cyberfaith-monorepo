@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const res = await fetch(`${CORE_API_URL}/readings/${id}/reactions`);
+    const res = await fetch(`${CORE_API_URL}/v1/readings/${id}/reactions`);
 
     if (!res.ok) {
       const body = await res.text();

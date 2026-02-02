@@ -3,7 +3,17 @@
 import { Suspense, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { TarotDeck } from "@/components/tarot/TarotDeck";
+import dynamic from "next/dynamic";
+
+const TarotDeck = dynamic(() => import("@/components/tarot/TarotDeck").then(m => m.TarotDeck), {
+  loading: () => (
+    <div className="flex flex-col items-center gap-4 py-16">
+      <div className="h-48 w-32 rounded-xl bg-muted animate-pulse" />
+      <div className="h-4 w-40 rounded bg-muted animate-pulse" />
+    </div>
+  ),
+  ssr: false,
+});
 import type { SpreadType, DrawnCard } from "@/data/tarot-deck";
 
 function ReadingContent() {

@@ -8,10 +8,29 @@ import { AppShell } from "@/components/layout/app-shell";
 import { ToastProvider } from "@/components/ui/toast";
 import { AuthWrapper } from "@/components/auth-wrapper";
 import { ServiceWorkerRegister } from "@/components/sw-register";
+import { WebApplicationJsonLd } from "@/components/seo/json-ld";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://destiny-loom.cyberfaith.app";
 
 export const metadata: Metadata = {
-  title: "Destiny Loom — CyberFaith",
-  description: "Weave your path with guided journeys and divine insights",
+  title: {
+    default: "Destiny Loom — CyberFaith",
+    template: "%s — Destiny Loom",
+  },
+  description: "Explore MBTI, Tarot, Zodiac, Four Pillars, and I Ching readings powered by AI. Casual spirituality for the digital generation.",
+  metadataBase: new URL(APP_URL),
+  openGraph: {
+    title: "Destiny Loom — CyberFaith",
+    description: "AI-powered spiritual readings: MBTI, Tarot, Zodiac, I Ching & more",
+    type: "website",
+    siteName: "Destiny Loom — CyberFaith",
+    url: APP_URL,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Destiny Loom — CyberFaith",
+    description: "AI-powered spiritual readings: MBTI, Tarot, Zodiac, I Ching & more",
+  },
 };
 
 type Props = {
@@ -35,8 +54,16 @@ export default async function LocaleLayout({ children, params }: Props) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <WebApplicationJsonLd />
       </head>
       <body className="bg-background text-foreground min-h-screen">
+        {/* Skip to content for accessibility */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-md focus:text-sm"
+        >
+          Skip to content
+        </a>
         <NextIntlClientProvider messages={messages}>
           <AuthWrapper>
             <ToastProvider>

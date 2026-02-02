@@ -110,7 +110,7 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 - [x] Game framework scaffolding (lobby + arcade API)
 - [x] Karma Slots — spiritual slot machine with neon animations
 - [x] Points integration with arcade (spend/win XP)
-- [ ] 木鱼 (Wooden Fish) — tap meditation tool with merit counter
+- [x] 木鱼 (Wooden Fish) — tap meditation tool with merit counter
 
 ### Platform
 - [x] PWA support (installable, offline shell)

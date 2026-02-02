@@ -9,7 +9,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     if (!auth) return withRateLimitHeaders(errorResponse("Unauthorized", 401));
 
     const { id } = await params;
-    const res = await fetch(`${CORE_API_URL}/friends/${id}`, {
+    const res = await fetch(`${CORE_API_URL}/v1/friends/${id}`, {
       method: "DELETE",
       headers: { Authorization: auth },
     });

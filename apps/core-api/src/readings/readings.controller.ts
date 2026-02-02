@@ -11,29 +11,27 @@ import {
   UseGuards,
   Inject,
   NotFoundException,
-  ForbiddenException,
-  BadRequestException,
   ConflictException,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { DRIZZLE } from "../db/drizzle.provider";
 import { readings, readingReactions, users } from "../db/schema";
-import { eq, and, desc, sql, count } from "drizzle-orm";
-// Note: .update() is on the db instance, not imported from drizzle-orm
+import { eq, and, desc, count } from "drizzle-orm";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { Request } from "express";
+import { AppException } from "../common/app.exception";
+import { ErrorCode } from "../common/error-codes";
+import { HttpStatus } from "@nestjs/common";
+import { CreateReadingDto, TogglePublicDto, ReactDto, FeedQueryDto, ReadingsQueryDto } from "./dto";
 
 interface AuthRequest extends Request {
   user: { id: string; email: string };
 }
 
-const VALID_EMOJIS = ["👍", "❤️", "🔮", "✨", "🌟"];
-
 @Controller("readings")
 export class ReadingsController {
   constructor(@Inject(DRIZZLE) private db: PostgresJsDatabase) {}
 
-  /** Public endpoint — no auth required. Only returns public readings without user info. */
   @Get("public/:id")
   async findPublic(@Param("id") id: string) {
     const [reading] = await this.db
@@ -49,26 +47,21 @@ export class ReadingsController {
       .where(and(eq(readings.id, id), eq(readings.isPublic, true)));
 
     if (!reading) {
-      throw new NotFoundException("Reading not found or not public");
+      throw new AppException(ErrorCode.READING_NOT_FOUND, "Reading not found or not public", HttpStatus.NOT_FOUND);
     }
 
     return { success: true, data: reading };
   }
 
-  /** Public feed — no auth required. Paginated public readings with author info. */
   @Get("feed")
-  async feed(
-    @Query("page") page?: string,
-    @Query("limit") limit?: string,
-    @Query("type") type?: string,
-  ) {
-    const pageNum = Math.max(1, parseInt(page || "1", 10) || 1);
-    const limitNum = Math.min(50, Math.max(1, parseInt(limit || "20", 10) || 20));
+  async feed(@Query() query: FeedQueryDto) {
+    const pageNum = query.page ?? 1;
+    const limitNum = Math.min(50, query.limit ?? 20);
     const offset = (pageNum - 1) * limitNum;
 
     const conditions: any[] = [eq(readings.isPublic, true)];
-    if (type) {
-      conditions.push(eq(readings.type, type));
+    if (query.type) {
+      conditions.push(eq(readings.type, query.type));
     }
 
     const rows = await this.db
@@ -91,7 +84,6 @@ export class ReadingsController {
     return { success: true, data: rows, page: pageNum, limit: limitNum };
   }
 
-  /** Get reaction counts for a reading */
   @Get(":id/reactions")
   async getReactions(@Param("id") id: string) {
     const rows = await this.db
@@ -111,26 +103,20 @@ export class ReadingsController {
     return { success: true, data: reactions };
   }
 
-  /** Add a reaction — authenticated */
   @UseGuards(AuthGuard("jwt"))
   @Post(":id/react")
   async react(
     @Req() req: AuthRequest,
     @Param("id") id: string,
-    @Body() body: { emoji: string },
+    @Body() body: ReactDto,
   ) {
-    if (!body.emoji || !VALID_EMOJIS.includes(body.emoji)) {
-      throw new BadRequestException(`Invalid emoji. Must be one of: ${VALID_EMOJIS.join(" ")}`);
-    }
-
-    // Verify reading exists and is public
     const [reading] = await this.db
       .select({ id: readings.id })
       .from(readings)
       .where(and(eq(readings.id, id), eq(readings.isPublic, true)));
 
     if (!reading) {
-      throw new NotFoundException("Reading not found or not public");
+      throw new AppException(ErrorCode.READING_NOT_FOUND, "Reading not found or not public", HttpStatus.NOT_FOUND);
     }
 
     try {
@@ -146,7 +132,7 @@ export class ReadingsController {
       return { success: true, data: reaction };
     } catch (err: any) {
       if (err?.code === "23505") {
-        throw new ConflictException("Already reacted with this emoji");
+        throw new AppException(ErrorCode.ALREADY_REACTED, "Already reacted with this emoji", HttpStatus.CONFLICT);
       }
       throw err;
     }
@@ -154,23 +140,16 @@ export class ReadingsController {
 
   @UseGuards(AuthGuard("jwt"))
   @Post()
-  async create(@Req() req: AuthRequest, @Body() body: any) {
-    const { type, input, result, locale, isPublic } = body;
-
-    const validTypes = ["mbti", "tarot", "i-ching", "four-pillars", "zodiac"];
-    if (!type || !validTypes.includes(type)) {
-      throw new ForbiddenException(`Invalid type. Must be one of: ${validTypes.join(", ")}`);
-    }
-
+  async create(@Req() req: AuthRequest, @Body() body: CreateReadingDto) {
     const [reading] = await this.db
       .insert(readings)
       .values({
         userId: req.user.id,
-        type,
-        input: input ?? null,
-        result: result ?? null,
-        locale: locale ?? null,
-        isPublic: isPublic ?? false,
+        type: body.type,
+        input: body.input ?? null,
+        result: body.result ?? null,
+        locale: body.locale ?? null,
+        isPublic: body.isPublic ?? false,
       })
       .returning();
 
@@ -179,19 +158,19 @@ export class ReadingsController {
 
   @UseGuards(AuthGuard("jwt"))
   @Patch(":id/public")
-  async togglePublic(@Req() req: AuthRequest, @Param("id") id: string, @Body() body: { isPublic: boolean }) {
+  async togglePublic(@Req() req: AuthRequest, @Param("id") id: string, @Body() body: TogglePublicDto) {
     const [reading] = await this.db
       .select()
       .from(readings)
       .where(and(eq(readings.id, id), eq(readings.userId, req.user.id)));
 
     if (!reading) {
-      throw new NotFoundException("Reading not found");
+      throw new AppException(ErrorCode.READING_NOT_FOUND, "Reading not found", HttpStatus.NOT_FOUND);
     }
 
     const [updated] = await this.db
       .update(readings)
-      .set({ isPublic: body.isPublic ?? false })
+      .set({ isPublic: body.isPublic })
       .where(and(eq(readings.id, id), eq(readings.userId, req.user.id)))
       .returning();
 
@@ -200,14 +179,14 @@ export class ReadingsController {
 
   @UseGuards(AuthGuard("jwt"))
   @Get()
-  async findAll(@Req() req: AuthRequest, @Query("type") type?: string, @Query("page") page?: string, @Query("limit") limit?: string) {
-    const pageNum = Math.max(1, parseInt(page || "1", 10) || 1);
-    const limitNum = Math.min(100, Math.max(1, parseInt(limit || "20", 10) || 20));
+  async findAll(@Req() req: AuthRequest, @Query() query: ReadingsQueryDto) {
+    const pageNum = query.page ?? 1;
+    const limitNum = query.limit ?? 20;
     const offset = (pageNum - 1) * limitNum;
 
     const conditions = [eq(readings.userId, req.user.id)];
-    if (type) {
-      conditions.push(eq(readings.type, type));
+    if (query.type) {
+      conditions.push(eq(readings.type, query.type));
     }
 
     const rows = await this.db
@@ -230,7 +209,7 @@ export class ReadingsController {
       .where(and(eq(readings.id, id), eq(readings.userId, req.user.id)));
 
     if (!reading) {
-      throw new NotFoundException("Reading not found");
+      throw new AppException(ErrorCode.READING_NOT_FOUND, "Reading not found", HttpStatus.NOT_FOUND);
     }
 
     return { success: true, data: reading };
@@ -245,7 +224,7 @@ export class ReadingsController {
       .where(and(eq(readings.id, id), eq(readings.userId, req.user.id)));
 
     if (!reading) {
-      throw new NotFoundException("Reading not found");
+      throw new AppException(ErrorCode.READING_NOT_FOUND, "Reading not found", HttpStatus.NOT_FOUND);
     }
 
     await this.db.delete(readings).where(and(eq(readings.id, id), eq(readings.userId, req.user.id)));

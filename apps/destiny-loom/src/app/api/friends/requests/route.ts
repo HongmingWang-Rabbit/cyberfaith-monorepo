@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const auth = request.headers.get("authorization");
     if (!auth) return withRateLimitHeaders(errorResponse("Unauthorized", 401));
 
-    const res = await fetch(`${CORE_API_URL}/friends/requests`, {
+    const res = await fetch(`${CORE_API_URL}/v1/friends/requests`, {
       headers: { Authorization: auth },
     });
 

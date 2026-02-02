@@ -16,7 +16,7 @@ export async function POST(
     const { id } = await params;
     const body = await request.json();
 
-    const res = await fetch(`${CORE_API_URL}/readings/${id}/react`, {
+    const res = await fetch(`${CORE_API_URL}/v1/readings/${id}/react`, {
       method: "POST",
       headers: {
         Authorization: auth,

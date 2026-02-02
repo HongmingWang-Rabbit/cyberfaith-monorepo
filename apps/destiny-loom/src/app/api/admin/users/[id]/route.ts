@@ -10,7 +10,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const { id } = await params;
   const body = await request.json();
 
-  const res = await fetch(`${CORE_API_URL}/admin/users/${id}`, {
+  const res = await fetch(`${CORE_API_URL}/v1/admin/users/${id}`, {
     method: "PATCH",
     headers: { Authorization: auth, "Content-Type": "application/json" },
     body: JSON.stringify(body),

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     if (!auth) return withRateLimitHeaders(errorResponse("Unauthorized", 401));
 
     const { id } = await params;
-    const res = await fetch(`${CORE_API_URL}/friends/${id}/readings`, {
+    const res = await fetch(`${CORE_API_URL}/v1/friends/${id}/readings`, {
       headers: { Authorization: auth },
     });
 

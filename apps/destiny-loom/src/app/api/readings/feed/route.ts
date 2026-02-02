@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get("limit") || "20";
     const type = searchParams.get("type");
 
-    const url = new URL(`${CORE_API_URL}/readings/feed`);
+    const url = new URL(`${CORE_API_URL}/v1/readings/feed`);
     url.searchParams.set("page", page);
     url.searchParams.set("limit", limit);
     if (type) url.searchParams.set("type", type);

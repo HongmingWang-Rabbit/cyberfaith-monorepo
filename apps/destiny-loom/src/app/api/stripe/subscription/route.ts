@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const res = await fetch(`${CORE_API_URL}/stripe/subscription`, {
+    const res = await fetch(`${CORE_API_URL}/v1/stripe/subscription`, {
       headers: { Authorization: auth },
     });
 

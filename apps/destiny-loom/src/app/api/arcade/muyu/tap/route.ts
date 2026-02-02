@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    const res = await fetch(`${CORE_API_URL}/arcade/muyu/tap`, {
+    const res = await fetch(`${CORE_API_URL}/v1/arcade/muyu/tap`, {
       method: "POST",
       headers: {
         Authorization: auth,

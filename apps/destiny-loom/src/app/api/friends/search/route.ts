@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     if (!auth) return withRateLimitHeaders(errorResponse("Unauthorized", 401));
 
     const q = new URL(request.url).searchParams.get("q") || "";
-    const res = await fetch(`${CORE_API_URL}/friends/search?q=${encodeURIComponent(q)}`, {
+    const res = await fetch(`${CORE_API_URL}/v1/friends/search?q=${encodeURIComponent(q)}`, {
       headers: { Authorization: auth },
     });
 

@@ -9,7 +9,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     if (!auth) return withRateLimitHeaders(errorResponse("Unauthorized", 401));
 
     const { id } = await params;
-    const res = await fetch(`${CORE_API_URL}/friends/reject/${id}`, {
+    const res = await fetch(`${CORE_API_URL}/v1/friends/reject/${id}`, {
       method: "POST",
       headers: { Authorization: auth },
     });

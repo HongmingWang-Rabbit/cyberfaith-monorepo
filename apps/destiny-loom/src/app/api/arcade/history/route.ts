@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get("limit") || "20";
     const page = searchParams.get("page") || "1";
 
-    const url = new URL(`${CORE_API_URL}/arcade/history`);
+    const url = new URL(`${CORE_API_URL}/v1/arcade/history`);
     url.searchParams.set("limit", limit);
     url.searchParams.set("page", page);
 

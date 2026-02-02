@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   const auth = request.headers.get("authorization");
   if (!auth) return errorResponse("Unauthorized", 401);
 
-  const res = await fetch(`${CORE_API_URL}/admin/games`, {
+  const res = await fetch(`${CORE_API_URL}/v1/admin/games`, {
     headers: { Authorization: auth },
   });
 

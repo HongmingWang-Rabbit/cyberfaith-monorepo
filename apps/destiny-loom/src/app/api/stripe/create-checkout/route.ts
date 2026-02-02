@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const res = await fetch(`${CORE_API_URL}/stripe/create-checkout`, {
+    const res = await fetch(`${CORE_API_URL}/v1/stripe/create-checkout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

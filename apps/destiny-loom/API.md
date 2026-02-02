@@ -4,6 +4,8 @@ Base URL: `http://localhost:3002/api`
 
 All POST endpoints accept JSON bodies. All responses include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` headers.
 
+> **Core API Versioning:** The backend Core API (NestJS) uses URI versioning. All proxy routes now call Core API endpoints with the `/v1/` prefix (e.g., `CORE_API_URL/v1/readings`). The Core API default version is `1`, so endpoints are accessible at both `/v1/...` and `/...` (backward compatible).
+
 ## Error Format
 
 All errors follow this structure:

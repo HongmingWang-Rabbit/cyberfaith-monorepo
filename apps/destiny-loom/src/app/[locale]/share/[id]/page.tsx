@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { ReadingArticleJsonLd } from "@/components/seo/json-ld";
 
 const CORE_API_URL = process.env.CORE_API_URL || "http://localhost:4000";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -120,6 +121,12 @@ export default async function SharePage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5 flex items-center justify-center p-4">
+      <ReadingArticleJsonLd
+        title={title}
+        description={description}
+        url={`${APP_URL}/share/${id}`}
+        datePublished={reading.createdAt}
+      />
       <div className="max-w-lg w-full space-y-6">
         {/* Main card */}
         <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-card/80 backdrop-blur-sm shadow-2xl shadow-primary/10">

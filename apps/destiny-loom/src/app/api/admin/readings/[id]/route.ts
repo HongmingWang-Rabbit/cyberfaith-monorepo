@@ -9,7 +9,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
   const { id } = await params;
 
-  const res = await fetch(`${CORE_API_URL}/admin/readings/${id}`, {
+  const res = await fetch(`${CORE_API_URL}/v1/admin/readings/${id}`, {
     method: "DELETE",
     headers: { Authorization: auth },
   });

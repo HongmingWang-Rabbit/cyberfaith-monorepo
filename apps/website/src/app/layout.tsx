@@ -9,10 +9,18 @@ export const metadata: Metadata = {
   },
   description:
     "Explore MBTI, Tarot, Zodiac, Four Pillars, and I Ching through a cyberpunk lens. Casual spirituality for the digital generation.",
+  metadataBase: new URL("https://cyberfaith.app"),
   openGraph: {
-    title: "CyberFaith",
-    description: "Digital spirituality for the modern age",
+    title: "CyberFaith — Digital Spirituality for the Modern Age",
+    description: "Casual spirituality for the digital generation. Decode your destiny with AI.",
     type: "website",
+    siteName: "CyberFaith",
+    url: "https://cyberfaith.app",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CyberFaith — Digital Spirituality for the Modern Age",
+    description: "Casual spirituality for the digital generation.",
   },
 };
 
@@ -80,12 +88,37 @@ function Footer() {
   );
 }
 
+function OrganizationJsonLd() {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "CyberFaith",
+    url: "https://cyberfaith.app",
+    description: "Digital spirituality for the modern age.",
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <OrganizationJsonLd />
+      </head>
       <body className="bg-background text-foreground min-h-screen">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-md focus:text-sm"
+        >
+          Skip to content
+        </a>
         <Navbar />
-        <div className="pt-16">{children}</div>
+        <div id="main-content" className="pt-16">{children}</div>
         <Footer />
       </body>
     </html>

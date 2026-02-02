@@ -45,7 +45,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-64 flex-col fixed inset-y-0 left-0 z-40 border-r border-border bg-card/80 backdrop-blur-md">
+      <aside aria-label="Main navigation" className="hidden md:flex w-64 flex-col fixed inset-y-0 left-0 z-40 border-r border-border bg-card/80 backdrop-blur-md">
         <div className="p-6">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl">🔮</span>
@@ -108,11 +108,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             ) : isAuthenticated && user ? (
               <div className="relative" ref={dropdownRef}>
                 <button
+                  aria-label="User menu"
+                  aria-expanded={showDropdown}
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="flex items-center gap-2 h-8 px-2 rounded-md hover:bg-muted/50 transition-colors"
                 >
                   {user.avatarUrl ? (
-                    <img src={user.avatarUrl} alt="" className="w-7 h-7 rounded-full" />
+                    <img src={user.avatarUrl} alt="" width={28} height={28} className="w-7 h-7 rounded-full" />
                   ) : (
                     <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xs font-bold text-white">
                       {(user.name || user.email || "U")[0].toUpperCase()}
@@ -152,11 +154,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-4 md:p-6">{children}</main>
+        <main id="main-content" className="flex-1 p-4 md:p-6">{children}</main>
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 flex items-center justify-around h-16 border-t border-border bg-card/80 backdrop-blur-md">
+      <nav aria-label="Mobile navigation" className="md:hidden fixed bottom-0 inset-x-0 z-40 flex items-center justify-around h-16 border-t border-border bg-card/80 backdrop-blur-md">
         {navItems.slice(0, 5).map((item) => {
           const isActive =
             item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);

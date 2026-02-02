@@ -12,6 +12,7 @@ import {
 import { AuthGuard } from "@nestjs/passport";
 import { FriendsService } from "./friends.service";
 import { Request } from "express";
+import { SendFriendRequestDto, SearchUsersDto } from "./dto";
 
 interface AuthRequest extends Request {
   user: { id: string; email: string };
@@ -23,7 +24,7 @@ export class FriendsController {
   constructor(private friendsService: FriendsService) {}
 
   @Post("request")
-  async sendRequest(@Req() req: AuthRequest, @Body() body: { addresseeId: string }) {
+  async sendRequest(@Req() req: AuthRequest, @Body() body: SendFriendRequestDto) {
     const data = await this.friendsService.sendRequest(req.user.id, body.addresseeId);
     return { success: true, data };
   }
@@ -59,8 +60,8 @@ export class FriendsController {
   }
 
   @Get("search")
-  async searchUsers(@Req() req: AuthRequest, @Query("q") query: string) {
-    const data = await this.friendsService.searchUsers(query || "", req.user.id);
+  async searchUsers(@Req() req: AuthRequest, @Query() query: SearchUsersDto) {
+    const data = await this.friendsService.searchUsers(query.q || "", req.user.id);
     return { success: true, data };
   }
 
