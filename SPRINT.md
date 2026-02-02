@@ -174,7 +174,28 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 - [ ] Gift readings — buy and send a reading to a friend
 
 ### Content & Engagement
-- [ ] Seasonal events system — event banner, limited-time readings, special arcade rewards
-- [ ] Daily challenges — "Draw a tarot card for a stranger" with karma reward
-- [ ] Achievement showcase on profile — badge wall, share achievements
-- [ ] Palmistry module — upload palm photo, AI analysis
+- [x] Seasonal events system — event banner, limited-time readings, special arcade rewards
+- [x] Daily challenges — "Draw a tarot card for a stranger" with karma reward
+- [x] Achievement showcase on profile — badge wall, share achievements
+- [x] Palmistry module — upload palm photo, AI analysis
+
+---
+
+## Sprint 6: Scale & Delight
+
+### Social & Viral
+- [ ] Social sharing cards — dynamic OG images with reading results (Vercel OG)
+- [ ] Leaderboard page — weekly/monthly/all-time karma rankings with avatars
+- [ ] User profiles — public profile pages with reading stats, achievements, zodiac
+- [ ] Activity feed — follow friends, see their readings/achievements in real-time
+
+### Content
+- [ ] Numerology module — life path number, expression number, soul urge from name+birthdate
+- [ ] Feng Shui tips — room layout advice based on birth element + compass direction
+- [ ] Daily affirmations — personalized based on zodiac + mood journal trends
+
+### Platform Hardening
+- [ ] Error boundary improvements — graceful fallbacks on every page
+- [ ] Offline mode — cache recent readings, queue actions for sync
+- [ ] Performance audit — lighthouse scores, bundle analysis, image optimization
+- [ ] API response caching (Redis or in-memory) for expensive AI calls
