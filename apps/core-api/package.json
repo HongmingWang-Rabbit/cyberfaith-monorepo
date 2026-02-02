@@ -6,6 +6,8 @@
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main",
+    "start:prod": "npx drizzle-kit migrate && node dist/main",
+    "db:migrate": "npx drizzle-kit migrate",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "vitest run --config vitest.e2e.config.ts",

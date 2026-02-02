@@ -51,7 +51,11 @@ export const referrals = pgTable("referrals", {
   status: referralStatusEnum("status").default("pending").notNull(),
   karmaAwarded: integer("karma_awarded").default(0).notNull(),
   premiumDaysAwarded: integer("premium_days_awarded").default(0).notNull(),
-});
+}, (table) => ({
+  referrerIdx: index("referrals_referrer_id_idx").on(table.referrerId),
+  codeIdx: index("referrals_code_idx").on(table.code),
+  referredUserIdx: index("referrals_referred_user_id_idx").on(table.referredUserId),
+}));
 
 export const giftReadings = pgTable("gift_readings", {
   id: idColumn(),
@@ -65,7 +69,10 @@ export const giftReadings = pgTable("gift_readings", {
   redeemed: boolean("redeemed").default(false).notNull(),
   redeemedAt: timestamp("redeemed_at"),
   redeemedByUserId: varchar("redeemed_by_user_id", { length: 36 }),
-});
+}, (table) => ({
+  senderIdx: index("gift_readings_sender_id_idx").on(table.senderId),
+  recipientUserIdx: index("gift_readings_recipient_user_id_idx").on(table.recipientUserId),
+}));
 
 export const pointsTransactions = pgTable("points_transactions", {
   id: idColumn(),
@@ -151,7 +158,10 @@ export const arcadePlays = pgTable("arcade_plays", {
   pointsSpent: integer("points_spent").notNull(),
   pointsWon: integer("points_won").notNull().default(0),
   result: jsonb("result"),
-});
+}, (table) => ({
+  userCreatedAtIdx: index("arcade_plays_user_id_created_at_idx").on(table.userId, table.createdAt),
+  gameIdx: index("arcade_plays_game_id_idx").on(table.gameId),
+}));
 
 export const muyuSessions = pgTable("muyu_sessions", {
   id: idColumn(),
@@ -160,7 +170,9 @@ export const muyuSessions = pgTable("muyu_sessions", {
   tapCount: integer("tap_count").notNull(),
   duration: integer("duration"), // seconds
   pointsEarned: integer("points_earned").notNull().default(0),
-});
+}, (table) => ({
+  userCreatedAtIdx: index("muyu_sessions_user_id_created_at_idx").on(table.userId, table.createdAt),
+}));
 
 export const zodiacSignEnum = pgEnum("zodiac_sign", [
   "aries", "taurus", "gemini", "cancer", "leo", "virgo",
@@ -174,7 +186,9 @@ export const fortuneCookieCracks = pgTable("fortune_cookie_cracks", {
   userId: varchar("user_id", { length: 36 }).notNull(),
   fortune: text("fortune").notNull(),
   pointsEarned: integer("points_earned").notNull().default(0),
-});
+}, (table) => ({
+  userCreatedAtIdx: index("fortune_cookie_cracks_user_id_created_at_idx").on(table.userId, table.createdAt),
+}));
 
 // ── Destiny Wheel ──
 export const destinyWheelSpins = pgTable("destiny_wheel_spins", {
@@ -184,7 +198,9 @@ export const destinyWheelSpins = pgTable("destiny_wheel_spins", {
   segment: varchar("segment", { length: 100 }).notNull(),
   reward: jsonb("reward").notNull(), // { type, amount?, description }
   pointsEarned: integer("points_earned").notNull().default(0),
-});
+}, (table) => ({
+  userCreatedAtIdx: index("destiny_wheel_spins_user_id_created_at_idx").on(table.userId, table.createdAt),
+}));
 
 // ── Meditation Timer ──
 export const meditationSessions = pgTable("meditation_sessions", {
@@ -195,7 +211,9 @@ export const meditationSessions = pgTable("meditation_sessions", {
   soundUsed: varchar("sound_used", { length: 50 }),
   completed: boolean("completed").default(true).notNull(),
   pointsEarned: integer("points_earned").notNull().default(0),
-});
+}, (table) => ({
+  userCreatedAtIdx: index("meditation_sessions_user_id_created_at_idx").on(table.userId, table.createdAt),
+}));
 
 export const dailyHoroscopes = pgTable("daily_horoscopes", {
   id: idColumn(),
@@ -214,7 +232,9 @@ export const pushSubscriptions = pgTable("push_subscriptions", {
   endpoint: text("endpoint").notNull().unique(),
   p256dh: text("p256dh").notNull(),
   auth: text("auth").notNull(),
-});
+}, (table) => ({
+  userIdx: index("push_subscriptions_user_id_idx").on(table.userId),
+}));
 
 export const compatibilityResults = pgTable("compatibility_results", {
   id: idColumn(),
@@ -364,6 +384,20 @@ export const adminAuditLog = pgTable("admin_audit_log", {
 }, (table) => ({
   adminUserIdx: index("audit_log_admin_user_idx").on(table.adminUserId),
   createdAtIdx: index("audit_log_created_at_idx").on(table.createdAt),
+}));
+
+// ─── User Badges ──────────────────────────────────────────
+export const userBadges = pgTable("user_badges", {
+  id: idColumn(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  badgeKey: varchar("badge_key", { length: 50 }).notNull(),
+  title: varchar("title", { length: 100 }).notNull(),
+  icon: varchar("icon", { length: 20 }).notNull(),
+  earnedAt: timestamp("earned_at").defaultNow().notNull(),
+  displayOnProfile: boolean("display_on_profile").default(true).notNull(),
+}, (table) => ({
+  uniqueUserBadge: uniqueIndex("user_badge_unique").on(table.userId, table.badgeKey),
+  userIdx: index("user_badges_user_idx").on(table.userId),
 }));
 
 export const reports = pgTable("reports", {

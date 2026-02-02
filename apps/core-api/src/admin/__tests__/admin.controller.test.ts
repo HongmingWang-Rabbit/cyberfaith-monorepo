@@ -61,7 +61,9 @@ describe("AdminController", () => {
     const mockTokenBlacklistService = { invalidateAllTokens: vi.fn().mockResolvedValue(undefined) } as any;
     const mockAnalyticsService = { getAnalytics: vi.fn().mockResolvedValue({}) } as any;
     const mockAuditService = { log: vi.fn().mockResolvedValue(undefined), getAuditLog: vi.fn().mockResolvedValue({ data: [], total: 0 }) } as any;
-    controller = new AdminController(db, mockNotificationsService, mockMetricsService, mockCacheService, mockTokenBlacklistService, mockAnalyticsService, mockAuditService);
+    const mockRedisService = { isConnected: false, keys: vi.fn().mockResolvedValue([]) } as any;
+    const mockHealthService = { getHealth: vi.fn().mockResolvedValue({ status: "ok", uptime: 100, version: "0.0.0", timestamp: new Date().toISOString(), memory: { heapUsedMB: 50, heapTotalMB: 100, rssMB: 120 }, database: { status: "connected", latencyMs: 1 } }) } as any;
+    controller = new AdminController(db, mockNotificationsService, mockMetricsService, mockCacheService, mockTokenBlacklistService, mockAnalyticsService, mockAuditService, mockRedisService, mockHealthService);
   });
 
   describe("getStats", () => {

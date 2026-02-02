@@ -1,14 +1,16 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, Optional } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { eq } from "drizzle-orm";
 import { DRIZZLE } from "../db/db.module";
 import { users } from "../db/schema";
+import { RedisService } from "../redis/redis.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(DRIZZLE) private db: any,
     private jwtService: JwtService,
+    @Optional() private redisService?: RedisService,
   ) {}
 
   async findOrCreateGoogleUser(profile: {
@@ -60,9 +62,19 @@ export class AuthService {
 
   async issueToken(user: { id: string; email: string }) {
     const payload = { sub: user.id, email: user.email };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    const token = this.jwtService.sign(payload);
+
+    // Track active session in Redis (TTL matches JWT expiry, default 24h)
+    if (this.redisService) {
+      const sessionKey = `session:${user.id}:${Date.now()}`;
+      await this.redisService.set(sessionKey, JSON.stringify({
+        userId: user.id,
+        email: user.email,
+        issuedAt: new Date().toISOString(),
+      }), 86400).catch(() => {});
+    }
+
+    return { access_token: token };
   }
 
   async getUserById(id: string) {

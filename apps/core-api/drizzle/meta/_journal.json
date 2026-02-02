@@ -29,6 +29,20 @@
       "when": 1770200000000,
       "tag": "0014_add_admin_audit_log",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1770300000000,
+      "tag": "0017_add_indexes_and_session_tracking",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1770400000000,
+      "tag": "0018_add_user_badges",
+      "breakpoints": true
     }
   ]
 }

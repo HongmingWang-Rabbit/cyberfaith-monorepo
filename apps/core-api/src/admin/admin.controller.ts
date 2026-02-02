@@ -28,6 +28,8 @@ import { randomBytes } from "crypto";
 import { TokenBlacklistService } from "../auth/token-blacklist.service";
 import { AdminAnalyticsService } from "./admin-analytics.service";
 import { AdminAuditService } from "./admin-audit.service";
+import { RedisService } from "../redis/redis.service";
+import { HealthService } from "../health/health.service";
 
 interface AuthRequest {
   user: { id: string; email: string };
@@ -49,6 +51,8 @@ export class AdminController {
     private tokenBlacklistService: TokenBlacklistService,
     private analyticsService: AdminAnalyticsService,
     private auditService: AdminAuditService,
+    private redisService: RedisService,
+    private healthService: HealthService,
   ) {}
 
   @Get("metrics")
@@ -340,4 +344,85 @@ export class AdminController {
     await this.auditService.log(getAdminId(req), "send_push", undefined, undefined, { title: body.title });
     return { success: true, data: result };
   }
+
+  @Get("monitoring")
+  @ApiOperation({ summary: "Infrastructure monitoring dashboard data" })
+  @ApiResponse({ status: 200, description: "Monitoring metrics" })
+  async getMonitoring() {
+    const [health, metrics] = await Promise.all([
+      this.healthService.getHealth(),
+      this.metricsService.getMetrics(),
+    ]);
+
+    const mem = process.memoryUsage();
+    const cpuUsage = process.cpuUsage();
+
+    // Active sessions count from Redis
+    let activeSessions = 0;
+    if (this.redisService.isConnected) {
+      try {
+        const sessionKeys = await this.redisService.keys("session:*");
+        activeSessions = sessionKeys.length;
+      } catch { /* ignore */ }
+    }
+
+    return {
+      success: true,
+      data: {
+        system: {
+          status: health.status,
+          uptime: health.uptime,
+          uptimeFormatted: formatUptime(health.uptime),
+          version: health.version,
+          nodeVersion: process.version,
+          platform: process.platform,
+          timestamp: health.timestamp,
+        },
+        memory: {
+          ...health.memory,
+          externalMB: Math.round(mem.external / 1024 / 1024 * 100) / 100,
+          arrayBuffersMB: Math.round((mem.arrayBuffers || 0) / 1024 / 1024 * 100) / 100,
+        },
+        cpu: {
+          userMs: Math.round(cpuUsage.user / 1000),
+          systemMs: Math.round(cpuUsage.system / 1000),
+        },
+        database: health.database,
+        redis: {
+          connected: this.redisService.isConnected,
+          activeSessions,
+        },
+        requests: {
+          totalRequests: metrics.totalRequests,
+          requestsLastHour: metrics.requestsLastHour,
+          requestsLastDay: metrics.requestsLastDay,
+          averageResponseMs: metrics.averageResponseMs,
+          errorCount: metrics.errorCount,
+          errorRate: metrics.errorRate,
+        },
+        cache: {
+          hitRate: (this.cacheService.hitRate * 100).toFixed(2) + "%",
+          hits: this.cacheService.totalHits,
+          misses: this.cacheService.totalMisses,
+          size: this.cacheService.size,
+        },
+        users: {
+          activeUsers24h: metrics.activeUsers24h,
+        },
+      },
+    };
+  }
+}
+
+function formatUptime(seconds: number): string {
+  const d = Math.floor(seconds / 86400);
+  const h = Math.floor((seconds % 86400) / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  const parts: string[] = [];
+  if (d > 0) parts.push(`${d}d`);
+  if (h > 0) parts.push(`${h}h`);
+  if (m > 0) parts.push(`${m}m`);
+  parts.push(`${s}s`);
+  return parts.join(" ");
 }
