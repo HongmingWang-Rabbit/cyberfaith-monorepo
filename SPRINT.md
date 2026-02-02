@@ -243,7 +243,29 @@ All-in-one spiritual app for Gen Z. Casual, fun, "let's just try it" vibe. Cyber
 - [ ] Accessibility audit (axe-core, screen reader testing)
 
 ### Final Polish
-- [ ] App-wide search (readings, users, content)
-- [ ] Notification center — in-app notification bell with history
+- [x] App-wide search (readings, users, content)
+- [x] Notification center — in-app notification bell with history
 - [ ] Dark/light theme refinement — ensure all pages look good in both
 - [ ] Performance budget enforcement (bundle size limits)
+
+---
+
+## Sprint 9: Growth & Virality
+
+### Sharing & Virality
+- [ ] WhatsApp/WeChat deep link sharing with mini-card previews
+- [ ] "Reading of the Day" — auto-curated featured reading on home page
+- [ ] Shareable achievement cards (image generation for social media)
+- [ ] Invite code on signup flow (pre-fill referral)
+
+### Engagement Loops
+- [ ] Weekly email digest — personalized recap (readings, streaks, friend activity)
+- [ ] Push notification scheduler — reminders for daily horoscope, streak at risk
+- [ ] Gamification: levels system (Novice → Adept → Oracle → Sage) based on total karma
+- [ ] Seasonal/holiday events — Chinese New Year, Mercury retrograde banners + special readings
+
+### Developer Experience
+- [ ] Storybook for UI components
+- [ ] API documentation (Swagger/OpenAPI auto-generated from NestJS)
+- [ ] Seed script for demo data (users, readings, comments, etc.)
+- [ ] End-to-end Playwright tests for critical user flows
