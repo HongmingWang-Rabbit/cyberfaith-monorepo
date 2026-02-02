@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Delete,
   Param,
@@ -18,11 +19,15 @@ import { eq, and, gte, desc, sql, ilike, or, count } from "drizzle-orm";
 import { AppException } from "../common/app.exception";
 import { ErrorCode } from "../common/error-codes";
 import { AdminUsersQueryDto, AdminReadingsQueryDto, UpdateUserDto } from "./dto";
+import { NotificationsService } from "../notifications/notifications.service";
 
 @Controller("admin")
 @UseGuards(AuthGuard("jwt"), AdminGuard)
 export class AdminController {
-  constructor(@Inject(DRIZZLE) private db: any) {}
+  constructor(
+    @Inject(DRIZZLE) private db: any,
+    private notificationsService: NotificationsService,
+  ) {}
 
   @Get("stats")
   async getStats() {
@@ -199,5 +204,15 @@ export class AdminController {
       .groupBy(arcadePlays.gameId);
 
     return { success: true, data: stats };
+  }
+
+  @Post("send-push")
+  async sendPush(@Body() body: { title: string; body: string; url?: string }) {
+    const result = await this.notificationsService.sendToAll(
+      body.title || "CyberFaith",
+      body.body || "You have a new notification!",
+      body.url,
+    );
+    return { success: true, data: result };
   }
 }

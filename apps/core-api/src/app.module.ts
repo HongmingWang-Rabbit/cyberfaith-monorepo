@@ -16,9 +16,11 @@ import { MuyuModule } from "./arcade/muyu/muyu.module";
 import { FriendsModule } from "./friends/friends.module";
 import { AdminModule } from "./admin/admin.module";
 import { EmailModule } from "./email/email.module";
+import { HoroscopeModule } from "./horoscope/horoscope.module";
+import { NotificationsModule } from "./notifications/notifications.module";
 
 @Module({
-  imports: [DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FriendsModule, EmailModule, AdminModule],
+  imports: [DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule],
   providers: [
     {
       provide: APP_GUARD,

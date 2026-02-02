@@ -23,6 +23,9 @@ importers:
 
   apps/core-api:
     dependencies:
+      '@cyberfaith/ai-provider':
+        specifier: workspace:^
+        version: link:../../packages/ai-provider
       '@cyberfaith/db-utils':
         specifier: workspace:*
         version: link:../../packages/db-utils

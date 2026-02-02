@@ -11,6 +11,7 @@
     "test:e2e": "vitest run --config vitest.e2e.config.ts"
   },
   "dependencies": {
+    "@cyberfaith/ai-provider": "workspace:^",
     "@cyberfaith/db-utils": "workspace:*",
     "@cyberfaith/types": "workspace:*",
     "@nestjs/common": "^10.4.15",

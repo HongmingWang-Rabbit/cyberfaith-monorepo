@@ -1,6 +1,11 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Card, CardContent } from "@cyberfaith/ui";
+import { useAuth } from "@cyberfaith/auth-client";
+import { DailyHoroscope } from "@/components/daily-horoscope";
+import { PushPrompt } from "@/components/push-prompt";
 
 const features = [
   { key: "mbti", href: "/mbti", icon: "🧠", color: "purple" },
@@ -18,9 +23,19 @@ const glowMap = {
 
 export default function HomePage() {
   const t = useTranslations();
+  const { session, isAuthenticated } = useAuth();
+  const token = isAuthenticated ? session?.tokens?.accessToken : null;
 
   return (
     <div className="max-w-5xl mx-auto space-y-12 pb-20">
+      {/* Daily Horoscope */}
+      {isAuthenticated && (
+        <section className="space-y-3">
+          <DailyHoroscope token={token} />
+          <PushPrompt token={token} />
+        </section>
+      )}
+
       {/* Hero */}
       <section className="text-center py-12 space-y-4">
         <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary via-accent to-highlight bg-clip-text text-transparent">

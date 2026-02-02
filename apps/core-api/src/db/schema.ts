@@ -17,6 +17,7 @@ export const users = pgTable("users", {
   stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
   emailNotifications: boolean("email_notifications").default(true).notNull(),
   role: userRoleEnum("role").default("user").notNull(),
+  zodiacSign: varchar("zodiac_sign", { length: 20 }),
 });
 
 export const pointsTransactions = pgTable("points_transactions", {
@@ -103,6 +104,30 @@ export const muyuSessions = pgTable("muyu_sessions", {
   tapCount: integer("tap_count").notNull(),
   duration: integer("duration"), // seconds
   pointsEarned: integer("points_earned").notNull().default(0),
+});
+
+export const zodiacSignEnum = pgEnum("zodiac_sign", [
+  "aries", "taurus", "gemini", "cancer", "leo", "virgo",
+  "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces",
+]);
+
+export const dailyHoroscopes = pgTable("daily_horoscopes", {
+  id: idColumn(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  sign: varchar("sign", { length: 20 }).notNull(),
+  date: varchar("date", { length: 10 }).notNull(), // YYYY-MM-DD
+  content: jsonb("content").notNull(), // { mood, luckyNumber, compatibility, reading }
+}, (table) => ({
+  uniqueSignDate: uniqueIndex("daily_horoscope_sign_date").on(table.sign, table.date),
+}));
+
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id: idColumn(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  userId: varchar("user_id", { length: 36 }).notNull(),
+  endpoint: text("endpoint").notNull().unique(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
 });
 
 export const friendshipStatusEnum = pgEnum("friendship_status", ["pending", "accepted", "rejected"]);

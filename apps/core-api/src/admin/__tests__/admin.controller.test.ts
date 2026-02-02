@@ -55,7 +55,8 @@ describe("AdminController", () => {
   beforeEach(() => {
     const mock = makeMockDb();
     db = mock.db;
-    controller = new AdminController(db);
+    const mockNotificationsService = { sendToAll: vi.fn().mockResolvedValue({ sent: 0, failed: 0 }) } as any;
+    controller = new AdminController(db, mockNotificationsService);
   });
 
   describe("getStats", () => {

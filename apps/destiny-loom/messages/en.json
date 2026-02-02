@@ -407,5 +407,32 @@
     "pagination": {
       "showing": "{from}-{to} of {total}"
     }
+  },
+  "horoscope": {
+    "dailyTitle": "Daily Horoscope",
+    "setSignTitle": "Set Your Zodiac Sign",
+    "setSignDesc": "Choose your zodiac sign to receive personalized daily horoscopes.",
+    "setSign": "Set Sign & Get Horoscope",
+    "saving": "Saving...",
+    "luckyNumber": "Lucky Number",
+    "compatibility": "Best Match",
+    "pushPromptTitle": "🔔 Never miss your horoscope",
+    "pushPromptDesc": "Get a daily notification when your horoscope is ready.",
+    "pushEnable": "Enable",
+    "pushDismiss": "Not now",
+    "signs": {
+      "aries": "Aries",
+      "taurus": "Taurus",
+      "gemini": "Gemini",
+      "cancer": "Cancer",
+      "leo": "Leo",
+      "virgo": "Virgo",
+      "libra": "Libra",
+      "scorpio": "Scorpio",
+      "sagittarius": "Sagittarius",
+      "capricorn": "Capricorn",
+      "aquarius": "Aquarius",
+      "pisces": "Pisces"
+    }
   }
 }

@@ -6,3 +6,4 @@ dist
 *.tsbuildinfo
 .env.local
 gcp-service-account.json
+.env.neon
