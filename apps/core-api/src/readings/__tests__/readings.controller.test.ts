@@ -33,7 +33,7 @@ describe("ReadingsController", () => {
       delete: vi.fn().mockReturnThis(),
     };
 
-    controller = new ReadingsController(mockDb);
+    controller = new ReadingsController(mockDb, {} as any);
   });
 
   const req = { user: { id: "user-1" } } as any;

@@ -1,3 +1,4 @@
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import { Controller, Get, Req, UseGuards, Inject, HttpStatus } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
@@ -12,6 +13,7 @@ interface AuthRequest extends Request {
   user: { id: string; email: string };
 }
 
+@ApiTags("Horoscope")
 @Controller("readings")
 export class HoroscopeController {
   constructor(

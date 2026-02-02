@@ -1,3 +1,4 @@
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import {
   Controller,
   Get,
@@ -18,6 +19,7 @@ interface AuthRequest extends Request {
   user: { id: string; email: string };
 }
 
+@ApiTags("Friends")
 @Controller("friends")
 @UseGuards(AuthGuard("jwt"))
 export class FriendsController {

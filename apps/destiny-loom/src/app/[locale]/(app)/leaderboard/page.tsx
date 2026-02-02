@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@cyberfaith/auth-client";
 import { useState, useEffect } from "react";
 import { Link } from "@/i18n/navigation";
+import { LevelBadge, getLevelFromKarma } from "@/components/levels/level-badge";
 
 const CORE_API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
@@ -156,11 +157,14 @@ export default function LeaderboardPage() {
                     {entry.displayName}
                   </span>
                 )}
-                {entry.zodiacSign && (
-                  <span className="text-xs text-muted-foreground">
-                    {zodiacEmoji[entry.zodiacSign] || ""} {entry.zodiacSign}
-                  </span>
-                )}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <LevelBadge level={getLevelFromKarma(entry.karma)} size="xs" />
+                  {entry.zodiacSign && (
+                    <span className="text-xs text-muted-foreground">
+                      {zodiacEmoji[entry.zodiacSign] || ""} {entry.zodiacSign}
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Karma */}

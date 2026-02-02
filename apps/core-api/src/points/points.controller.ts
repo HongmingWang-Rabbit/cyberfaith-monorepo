@@ -1,3 +1,4 @@
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import { Controller, Get, Req, UseGuards, Query } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
@@ -7,6 +8,7 @@ interface AuthRequest extends Request {
   user: { id: string; email: string };
 }
 
+@ApiTags("Points")
 @Controller("points")
 export class PointsController {
   constructor(private readonly pointsService: PointsService) {}

@@ -276,6 +276,23 @@ export const reportReasonEnum = pgEnum("report_reason", ["spam", "inappropriate"
 export const reportStatusEnum = pgEnum("report_status", ["pending", "reviewed", "dismissed"]);
 export const reportTargetTypeEnum = pgEnum("report_target_type", ["reading", "comment", "user"]);
 
+// ─── Seasonal Events ─────────────────────────────────────
+export const eventTypeEnum = pgEnum("event_type", ["seasonal", "holiday", "astronomical"]);
+
+export const events = pgTable("events", {
+  id: idColumn(),
+  ...timestampColumns(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  type: eventTypeEnum("type").notNull(),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  bannerImageUrl: text("banner_image_url"),
+  specialReadingType: varchar("special_reading_type", { length: 50 }),
+  karmaMultiplier: integer("karma_multiplier").default(1).notNull(),
+  active: boolean("active").default(true).notNull(),
+});
+
 export const reports = pgTable("reports", {
   id: idColumn(),
   reporterId: varchar("reporter_id", { length: 36 }).notNull(),

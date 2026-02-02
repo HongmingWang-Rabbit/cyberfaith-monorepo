@@ -1,3 +1,4 @@
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import {
   Controller,
   Get,
@@ -25,6 +26,7 @@ import { CacheService } from "../cache/cache.service";
 import { randomBytes } from "crypto";
 import { TokenBlacklistService } from "../auth/token-blacklist.service";
 
+@ApiTags("Admin")
 @Controller("admin")
 @UseGuards(AuthGuard("jwt"), AdminGuard)
 export class AdminController {

@@ -1,3 +1,4 @@
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import {
   Controller, Get, Patch, Post, Param, Query, Req, UseGuards, HttpStatus,
 } from "@nestjs/common";
@@ -11,6 +12,7 @@ interface AuthRequest extends Request {
   user: { id: string; email: string };
 }
 
+@ApiTags("In-App Notifications")
 @Controller("notifications")
 @UseGuards(AuthGuard("jwt"))
 export class InAppNotificationsController {

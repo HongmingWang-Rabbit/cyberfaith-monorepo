@@ -82,4 +82,37 @@ export class NotificationsService {
 
     return { sent, failed };
   }
+
+  async sendToUser(userId: string, title: string, body: string, url?: string): Promise<boolean> {
+    if (!webpush) {
+      this.logger.warn("web-push not available");
+      return false;
+    }
+
+    const subs = await this.db
+      .select()
+      .from(pushSubscriptions)
+      .where(eq(pushSubscriptions.userId, userId));
+
+    if (subs.length === 0) return false;
+
+    const payload = JSON.stringify({ title, body, url: url || "/" });
+    let anySent = false;
+
+    for (const sub of subs) {
+      try {
+        await webpush.sendNotification(
+          { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+          payload,
+        );
+        anySent = true;
+      } catch (err: any) {
+        if (err?.statusCode === 404 || err?.statusCode === 410) {
+          await this.db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, sub.id));
+        }
+      }
+    }
+
+    return anySent;
+  }
 }

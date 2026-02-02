@@ -14,6 +14,7 @@ import {
   ConflictException,
   BadRequestException,
 } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
 import { DRIZZLE } from "../db/drizzle.provider";
 import { readings, readingReactions, users, journalEntries } from "../db/schema";
@@ -25,14 +26,25 @@ import { ErrorCode } from "../common/error-codes";
 import { HttpStatus } from "@nestjs/common";
 import { CreateReadingDto, TogglePublicDto, ReactDto, FeedQueryDto, ReadingsQueryDto, CreateJournalEntryDto, UpdateJournalEntryDto } from "./dto";
 import { calculateBirthChart, type BirthChartInput } from "./birth-chart.util";
+import { FeaturedReadingService } from "./featured.service";
 
 interface AuthRequest extends Request {
   user: { id: string; email: string };
 }
 
+@ApiTags("Readings")
 @Controller("readings")
 export class ReadingsController {
-  constructor(@Inject(DRIZZLE) private db: PostgresJsDatabase) {}
+  constructor(
+    @Inject(DRIZZLE) private db: PostgresJsDatabase,
+    private featuredService: FeaturedReadingService,
+  ) {}
+
+  @Get("featured")
+  async getFeatured() {
+    const data = await this.featuredService.getFeaturedReading();
+    return { success: true, data };
+  }
 
   @Get("birth-chart")
   async birthChart(
@@ -296,6 +308,7 @@ export class ReadingsController {
   }
 }
 
+@ApiTags("Journal")
 @Controller("journal")
 export class JournalController {
   constructor(@Inject(DRIZZLE) private db: PostgresJsDatabase) {}

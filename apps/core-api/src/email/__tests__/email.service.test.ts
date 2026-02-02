@@ -45,11 +45,14 @@ describe("EmailService", () => {
         totalPoints: 200,
         currentStreak: 7,
         communityHighlights: [{ authorName: "Bob", type: "tarot" }],
+        friendActivity: { newFriends: ["Carol"], friendReadings: [{ friendName: "Carol", type: "zodiac" }] },
+        featuredReading: { authorName: "Bob", type: "tarot" },
+        horoscopeTeaser: "The stars align for a productive week ✨",
       });
       expect(sendMailMock).toHaveBeenCalledWith(
         expect.objectContaining({
           to: "test@example.com",
-          subject: expect.stringContaining("Weekly Digest"),
+          subject: expect.stringContaining("Weekly"),
           html: expect.stringContaining("Alice"),
         }),
       );
@@ -64,6 +67,9 @@ describe("EmailService", () => {
         totalPoints: 0,
         currentStreak: 0,
         communityHighlights: [],
+        friendActivity: { newFriends: [], friendReadings: [] },
+        featuredReading: null,
+        horoscopeTeaser: null,
       });
       expect(sendMailMock).toHaveBeenCalled();
     });

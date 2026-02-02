@@ -32,9 +32,11 @@ import { RedisModule } from "./redis/redis.module";
 import { RedisService } from "./redis/redis.service";
 import { MetricsMiddleware } from "./common/metrics.middleware";
 import { MetricsModule } from "./metrics/metrics.module";
+import { LevelsModule } from "./levels/levels.module";
+import { EventsModule } from "./events/events.module";
 
 @Module({
-  imports: [RedisModule, CacheModule, DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule, ReferralsModule, GiftsModule, LeaderboardModule, MetricsModule, FollowsModule, CommentsModule, ReportsModule, SearchModule],
+  imports: [RedisModule, CacheModule, DbModule, HealthModule, AuthModule, UsersModule, PointsModule, AchievementsModule, ReadingsModule, StripeModule, ArcadeModule, MuyuModule, FriendsModule, EmailModule, AdminModule, HoroscopeModule, NotificationsModule, CompatibilityModule, ReferralsModule, GiftsModule, LeaderboardModule, MetricsModule, FollowsModule, CommentsModule, ReportsModule, SearchModule, LevelsModule, EventsModule],
   providers: [
     {
       provide: APP_GUARD,

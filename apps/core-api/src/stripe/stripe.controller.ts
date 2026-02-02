@@ -1,3 +1,4 @@
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import {
   Controller,
   Post,
@@ -13,6 +14,7 @@ import { StripeService } from "./stripe.service";
 import { AppException } from "../common/app.exception";
 import { ErrorCode } from "../common/error-codes";
 
+@ApiTags("Stripe")
 @Controller("stripe")
 export class StripeController {
   constructor(private readonly stripeService: StripeService) {}

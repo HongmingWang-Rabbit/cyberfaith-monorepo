@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsString, IsOptional, IsEnum, MaxLength, MinLength } from "class-validator";
 
 export enum JournalMood {
@@ -13,10 +14,12 @@ export class CreateJournalEntryDto {
   @IsString()
   @MinLength(1)
   @MaxLength(5000)
+  @ApiProperty({ description: "Journal entry content" })
   content!: string;
 
   @IsOptional()
   @IsEnum(JournalMood)
+  @ApiPropertyOptional({ enum: ["happy","neutral","sad","anxious","hopeful","confused"] })
   mood?: JournalMood;
 }
 

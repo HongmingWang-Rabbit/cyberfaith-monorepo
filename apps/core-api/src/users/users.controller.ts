@@ -1,3 +1,4 @@
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import { Controller, Get, Patch, Delete, Body, Req, Param, UseGuards, Inject, NotFoundException, HttpStatus, Res } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import type { Request, Response } from "express";
@@ -9,11 +10,13 @@ import { ErrorCode } from "../common/error-codes";
 import { sanitizeText } from "../common/sanitize";
 import { SetZodiacDto } from "../horoscope/dto/zodiac.dto";
 import { UpdateSettingsDto } from "./dto/update-settings.dto";
+import { getLevelForKarma } from "../levels/levels.service";
 
 interface AuthRequest extends Request {
   user: { id: string; email: string };
 }
 
+@ApiTags("Users")
 @Controller("users")
 export class UsersController {
   constructor(@Inject(DRIZZLE) private readonly db: any) {}
@@ -93,6 +96,9 @@ export class UsersController {
       .from(userFollows)
       .where(eq(userFollows.followerId, user.id));
 
+    const karma = Number(user.karma ?? 0);
+    const levelInfo = getLevelForKarma(karma);
+
     return {
       success: true,
       data: {
@@ -101,7 +107,15 @@ export class UsersController {
         username: user.username,
         avatarUrl: user.avatarUrl,
         zodiacSign: user.zodiacSign,
-        karma: user.karma,
+        karma,
+        level: {
+          name: levelInfo.tier.name,
+          emoji: levelInfo.tier.emoji,
+          color: levelInfo.tier.color,
+          progress: levelInfo.progress,
+          nextLevel: levelInfo.nextTier?.name ?? null,
+          nextThreshold: levelInfo.nextTier?.minKarma ?? null,
+        },
         readingCount: Number(readingCount?.count ?? 0),
         followerCount: Number(followerCount?.count ?? 0),
         followingCount: Number(followingCount?.count ?? 0),

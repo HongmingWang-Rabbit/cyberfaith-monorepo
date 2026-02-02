@@ -1,4 +1,5 @@
-import { Controller, Get, Post, UseGuards, Req, ForbiddenException } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
+import { Controller, Get, Post, Param, UseGuards, Req } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
 import { EmailService } from "./email.service";
@@ -8,6 +9,7 @@ interface AuthRequest extends Request {
   user: { id: string; email: string };
 }
 
+@ApiTags("Email")
 @Controller("email")
 export class EmailController {
   constructor(
@@ -15,13 +17,24 @@ export class EmailController {
     private digestService: DigestService,
   ) {}
 
-  /** Preview digest for the authenticated user (admin only placeholder — any authed user for now) */
+  /** Preview digest for the authenticated user */
   @UseGuards(AuthGuard("jwt"))
   @Get("digest-preview")
   async digestPreview(@Req() req: AuthRequest) {
     const data = await this.digestService.generateDigest(req.user.id);
     if (!data) {
       return { success: false, error: "No data available" };
+    }
+    return { success: true, data };
+  }
+
+  /** Generate personalized weekly digest for a specific user */
+  @UseGuards(AuthGuard("jwt"))
+  @Get("weekly-digest/:userId")
+  async weeklyDigest(@Param("userId") userId: string) {
+    const data = await this.digestService.generateDigest(userId);
+    if (!data) {
+      return { success: false, error: "User not found or no data available" };
     }
     return { success: true, data };
   }
@@ -36,8 +49,8 @@ export class AdminEmailController {
 
   /** Trigger weekly digest for all opted-in users */
   @UseGuards(AuthGuard("jwt"))
-  @Post("send-digest")
-  async sendDigest() {
+  @Post("send-weekly-digest")
+  async sendWeeklyDigest() {
     const usersToEmail = await this.digestService.getUsersForDigest();
     let sent = 0;
     let failed = 0;
@@ -55,5 +68,12 @@ export class AdminEmailController {
     }
 
     return { success: true, data: { sent, failed, total: usersToEmail.length } };
+  }
+
+  /** Legacy endpoint alias */
+  @UseGuards(AuthGuard("jwt"))
+  @Post("send-digest")
+  async sendDigest() {
+    return this.sendWeeklyDigest();
   }
 }

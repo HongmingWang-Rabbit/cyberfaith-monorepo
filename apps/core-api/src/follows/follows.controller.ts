@@ -1,3 +1,4 @@
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import {
   Controller, Get, Post, Delete, Param, Query, Req, UseGuards, Inject, HttpStatus,
 } from "@nestjs/common";
@@ -14,6 +15,7 @@ interface AuthRequest extends Request {
   user: { id: string; email: string };
 }
 
+@ApiTags("Follows")
 @Controller("users")
 export class FollowsController {
   constructor(
@@ -152,6 +154,7 @@ export class FollowsController {
   }
 }
 
+@ApiTags("Feed")
 @Controller("feed")
 export class FeedController {
   constructor(@Inject(DRIZZLE) private readonly db: any) {}

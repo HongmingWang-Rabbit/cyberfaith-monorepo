@@ -1,3 +1,4 @@
+import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import {
   Controller, Get, Query, Inject, HttpStatus,
 } from "@nestjs/common";
@@ -7,6 +8,7 @@ import { sql, eq, and, or, desc, count } from "drizzle-orm";
 import { AppException } from "../common/app.exception";
 import { ErrorCode } from "../common/error-codes";
 
+@ApiTags("Search")
 @Controller("search")
 export class SearchController {
   constructor(@Inject(DRIZZLE) private readonly db: any) {}

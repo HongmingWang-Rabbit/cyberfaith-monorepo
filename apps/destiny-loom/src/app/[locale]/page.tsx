@@ -6,6 +6,8 @@ import { Card, CardContent } from "@cyberfaith/ui";
 import { useAuth } from "@cyberfaith/auth-client";
 import { DailyHoroscope } from "@/components/daily-horoscope";
 import { PushPrompt } from "@/components/push-prompt";
+import { FeaturedReading } from "@/components/featured-reading";
+import { EventBanner } from "@/components/events/event-banner";
 
 const features = [
   { key: "mbti", href: "/mbti", icon: "🧠", color: "purple" },
@@ -28,6 +30,9 @@ export default function HomePage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-12 pb-20">
+      {/* Event Banner */}
+      <EventBanner />
+
       {/* Daily Horoscope */}
       {isAuthenticated && (
         <section className="space-y-3">
@@ -35,6 +40,11 @@ export default function HomePage() {
           <PushPrompt token={token} />
         </section>
       )}
+
+      {/* Reading of the Day */}
+      <section>
+        <FeaturedReading />
+      </section>
 
       {/* Hero */}
       <section className="text-center py-12 space-y-4">

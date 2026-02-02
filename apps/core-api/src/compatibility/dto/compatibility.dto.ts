@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsString, IsOptional, IsIn } from "class-validator";
 
 const VALID_SIGNS = [
@@ -13,23 +14,28 @@ const VALID_MBTI = [
 export class CompatibilityDto {
   @IsString()
   @IsIn(VALID_SIGNS)
+  @ApiProperty({ description: "First zodiac sign" })
   sign1!: string;
 
   @IsString()
   @IsIn(VALID_SIGNS)
+  @ApiProperty({ description: "Second zodiac sign" })
   sign2!: string;
 
   @IsOptional()
   @IsString()
   @IsIn(VALID_MBTI)
+  @ApiPropertyOptional({ description: "First MBTI type" })
   mbtiType1?: string;
 
   @IsOptional()
   @IsString()
   @IsIn(VALID_MBTI)
+  @ApiPropertyOptional({ description: "Second MBTI type" })
   mbtiType2?: string;
 
   @IsOptional()
   @IsString()
+  @ApiPropertyOptional({ description: "Locale" })
   locale?: string;
 }

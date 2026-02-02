@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsString, IsIn } from "class-validator";
 
 const ZODIAC_SIGNS = [
@@ -8,5 +9,6 @@ const ZODIAC_SIGNS = [
 export class SetZodiacDto {
   @IsString()
   @IsIn(ZODIAC_SIGNS)
+  @ApiProperty({ description: "Zodiac sign", example: "aries" })
   zodiacSign!: string;
 }

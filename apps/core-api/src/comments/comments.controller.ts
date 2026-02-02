@@ -1,3 +1,4 @@
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import {
   Controller, Get, Post, Delete, Param, Query, Body, Req, UseGuards, Inject, HttpStatus,
 } from "@nestjs/common";
@@ -16,6 +17,7 @@ interface AuthRequest extends Request {
   user: { id: string; email: string; role?: string };
 }
 
+@ApiTags("Comments")
 @Controller("readings")
 export class CommentsOnReadingsController {
   constructor(
@@ -142,6 +144,7 @@ export class CommentsOnReadingsController {
   }
 }
 
+@ApiTags("Comments")
 @Controller("comments")
 export class CommentsController {
   constructor(@Inject(DRIZZLE) private readonly db: any) {}

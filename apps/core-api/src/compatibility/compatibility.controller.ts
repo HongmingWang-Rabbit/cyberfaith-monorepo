@@ -1,3 +1,4 @@
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
 import {
   Controller,
   Post,
@@ -18,6 +19,7 @@ interface AuthRequest extends Request {
   user: { id: string; email: string };
 }
 
+@ApiTags("Compatibility")
 @Controller("readings/compatibility")
 export class CompatibilityController {
   constructor(private compatibilityService: CompatibilityService) {}
