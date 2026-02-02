@@ -185,6 +185,28 @@ export class ReadingsController {
   }
 
   @UseGuards(AuthGuard("jwt"))
+  @Patch(":id/favorite")
+  @ApiOperation({ summary: "Toggle favorite on a reading" })
+  async toggleFavorite(@Req() req: AuthRequest, @Param("id") id: string) {
+    const [reading] = await this.db
+      .select()
+      .from(readings)
+      .where(and(eq(readings.id, id), eq(readings.userId, req.user.id)));
+
+    if (!reading) {
+      throw new AppException(ErrorCode.READING_NOT_FOUND, "Reading not found", HttpStatus.NOT_FOUND);
+    }
+
+    const [updated] = await this.db
+      .update(readings)
+      .set({ isFavorite: !reading.isFavorite })
+      .where(and(eq(readings.id, id), eq(readings.userId, req.user.id)))
+      .returning();
+
+    return { success: true, data: updated };
+  }
+
+  @UseGuards(AuthGuard("jwt"))
   @Patch(":id/public")
   async togglePublic(@Req() req: AuthRequest, @Param("id") id: string, @Body() body: TogglePublicDto) {
     const [reading] = await this.db
@@ -212,9 +234,18 @@ export class ReadingsController {
     const limitNum = query.limit ?? 20;
     const offset = (pageNum - 1) * limitNum;
 
-    const conditions = [eq(readings.userId, req.user.id)];
+    const conditions: any[] = [eq(readings.userId, req.user.id)];
     if (query.type) {
       conditions.push(eq(readings.type, query.type));
+    }
+    if (query.favorited) {
+      conditions.push(eq(readings.isFavorite, true));
+    }
+    if (query.from) {
+      conditions.push(gte(readings.createdAt, new Date(query.from)));
+    }
+    if (query.to) {
+      conditions.push(lte(readings.createdAt, new Date(query.to)));
     }
 
     const rows = await this.db

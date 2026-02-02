@@ -24,7 +24,8 @@
       "fengShui": "风水",
       "affirmations": "每日肯定",
       "readings": "解读",
-      "events": "活动"
+      "events": "活动",
+      "history": "历史记录"
     },
     "auth": {
       "signIn": "登录",
@@ -964,5 +965,28 @@
     "maxLevel": "已达最高等级！",
     "levelUp": "升级！",
     "levelUpMessage": "你的灵性之旅已迈向新高度！"
+  },
+  "history": {
+    "title": "阅读历史",
+    "signInRequired": "请登录查看你的阅读历史",
+    "noReadings": "还没有阅读记录，开始你的灵性之旅吧！",
+    "filterAll": "所有类型",
+    "favorites": "收藏",
+    "from": "起始日期",
+    "to": "截止日期",
+    "clearDates": "清除日期",
+    "readings": "次阅读",
+    "public": "公开",
+    "favorite": "添加到收藏",
+    "unfavorite": "取消收藏",
+    "exportPdf": "导出PDF",
+    "exporting": "导出中...",
+    "monthlySummary": "月度总结",
+    "topType": "最多阅读"
+  },
+  "tarotArt": {
+    "tapToFlip": "点击卡牌翻转",
+    "reversed": "逆位",
+    "interpretation": "解读"
   }
 }

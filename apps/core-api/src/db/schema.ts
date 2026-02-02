@@ -91,6 +91,7 @@ export const readings = pgTable("readings", {
   result: jsonb("result"),
   locale: varchar("locale", { length: 10 }),
   isPublic: boolean("is_public").default(false).notNull(),
+  isFavorite: boolean("is_favorite").default(false).notNull(),
 }, (table) => ({
   // EXPLAIN ANALYZE: enables index scan on "WHERE user_id = ? ORDER BY created_at DESC"
   userCreatedAtIdx: index("readings_user_id_created_at_idx").on(table.userId, table.createdAt),
@@ -292,6 +293,20 @@ export const events = pgTable("events", {
   karmaMultiplier: integer("karma_multiplier").default(1).notNull(),
   active: boolean("active").default(true).notNull(),
 });
+
+// ─── Admin Audit Log ──────────────────────────────────────
+export const adminAuditLog = pgTable("admin_audit_log", {
+  id: idColumn(),
+  adminUserId: varchar("admin_user_id", { length: 36 }).notNull(),
+  action: varchar("action", { length: 100 }).notNull(),
+  targetType: varchar("target_type", { length: 50 }),
+  targetId: varchar("target_id", { length: 36 }),
+  details: jsonb("details"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  adminUserIdx: index("audit_log_admin_user_idx").on(table.adminUserId),
+  createdAtIdx: index("audit_log_created_at_idx").on(table.createdAt),
+}));
 
 export const reports = pgTable("reports", {
   id: idColumn(),

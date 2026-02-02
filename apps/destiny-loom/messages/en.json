@@ -24,7 +24,8 @@
       "fengShui": "Feng Shui",
       "affirmations": "Affirmations",
       "readings": "Readings",
-      "events": "Events"
+      "events": "Events",
+      "history": "History"
     },
     "auth": {
       "signIn": "Sign In",
@@ -964,5 +965,28 @@
     "maxLevel": "Maximum level reached!",
     "levelUp": "Level Up!",
     "levelUpMessage": "Your spiritual journey continues to new heights!"
+  },
+  "history": {
+    "title": "Reading History",
+    "signInRequired": "Sign in to view your reading history",
+    "noReadings": "No readings yet. Start your spiritual journey!",
+    "filterAll": "All Types",
+    "favorites": "Favorites",
+    "from": "From date",
+    "to": "To date",
+    "clearDates": "Clear dates",
+    "readings": "readings",
+    "public": "Public",
+    "favorite": "Add to favorites",
+    "unfavorite": "Remove from favorites",
+    "exportPdf": "Export PDF",
+    "exporting": "Exporting...",
+    "monthlySummary": "Monthly Summary",
+    "topType": "Most read"
+  },
+  "tarotArt": {
+    "tapToFlip": "Tap card to flip",
+    "reversed": "Reversed",
+    "interpretation": "Interpretation"
   }
 }
