@@ -1,8 +1,8 @@
-import { Controller, Get, Patch, Delete, Body, Req, UseGuards, Inject, NotFoundException, HttpStatus } from "@nestjs/common";
+import { Controller, Get, Patch, Delete, Body, Req, Param, UseGuards, Inject, NotFoundException, HttpStatus } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
 import { DRIZZLE } from "../db/drizzle.provider";
-import { users, userSettings, readings, journalEntries, pointsTransactions } from "../db/schema";
+import { users, userSettings, userAchievements, achievements, readings, journalEntries, pointsTransactions } from "../db/schema";
 import { eq, sql, desc, count, and, gte } from "drizzle-orm";
 import { AppException } from "../common/app.exception";
 import { ErrorCode } from "../common/error-codes";
@@ -22,6 +22,81 @@ export class UsersController {
     return { success: true, data: [] };
   }
 
+  @Get("profile/:username")
+  async publicProfile(@Param("username") username: string) {
+    const [user] = await this.db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        avatarUrl: users.avatarUrl,
+        zodiacSign: users.zodiacSign,
+        karma: users.karma,
+        createdAt: users.createdAt,
+      })
+      .from(users)
+      .where(and(eq(users.username, username), eq(users.isActive, true)));
+
+    if (!user) throw new NotFoundException("User not found");
+
+    // Check privacy settings
+    const [settings] = await this.db
+      .select({ privacyProfileVisible: userSettings.privacyProfileVisible })
+      .from(userSettings)
+      .where(eq(userSettings.userId, user.id));
+
+    if (settings && !settings.privacyProfileVisible) {
+      throw new NotFoundException("User not found");
+    }
+
+    // Get reading count
+    const [readingCount] = await this.db
+      .select({ count: count() })
+      .from(readings)
+      .where(eq(readings.userId, user.id));
+
+    // Get achievements
+    const userAchievementsList = await this.db
+      .select({
+        name: achievements.name,
+        description: achievements.description,
+        icon: achievements.icon,
+        category: achievements.category,
+        unlockedAt: userAchievements.unlockedAt,
+      })
+      .from(userAchievements)
+      .innerJoin(achievements, eq(userAchievements.achievementId, achievements.id))
+      .where(eq(userAchievements.userId, user.id));
+
+    // Get recent public readings
+    const publicReadings = await this.db
+      .select({
+        id: readings.id,
+        type: readings.type,
+        result: readings.result,
+        createdAt: readings.createdAt,
+      })
+      .from(readings)
+      .where(and(eq(readings.userId, user.id), eq(readings.isPublic, true)))
+      .orderBy(desc(readings.createdAt))
+      .limit(10);
+
+    return {
+      success: true,
+      data: {
+        displayName: user.name,
+        username: user.username,
+        avatarUrl: user.avatarUrl,
+        zodiacSign: user.zodiacSign,
+        karma: user.karma,
+        readingCount: Number(readingCount?.count ?? 0),
+        achievements: userAchievementsList,
+        recentReadings: publicReadings,
+        joinDate: user.createdAt,
+      },
+    };
+  }
+
   @UseGuards(AuthGuard("jwt"))
   @Get("me")
   async me(@Req() req: AuthRequest) {
@@ -30,6 +105,7 @@ export class UsersController {
         id: users.id,
         email: users.email,
         name: users.name,
+        username: users.username,
         avatarUrl: users.avatarUrl,
         subscriptionTier: users.subscriptionTier,
         zodiacSign: users.zodiacSign,
@@ -121,9 +197,20 @@ export class UsersController {
         .values({ userId: req.user.id, ...updates });
     }
 
-    // Also update user display name and avatar on the users table if provided
+    // Also update user display name, username on the users table if provided
     const userUpdates: Record<string, unknown> = {};
     if (body.displayName !== undefined) userUpdates.name = body.displayName;
+    if (body.username !== undefined) {
+      // Check uniqueness
+      const [existing] = await this.db
+        .select({ id: users.id })
+        .from(users)
+        .where(and(eq(users.username, body.username), sql`${users.id} != ${req.user.id}`));
+      if (existing) {
+        throw new AppException(ErrorCode.VALIDATION_ERROR || "VALIDATION_ERROR", "Username already taken", HttpStatus.CONFLICT);
+      }
+      userUpdates.username = body.username;
+    }
     if (Object.keys(userUpdates).length > 0) {
       await this.db.update(users).set(userUpdates).where(eq(users.id, req.user.id));
     }

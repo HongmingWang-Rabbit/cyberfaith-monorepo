@@ -14,7 +14,8 @@ describe("HoroscopeService", () => {
       values: vi.fn().mockReturnThis(),
     };
 
-    service = new HoroscopeService(mockDb);
+    const mockCache = { wrap: vi.fn().mockImplementation((_k: string, fn: () => Promise<unknown>) => fn()), get: vi.fn(), set: vi.fn(), invalidate: vi.fn() } as any;
+    service = new HoroscopeService(mockDb, mockCache);
   });
 
   describe("isValidZodiacSign", () => {

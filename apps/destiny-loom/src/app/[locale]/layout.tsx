@@ -9,6 +9,7 @@ import { ToastProvider } from "@/components/ui/toast";
 import { AuthWrapper } from "@/components/auth-wrapper";
 import { ServiceWorkerRegister } from "@/components/sw-register";
 import { WebApplicationJsonLd } from "@/components/seo/json-ld";
+import { OfflineBanner } from "@/components/offline-banner";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://destiny-loom.cyberfaith.app";
 
@@ -54,6 +55,8 @@ export default async function LocaleLayout({ children, params }: Props) {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <WebApplicationJsonLd />
       </head>
       <body className="bg-background text-foreground min-h-screen">
@@ -68,6 +71,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <AuthWrapper>
             <ToastProvider>
               <ServiceWorkerRegister />
+              <OfflineBanner />
               <AppShell>{children}</AppShell>
             </ToastProvider>
           </AuthWrapper>

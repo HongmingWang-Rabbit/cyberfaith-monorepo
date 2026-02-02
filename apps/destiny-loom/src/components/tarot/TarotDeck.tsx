@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Button } from "@cyberfaith/ui";
@@ -12,7 +12,7 @@ interface TarotDeckProps {
   onComplete: (cards: DrawnCard[]) => void;
 }
 
-export function TarotDeck({ spreadType, onComplete }: TarotDeckProps) {
+export const TarotDeck = memo(function TarotDeck({ spreadType, onComplete }: TarotDeckProps) {
   const t = useTranslations("tarot");
   const config = spreadConfigs[spreadType];
   const [shuffledDeck] = useState(() => [...tarotDeck].sort(() => Math.random() - 0.5));
@@ -21,7 +21,7 @@ export function TarotDeck({ spreadType, onComplete }: TarotDeckProps) {
   const [isComplete, setIsComplete] = useState(false);
 
   // Show 12 cards from shuffled deck for selection
-  const displayCards = shuffledDeck.slice(0, 12);
+  const displayCards = useMemo(() => shuffledDeck.slice(0, 12), [shuffledDeck]);
 
   const handleCardClick = useCallback((index: number) => {
     if (isComplete) return;
@@ -100,4 +100,4 @@ export function TarotDeck({ spreadType, onComplete }: TarotDeckProps) {
       )}
     </div>
   );
-}
+});

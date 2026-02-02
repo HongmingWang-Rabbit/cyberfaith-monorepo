@@ -1,10 +1,16 @@
-import { IsOptional, IsString, IsBoolean, IsIn, MaxLength } from "class-validator";
+import { IsOptional, IsString, IsBoolean, IsIn, MaxLength, Matches } from "class-validator";
 
 export class UpdateSettingsDto {
   @IsOptional()
   @IsString()
   @MaxLength(255)
   displayName?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  @Matches(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/, { message: "Username must be lowercase alphanumeric with hyphens" })
+  username?: string;
 
   @IsOptional()
   @IsString()

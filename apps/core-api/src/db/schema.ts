@@ -21,6 +21,7 @@ export const users = pgTable("users", {
   referralCode: varchar("referral_code", { length: 20 }).unique(),
   premiumUntil: timestamp("premium_until"),
   karma: integer("karma").default(0).notNull(),
+  username: varchar("username", { length: 50 }).unique(),
   deletedAt: timestamp("deleted_at"),
 });
 

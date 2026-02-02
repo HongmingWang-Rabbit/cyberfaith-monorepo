@@ -3,6 +3,7 @@ import { DRIZZLE } from "../db/drizzle.provider";
 import { dailyHoroscopes } from "../db/schema";
 import { eq, and } from "drizzle-orm";
 import { createAIProvider, type AIProvider } from "@cyberfaith/ai-provider";
+import { CacheService } from "../cache/cache.service";
 
 export interface HoroscopeContent {
   mood: string;
@@ -26,7 +27,10 @@ export function isValidZodiacSign(sign: string): sign is ZodiacSign {
 export class HoroscopeService {
   private aiProvider: AIProvider | null = null;
 
-  constructor(@Inject(DRIZZLE) private db: any) {
+  constructor(
+    @Inject(DRIZZLE) private db: any,
+    private readonly cache: CacheService,
+  ) {
     const providerName = (process.env.AI_PROVIDER || "openai") as "openai" | "anthropic" | "google";
     const keyMap: Record<string, string | undefined> = {
       openai: process.env.OPENAI_API_KEY,
@@ -45,8 +49,15 @@ export class HoroscopeService {
 
   async getDailyHoroscope(sign: ZodiacSign): Promise<HoroscopeContent> {
     const today = this.getToday();
+    const cacheKey = `horoscope:${sign}:${today}`;
 
-    // Check cache
+    return this.cache.wrap(cacheKey, async () => {
+      return this._fetchOrGenerate(sign, today);
+    }, 60 * 60 * 1000); // 1 hour TTL
+  }
+
+  private async _fetchOrGenerate(sign: ZodiacSign, today: string): Promise<HoroscopeContent> {
+    // Check DB
     const [existing] = await this.db
       .select()
       .from(dailyHoroscopes)

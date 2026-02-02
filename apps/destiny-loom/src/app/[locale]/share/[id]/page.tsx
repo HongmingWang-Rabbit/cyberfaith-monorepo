@@ -76,6 +76,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = getReadingTitle(reading);
   const description = getReadingDescription(reading);
 
+  const ogImageUrl = `${APP_URL}/api/og/reading/${id}`;
+
   return {
     title: `${title} — Destiny Loom`,
     description,
@@ -85,11 +87,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "article",
       url: `${APP_URL}/share/${id}`,
       siteName: "Destiny Loom — CyberFaith",
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [ogImageUrl],
     },
   };
 }
