@@ -11,8 +11,11 @@
       "fourPillars": "四柱八字",
       "profile": "个人中心",
       "community": "社区",
+      "dream": "解梦",
+      "journal": "日记",
       "arcade": "游戏厅",
-      "admin": "管理后台"
+      "admin": "管理后台",
+      "compatibility": "星座配对"
     },
     "auth": {
       "signIn": "登录",
@@ -70,6 +73,11 @@
         "title": "四柱八字",
         "description": "通过古老的八字分析，解读你的命运密码。",
         "badge": ""
+      },
+      "dream": {
+        "title": "解梦",
+        "description": "通过AI驱动的梦境分析，解读你潜意识中隐藏的信息。",
+        "badge": "新"
       }
     },
     "readingsCount": "已完成 {count} 次占卜",
@@ -258,13 +266,15 @@
         "fourPillars": "四柱",
         "zodiac": "星座",
         "i-ching": "易经",
-        "four-pillars": "四柱"
+        "four-pillars": "四柱",
+        "dream": "解梦"
       },
       "mbti": "MBTI结果",
       "tarot": "塔罗占卜",
       "zodiac": "星座解读",
       "fourPillars": "四柱八字",
-      "iching": "易经占卜"
+      "iching": "易经占卜",
+      "dream": "梦境解读"
     }
   },
   "fourPillars": {
@@ -408,6 +418,51 @@
       "showing": "{from}-{to} / 共 {total}"
     }
   },
+  "dream": {
+    "title": "解梦",
+    "subtitle": "描述你的梦境，让AI神谕解读你潜意识中隐藏的信息。",
+    "inputTitle": "描述你的梦境",
+    "instruction": "写下你记得的一切——画面、感觉、人物、地点。细节越多，解读越深入。",
+    "placeholder": "昨晚我梦见自己飞越一片浩瀚的星海...",
+    "analyze": "解读梦境",
+    "yourDream": "你的梦境",
+    "aiAnalysis": "AI梦境分析",
+    "aiPlaceholder": "梦境神谕正在准备你的解读...",
+    "newDream": "新梦境",
+    "sections": {
+      "symbols": "梦境符号",
+      "emotions": "情感主题",
+      "meanings": "可能的含义",
+      "jung": "荣格视角",
+      "freud": "弗洛伊德视角",
+      "actions": "行动建议"
+    }
+  },
+  "journal": {
+    "title": "占卜日记",
+    "subtitle": "你在所有占卜中的个人感悟",
+    "loginRequired": "请登录以访问你的日记。",
+    "empty": "暂无日记。给你的占卜添加笔记来开始记录吧！",
+    "edit": "编辑",
+    "delete": "删除",
+    "save": "保存",
+    "cancel": "取消",
+    "addNote": "添加笔记",
+    "placeholder": "写下你的想法、感悟或见解...",
+    "moodLabel": "你现在的心情如何？",
+    "filters": {
+      "allMoods": "所有心情",
+      "allTypes": "所有类型"
+    },
+    "moods": {
+      "happy": "开心",
+      "neutral": "平静",
+      "sad": "难过",
+      "anxious": "焦虑",
+      "hopeful": "充满希望",
+      "confused": "困惑"
+    }
+  },
   "horoscope": {
     "dailyTitle": "每日星座运势",
     "setSignTitle": "设置你的星座",
@@ -434,5 +489,45 @@
       "aquarius": "水瓶座",
       "pisces": "双鱼座"
     }
+  },
+  "arcade": {
+    "title": "灵性游戏厅",
+    "subtitle": "用灵性小游戏测试你的宇宙运气",
+    "fortuneCookie": {
+      "name": "幸运饼干",
+      "description": "打开一块宇宙幸运饼干，获取神圣智慧"
+    },
+    "destinyWheel": {
+      "name": "命运之轮",
+      "description": "转动命运之轮，获得业力奖励和特殊奖品"
+    },
+    "meditation": {
+      "name": "冥想计时器",
+      "description": "带有环境音效和业力奖励的引导式呼吸冥想"
+    }
+  },
+  "compatibility": {
+    "title": "星座配对",
+    "subtitle": "通过星座与人格类型，探索两个灵魂之间的宇宙纽带",
+    "person1": "第一人",
+    "person2": "第二人",
+    "selectSign": "选择星座...",
+    "mbtiOptional": "MBTI类型（可选）",
+    "compare": "分析配对",
+    "compareWithFriend": "与好友配对",
+    "viewMatrix": "查看完整12×12配对矩阵 →",
+    "matrix": "配对矩阵",
+    "matrixSubtitle": "点击任意格子，揭示两个星座之间的宇宙缘分",
+    "analyzing": "正在解读星象...",
+    "overallScore": "综合配对指数",
+    "love": "爱情与浪漫",
+    "friendship": "友情",
+    "work": "事业与合作",
+    "strengths": "优势",
+    "challenges": "挑战",
+    "cosmicAdvice": "星象建议",
+    "selectFriend": "选择一位好友进行配对",
+    "loadingFriends": "加载好友列表...",
+    "noFriends": "还没有好友，先添加一些好友吧！"
   }
 }

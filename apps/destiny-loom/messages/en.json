@@ -11,8 +11,11 @@
       "fourPillars": "Four Pillars",
       "profile": "Profile",
       "community": "Community",
+      "dream": "Dreams",
+      "journal": "Journal",
       "arcade": "Arcade",
-      "admin": "Admin"
+      "admin": "Admin",
+      "compatibility": "Compatibility"
     },
     "auth": {
       "signIn": "Sign In",
@@ -70,6 +73,11 @@
         "title": "Four Pillars",
         "description": "Decode your destiny through the ancient art of BaZi analysis.",
         "badge": ""
+      },
+      "dream": {
+        "title": "Dream Interpretation",
+        "description": "Decode the hidden messages of your subconscious through AI-powered dream analysis.",
+        "badge": "New"
       }
     },
     "readingsCount": "{count} readings done",
@@ -258,13 +266,15 @@
         "fourPillars": "Four Pillars",
         "zodiac": "Zodiac",
         "i-ching": "I Ching",
-        "four-pillars": "Four Pillars"
+        "four-pillars": "Four Pillars",
+        "dream": "Dream"
       },
       "mbti": "MBTI Result",
       "tarot": "Tarot Reading",
       "zodiac": "Zodiac Reading",
       "fourPillars": "Four Pillars",
-      "iching": "I Ching Reading"
+      "iching": "I Ching Reading",
+      "dream": "Dream Interpretation"
     }
   },
   "fourPillars": {
@@ -408,6 +418,51 @@
       "showing": "{from}-{to} of {total}"
     }
   },
+  "dream": {
+    "title": "Dream Interpretation",
+    "subtitle": "Describe your dream and let our AI oracle decode the hidden messages of your subconscious.",
+    "inputTitle": "Describe Your Dream",
+    "instruction": "Write down everything you remember — images, feelings, people, places. The more detail, the deeper the interpretation.",
+    "placeholder": "Last night I dreamed that I was flying over a vast ocean of stars...",
+    "analyze": "Interpret Dream",
+    "yourDream": "Your Dream",
+    "aiAnalysis": "AI Dream Analysis",
+    "aiPlaceholder": "The Dream Oracle is preparing your interpretation...",
+    "newDream": "New Dream",
+    "sections": {
+      "symbols": "Dream Symbols",
+      "emotions": "Emotional Themes",
+      "meanings": "Possible Meanings",
+      "jung": "Jungian Perspective",
+      "freud": "Freudian Perspective",
+      "actions": "Action Suggestions"
+    }
+  },
+  "journal": {
+    "title": "Reading Journal",
+    "subtitle": "Your personal reflections across all readings",
+    "loginRequired": "Sign in to access your journal.",
+    "empty": "No journal entries yet. Add notes to your readings to start your journal!",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "addNote": "Add Note",
+    "placeholder": "Write your thoughts, reflections, or insights...",
+    "moodLabel": "How are you feeling?",
+    "filters": {
+      "allMoods": "All Moods",
+      "allTypes": "All Types"
+    },
+    "moods": {
+      "happy": "Happy",
+      "neutral": "Neutral",
+      "sad": "Sad",
+      "anxious": "Anxious",
+      "hopeful": "Hopeful",
+      "confused": "Confused"
+    }
+  },
   "horoscope": {
     "dailyTitle": "Daily Horoscope",
     "setSignTitle": "Set Your Zodiac Sign",
@@ -434,5 +489,45 @@
       "aquarius": "Aquarius",
       "pisces": "Pisces"
     }
+  },
+  "arcade": {
+    "title": "Spirit Arcade",
+    "subtitle": "Test your cosmic luck with spiritual mini-games",
+    "fortuneCookie": {
+      "name": "Fortune Cookie",
+      "description": "Crack open a cosmic fortune cookie for divine wisdom"
+    },
+    "destinyWheel": {
+      "name": "Destiny Wheel",
+      "description": "Spin the wheel of fate for karma rewards and special prizes"
+    },
+    "meditation": {
+      "name": "Meditation Timer",
+      "description": "Guided breathing meditation with ambient sounds and karma rewards"
+    }
+  },
+  "compatibility": {
+    "title": "Compatibility",
+    "subtitle": "Discover the cosmic bond between two souls through zodiac signs and personality types",
+    "person1": "Person 1",
+    "person2": "Person 2",
+    "selectSign": "Select a zodiac sign...",
+    "mbtiOptional": "MBTI type (optional)",
+    "compare": "Analyze Compatibility",
+    "compareWithFriend": "Compare with a Friend",
+    "viewMatrix": "View full 12×12 compatibility matrix →",
+    "matrix": "Compatibility Matrix",
+    "matrixSubtitle": "Click any cell to reveal the cosmic bond between two signs",
+    "analyzing": "Reading the stars...",
+    "overallScore": "Overall Compatibility Score",
+    "love": "Love & Romance",
+    "friendship": "Friendship",
+    "work": "Work & Career",
+    "strengths": "Strengths",
+    "challenges": "Challenges",
+    "cosmicAdvice": "Cosmic Advice",
+    "selectFriend": "Choose a friend to compare with",
+    "loadingFriends": "Loading friends...",
+    "noFriends": "No friends yet. Add some friends first!"
   }
 }
