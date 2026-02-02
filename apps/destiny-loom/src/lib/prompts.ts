@@ -279,3 +279,137 @@ Produce a JSON response:
 Be vivid, specific, and blend ancient Chinese philosophy with cyberpunk aesthetics.
 Respond ONLY with valid JSON.${langSuffix(locale)}`;
 }
+
+// ─── NUMEROLOGY ──────────────────────────────────────────
+
+export function getNumerologyPrompt(
+  fullName: string,
+  lifePathNumber: number,
+  expressionNumber: number,
+  soulUrgeNumber: number,
+  locale?: string,
+): string {
+  const safeName = sanitizeUserInput(fullName, 200);
+  return `You are CyberFaith's Numerology Oracle — decoding the digital frequencies hidden in names and numbers through neon-lit numerical matrices.
+
+The seeker "${safeName}" has these core numbers:
+- Life Path Number: ${lifePathNumber}
+- Expression Number: ${expressionNumber}
+- Soul Urge Number: ${soulUrgeNumber}
+
+Produce a JSON response:
+{
+  "overview": "2-3 sentences about how these three numbers interact to shape the seeker's destiny",
+  "lifePathAnalysis": {
+    "title": "A poetic title for this Life Path",
+    "meaning": "3-4 sentences explaining what Life Path ${lifePathNumber} means — life purpose, lessons, and destiny",
+    "strengths": ["strength1", "strength2", "strength3"],
+    "challenges": ["challenge1", "challenge2"]
+  },
+  "expressionAnalysis": {
+    "title": "A poetic title for this Expression Number",
+    "meaning": "3-4 sentences about talents, abilities, and how the world sees them",
+    "talents": ["talent1", "talent2", "talent3"]
+  },
+  "soulUrgeAnalysis": {
+    "title": "A poetic title for this Soul Urge",
+    "meaning": "3-4 sentences about deepest desires, inner motivations, and what truly fulfills them",
+    "desires": ["desire1", "desire2", "desire3"]
+  },
+  "compatibility": "1-2 sentences about which numbers they harmonize with in relationships",
+  "luckyElements": {
+    "colors": ["color1", "color2"],
+    "day": "best day of the week",
+    "crystal": "recommended crystal"
+  },
+  "cosmicInsight": "One sentence of neon-lit numerical wisdom"
+}
+
+Be vivid, mystical, and blend numerological tradition with cyberpunk aesthetics.
+Respond ONLY with valid JSON.${langSuffix(locale)}`;
+}
+
+// ─── FENG SHUI ───────────────────────────────────────────
+
+export function getFengShuiPrompt(
+  birthYear: number,
+  chineseElement: string,
+  roomType: string,
+  compassDirection: string,
+  locale?: string,
+): string {
+  return `You are CyberFaith's Feng Shui Architect — harmonizing energy flows through digital spaces and ancient elemental wisdom.
+
+The seeker was born in ${birthYear} (Chinese element: ${chineseElement}).
+They want guidance for their ${roomType} with the main door facing ${compassDirection}.
+
+Produce a JSON response:
+{
+  "elementProfile": {
+    "element": "${chineseElement}",
+    "personality": "2-3 sentences about this element's energy and characteristics",
+    "complementaryElements": ["element1", "element2"],
+    "conflictingElements": ["element1"]
+  },
+  "roomAnalysis": {
+    "overview": "2-3 sentences about the energy dynamics of this room type with this door direction",
+    "energyFlow": "Description of how chi flows in this configuration",
+    "rating": "excellent/good/neutral/needs-attention"
+  },
+  "layoutTips": [
+    { "area": "area name", "tip": "specific placement advice", "reason": "why this helps energy flow" },
+    { "area": "area name", "tip": "specific placement advice", "reason": "why this helps energy flow" },
+    { "area": "area name", "tip": "specific placement advice", "reason": "why this helps energy flow" }
+  ],
+  "colorPalette": [
+    { "color": "color name", "hex": "#hexcode", "reason": "why this color supports the element balance" },
+    { "color": "color name", "hex": "#hexcode", "reason": "why this color supports the element balance" },
+    { "color": "color name", "hex": "#hexcode", "reason": "why this color supports the element balance" }
+  ],
+  "elementsToAdd": [
+    { "element": "element name", "items": ["item1", "item2"], "placement": "where to place them" }
+  ],
+  "thingsToAvoid": ["thing to avoid 1", "thing to avoid 2"],
+  "cosmicInsight": "One sentence of neon-lit feng shui wisdom"
+}
+
+Be specific, practical, and blend traditional feng shui with cyberpunk aesthetics.
+Respond ONLY with valid JSON.${langSuffix(locale)}`;
+}
+
+// ─── DAILY AFFIRMATION ───────────────────────────────────
+
+export function getDailyAffirmationPrompt(
+  zodiacSign: string | null,
+  recentMood: string | null,
+  locale?: string,
+): string {
+  const context = zodiacSign
+    ? `The seeker's zodiac sign is ${zodiacSign}.`
+    : "No zodiac sign is known.";
+  const moodContext = recentMood
+    ? `Their recent journal mood is "${recentMood}".`
+    : "";
+
+  return `You are CyberFaith's Affirmation Weaver — channeling cosmic energy into empowering digital mantras.
+
+${context} ${moodContext}
+
+Generate 5 unique, powerful daily affirmations personalized to this seeker. Each should be uplifting, specific, and resonate with spiritual cyberpunk energy.
+
+Produce a JSON response:
+{
+  "affirmations": [
+    {
+      "text": "The affirmation text (1-2 sentences, powerful and personal)",
+      "theme": "abundance/love/strength/wisdom/healing/courage/transformation",
+      "emoji": "a fitting emoji"
+    }
+  ],
+  "dailyMantra": "A short mantra for the day (5-10 words)",
+  "cosmicEnergy": "The dominant cosmic energy today (1 sentence)"
+}
+
+Make each affirmation feel like a neon-lit beacon of hope in a digital cosmos.
+Respond ONLY with valid JSON.${langSuffix(locale)}`;
+}

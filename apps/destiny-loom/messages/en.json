@@ -18,7 +18,11 @@
       "compatibility": "Compatibility",
       "settings": "Settings",
       "insights": "Insights",
-      "birthChart": "Birth Chart"
+      "birthChart": "Birth Chart",
+      "leaderboard": "Leaderboard",
+      "numerology": "Numerology",
+      "fengShui": "Feng Shui",
+      "affirmations": "Affirmations"
     },
     "auth": {
       "signIn": "Sign In",
@@ -80,6 +84,21 @@
       "dream": {
         "title": "Dream Interpretation",
         "description": "Decode the hidden messages of your subconscious through AI-powered dream analysis.",
+        "badge": "New"
+      },
+      "numerology": {
+        "title": "Numerology",
+        "description": "Decode your Life Path, Expression, and Soul Urge numbers with AI analysis.",
+        "badge": "New"
+      },
+      "fengShui": {
+        "title": "Feng Shui",
+        "description": "Get personalized room layout and color guidance based on your Chinese element.",
+        "badge": "New"
+      },
+      "affirmations": {
+        "title": "Daily Affirmations",
+        "description": "Receive personalized affirmations aligned with your zodiac energy.",
         "badge": "New"
       }
     },
@@ -716,5 +735,84 @@
       "degree": "Degree",
       "interpretation": "Interpretation"
     }
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "subtitle": "Top spiritual seekers ranked by karma",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "allTime": "All Time",
+    "karma": "karma",
+    "loading": "Loading...",
+    "empty": "No entries yet. Start earning karma!",
+    "yourRank": "Your Rank"
+  },
+  "userProfile": {
+    "notFound": "User not found",
+    "karma": "Karma",
+    "readings": "Readings",
+    "achievements": "Achievements",
+    "recentReadings": "Recent Public Readings",
+    "joined": "Joined {date}",
+    "discoverCta": "Discover Your Destiny"
+  },
+  "numerology": {
+    "title": "Numerology",
+    "subtitle": "Decode your destiny through the sacred mathematics of the universe",
+    "description": "Enter your full name and birthdate to reveal your core numerology numbers — Life Path, Expression, and Soul Urge.",
+    "fullNameLabel": "Full Name",
+    "fullNamePlaceholder": "Enter your full birth name",
+    "birthdateLabel": "Birthdate",
+    "calculateButton": "Reveal My Numbers",
+    "calculating": "Calculating...",
+    "yourNumbers": "Your Core Numbers",
+    "lifePathNumber": "Life Path",
+    "expressionNumber": "Expression",
+    "soulUrgeNumber": "Soul Urge",
+    "aiAnalysis": "AI Numerology Analysis"
+  },
+  "fengShui": {
+    "title": "Feng Shui",
+    "subtitle": "Harmonize your space with ancient elemental wisdom",
+    "description": "Enter your birth year, room type, and door direction to receive personalized feng shui guidance.",
+    "birthYearLabel": "Birth Year",
+    "roomTypeLabel": "Room Type",
+    "directionLabel": "Door Direction",
+    "selectRoom": "Select room...",
+    "selectDirection": "Select direction...",
+    "analyzeButton": "Analyze My Space",
+    "analyzing": "Analyzing...",
+    "element": "Element",
+    "layoutTips": "Layout Tips",
+    "colorRecommendations": "Color Recommendations",
+    "thingsToAvoid": "Things to Avoid",
+    "aiAnalysis": "AI Feng Shui Analysis",
+    "rooms": {
+      "bedroom": "Bedroom",
+      "office": "Office",
+      "living": "Living Room",
+      "kitchen": "Kitchen",
+      "bathroom": "Bathroom"
+    },
+    "directions": {
+      "north": "North",
+      "northeast": "Northeast",
+      "east": "East",
+      "southeast": "Southeast",
+      "south": "South",
+      "southwest": "Southwest",
+      "west": "West",
+      "northwest": "Northwest"
+    }
+  },
+  "affirmations": {
+    "title": "Daily Affirmations",
+    "dailyMantra": "Today's Mantra",
+    "loading": "Channeling cosmic energy...",
+    "retry": "Try Again",
+    "swipeHint": "Swipe or use arrows to browse affirmations",
+    "allAffirmations": "All Affirmations",
+    "favorites": "Favorites",
+    "history": "History"
   }
 }

@@ -18,7 +18,11 @@
       "compatibility": "星座配对",
       "settings": "设置",
       "insights": "数据洞察",
-      "birthChart": "星盘"
+      "birthChart": "星盘",
+      "leaderboard": "排行榜",
+      "numerology": "数字命理",
+      "fengShui": "风水",
+      "affirmations": "每日肯定"
     },
     "auth": {
       "signIn": "登录",
@@ -80,6 +84,21 @@
       "dream": {
         "title": "解梦",
         "description": "通过AI驱动的梦境分析，解读你潜意识中隐藏的信息。",
+        "badge": "新"
+      },
+      "numerology": {
+        "title": "数字命理",
+        "description": "通过AI分析解码你的生命路径、表达和灵魂渴望数字。",
+        "badge": "新"
+      },
+      "fengShui": {
+        "title": "风水",
+        "description": "根据你的中国五行属性获取个性化的房间布局和颜色指导。",
+        "badge": "新"
+      },
+      "affirmations": {
+        "title": "每日肯定",
+        "description": "接收与你星座能量一致的个性化肯定语。",
         "badge": "新"
       }
     },
@@ -716,5 +735,84 @@
       "degree": "度数",
       "interpretation": "解读"
     }
+  },
+  "leaderboard": {
+    "title": "排行榜",
+    "subtitle": "按功德值排名的灵性探索者",
+    "weekly": "本周",
+    "monthly": "本月",
+    "allTime": "总榜",
+    "karma": "功德",
+    "loading": "加载中...",
+    "empty": "暂无记录。开始积累功德吧！",
+    "yourRank": "你的排名"
+  },
+  "userProfile": {
+    "notFound": "用户未找到",
+    "karma": "功德",
+    "readings": "占卜次数",
+    "achievements": "成就",
+    "recentReadings": "最近公开占卜",
+    "joined": "加入于 {date}",
+    "discoverCta": "探索你的命运"
+  },
+  "numerology": {
+    "title": "数字命理",
+    "subtitle": "通过宇宙神圣数学解码你的命运",
+    "description": "输入你的全名和出生日期，揭示你的核心命理数字——生命路径、表达和灵魂渴望。",
+    "fullNameLabel": "全名",
+    "fullNamePlaceholder": "请输入你的出生全名",
+    "birthdateLabel": "出生日期",
+    "calculateButton": "揭示我的数字",
+    "calculating": "计算中...",
+    "yourNumbers": "你的核心数字",
+    "lifePathNumber": "生命路径",
+    "expressionNumber": "表达数",
+    "soulUrgeNumber": "灵魂渴望",
+    "aiAnalysis": "AI 命理分析"
+  },
+  "fengShui": {
+    "title": "风水",
+    "subtitle": "用古老的五行智慧和谐你的空间",
+    "description": "输入你的出生年份、房间类型和门的朝向，获取个性化的风水指导。",
+    "birthYearLabel": "出生年份",
+    "roomTypeLabel": "房间类型",
+    "directionLabel": "门的朝向",
+    "selectRoom": "选择房间...",
+    "selectDirection": "选择方向...",
+    "analyzeButton": "分析我的空间",
+    "analyzing": "分析中...",
+    "element": "元素",
+    "layoutTips": "布局建议",
+    "colorRecommendations": "颜色推荐",
+    "thingsToAvoid": "需要避免的",
+    "aiAnalysis": "AI 风水分析",
+    "rooms": {
+      "bedroom": "卧室",
+      "office": "办公室",
+      "living": "客厅",
+      "kitchen": "厨房",
+      "bathroom": "浴室"
+    },
+    "directions": {
+      "north": "北",
+      "northeast": "东北",
+      "east": "东",
+      "southeast": "东南",
+      "south": "南",
+      "southwest": "西南",
+      "west": "西",
+      "northwest": "西北"
+    }
+  },
+  "affirmations": {
+    "title": "每日肯定",
+    "dailyMantra": "今日箴言",
+    "loading": "正在连接宇宙能量...",
+    "retry": "重试",
+    "swipeHint": "滑动或使用箭头浏览肯定语",
+    "allAffirmations": "全部肯定语",
+    "favorites": "收藏",
+    "history": "历史"
   }
 }
