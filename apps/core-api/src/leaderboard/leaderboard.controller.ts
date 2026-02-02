@@ -1,8 +1,9 @@
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
-import { Controller, Get, Query, Req, UseGuards } from "@nestjs/common";
+import { Controller, Get, Query, Req, UseGuards, UseInterceptors } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
 import { LeaderboardService } from "./leaderboard.service";
+import { HttpCacheInterceptor, CacheTTL } from "../cache/cache.interceptor";
 
 interface AuthRequest extends Request {
   user: { id: string; email: string };
@@ -10,10 +11,12 @@ interface AuthRequest extends Request {
 
 @ApiTags("Leaderboard")
 @Controller("leaderboard")
+@UseInterceptors(HttpCacheInterceptor)
 export class LeaderboardController {
   constructor(private readonly leaderboardService: LeaderboardService) {}
 
   @Get()
+  @CacheTTL(120) // 2 minutes
   async getLeaderboard(
     @Query("period") period?: string,
     @Query("limit") limit?: string,

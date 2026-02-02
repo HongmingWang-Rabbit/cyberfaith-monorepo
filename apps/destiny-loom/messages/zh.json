@@ -1094,5 +1094,12 @@
     "syncing": "正在同步 {count} 个排队项目...",
     "syncNow": "立即同步",
     "pendingSync": "{count} 个待同步"
+  },
+  "error": {
+    "title": "宇宙信号中断",
+    "message": "星际矩阵出现了故障，星辰即将重新排列。",
+    "retry": "重新连接",
+    "goHome": "返回首页",
+    "offline": "您似乎已离线，请检查网络连接后重试。"
   }
 }
