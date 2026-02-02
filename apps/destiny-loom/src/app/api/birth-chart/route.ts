@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       return withRateLimitHeaders(errorResponse("date and time are required", 400));
     }
 
-    const url = new URL(`${CORE_API_URL}/v1/readings/birth-chart`);
+    const url = new URL(`${CORE_API_URL}/readings/birth-chart`);
     url.searchParams.set("date", date);
     url.searchParams.set("time", time);
     url.searchParams.set("location", location);
