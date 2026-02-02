@@ -37,7 +37,8 @@ interface JournalEntry {
 
 export default function JournalPage() {
   const t = useTranslations("journal");
-  const { token } = useAuth();
+  const { session, isAuthenticated } = useAuth();
+  const token = session?.tokens?.accessToken;
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [moodFilter, setMoodFilter] = useState<string>("");
