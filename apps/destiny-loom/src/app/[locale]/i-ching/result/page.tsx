@@ -251,7 +251,7 @@ export default function IChingResultPage() {
         <MintReadingButton
           type="iching"
           title={`I Ching: ${hexagram.chinese} · ${hexagram.name}`}
-          description={`Hexagram #${hexagram.number} — ${hexagram.meaning}`}
+          description={`Hexagram #${hexagram.number} — ${hexagram.description}`}
           data={{
             hexagram: hexagram.name,
             number: hexagram.number,
