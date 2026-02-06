@@ -9,6 +9,7 @@ import { ShareButtons } from "@/components/ui/share-buttons";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useAiAnalysis } from "@/hooks/useAiAnalysis";
 import { AiAnalysisCard, ReadingContent } from "@/components/ui/ai-analysis";
+import { MintReadingButton } from "@/components/wallet";
 
 function HexagramDisplay({
   lines,
@@ -244,6 +245,20 @@ export default function IChingResultPage() {
         title={`I Ching — ${hexagram.chinese} · ${hexagram.name}`}
         description="I Ching divination on Destiny Loom"
       />
+
+      {/* Mint as NFT */}
+      <div className="flex justify-center">
+        <MintReadingButton
+          type="iching"
+          title={`I Ching: ${hexagram.chinese} · ${hexagram.name}`}
+          description={`Hexagram #${hexagram.number} — ${hexagram.meaning}`}
+          data={{
+            hexagram: hexagram.name,
+            number: hexagram.number,
+            chinese: hexagram.chinese,
+          }}
+        />
+      </div>
 
       <div className="text-center">
         <Link

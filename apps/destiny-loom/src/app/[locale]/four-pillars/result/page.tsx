@@ -13,6 +13,7 @@ import {
   type Pillar,
 } from "@/lib/four-pillars";
 import { ShareButtons } from "@/components/ui/share-buttons";
+import { MintReadingButton } from "@/components/wallet";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { PageSkeleton } from "@/components/ui/skeleton";
 
@@ -203,6 +204,25 @@ function FourPillarsResultContent() {
         title="My Four Pillars of Destiny"
         description="Four Pillars (BaZi) analysis on Destiny Loom"
       />
+
+      {/* Mint as NFT */}
+      <div className="flex justify-center">
+        <MintReadingButton
+          type="four-pillars"
+          title={`Four Pillars: ${result.day.stem} ${result.day.branch} Day Master`}
+          description="Four Pillars (BaZi) destiny chart analysis"
+          data={{
+            dayMaster: `${result.day.stem} ${result.day.branch}`,
+            element: maxElement,
+            pillars: {
+              year: `${result.year.stem}${result.year.branch}`,
+              month: `${result.month.stem}${result.month.branch}`,
+              day: `${result.day.stem}${result.day.branch}`,
+              hour: `${result.hour.stem}${result.hour.branch}`,
+            },
+          }}
+        />
+      </div>
 
       <div className="text-center">
         <Link

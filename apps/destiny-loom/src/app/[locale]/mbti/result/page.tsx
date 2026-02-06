@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/toast";
 import { ShareButtons } from "@/components/ui/share-buttons";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { PageSkeleton } from "@/components/ui/skeleton";
+import { MintReadingButton } from "@/components/wallet";
 
 const dimensionKeys = ["EI", "SN", "TF", "JP"] as const;
 const dimensionLabels: Record<string, [string, string]> = {
@@ -153,6 +154,21 @@ function MbtiResultContent() {
 
       {/* Share */}
       <ShareButtons title={`My MBTI type is ${type} — ${typeName}`} description="Discover your personality type on Destiny Loom" />
+
+      {/* Mint as NFT */}
+      <div className="flex justify-center">
+        <MintReadingButton
+          type="mbti"
+          title={`MBTI: ${type} — ${typeName}`}
+          description={`Personality type assessment result: ${type}`}
+          data={{
+            type,
+            scores,
+          }}
+          onSuccess={(sig) => showToast(`Minted! ${sig.slice(0, 8)}...`)}
+          onError={(err) => showToast(`Error: ${err}`)}
+        />
+      </div>
 
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
