@@ -8,7 +8,6 @@ import {
   publicKey,
   generateSigner,
 } from '@metaplex-foundation/umi';
-import { walletAdapterIdentity } from '@metaplex-foundation/umi-signer-wallet-adapters';
 
 const MERKLE_TREE_ADDRESS = process.env.NEXT_PUBLIC_MERKLE_TREE_ADDRESS || '';
 const COLLECTION_ADDRESS = process.env.NEXT_PUBLIC_COLLECTION_ADDRESS || '';

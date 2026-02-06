@@ -20,6 +20,7 @@ interface MintReadingButtonProps {
 const statusMessages: Record<MintStatus, string> = {
   idle: 'Mint as NFT',
   preparing: 'Preparing...',
+  uploading: 'Uploading...',
   signing: 'Sign in wallet...',
   minting: 'Minting...',
   success: 'Minted! ✓',
@@ -29,6 +30,7 @@ const statusMessages: Record<MintStatus, string> = {
 const statusIcons: Record<MintStatus, string> = {
   idle: '🎴',
   preparing: '⏳',
+  uploading: '☁️',
   signing: '✍️',
   minting: '⚡',
   success: '✨',
