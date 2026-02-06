@@ -9,6 +9,7 @@ import { PushPrompt } from "@/components/push-prompt";
 import { FeaturedReading } from "@/components/featured-reading";
 import { EventBanner } from "@/components/events/event-banner";
 import { DailyChallenge } from "@/components/daily-challenge";
+import { SolanaCTA } from "@/components/home/SolanaCTA";
 
 const features = [
   { key: "mbti", href: "/mbti", icon: "🧠", color: "purple" },
@@ -56,6 +57,11 @@ export default function HomePage() {
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           {t("home.heroSub")}
         </p>
+      </section>
+
+      {/* Solana CTA */}
+      <section>
+        <SolanaCTA />
       </section>
 
       {/* Feature grid */}
