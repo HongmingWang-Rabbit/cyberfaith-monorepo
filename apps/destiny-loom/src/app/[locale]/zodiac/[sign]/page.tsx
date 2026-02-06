@@ -11,6 +11,7 @@ import { ShareButtons } from "@/components/ui/share-buttons";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useZodiacReading } from "@/hooks/useAiAnalysis";
 import { AiAnalysisCard, ReadingContent } from "@/components/ui/ai-analysis";
+import { MintReadingButton } from "@/components/wallet";
 
 type Period = "daily" | "weekly" | "monthly";
 
@@ -192,6 +193,21 @@ export default function ZodiacSignPage() {
         title={`${sign.symbol} ${isZh ? sign.nameZh : sign.name} — ${sign.dateRange}`}
         description="Zodiac reading on Destiny Loom"
       />
+
+      {/* Mint as NFT */}
+      <div className="flex justify-center">
+        <MintReadingButton
+          type="zodiac"
+          title={`${sign.symbol} ${isZh ? sign.nameZh : sign.name} — ${period} reading`}
+          description={`Zodiac reading for ${sign.name} (${sign.dateRange})`}
+          data={{
+            sign: sign.id,
+            element: sign.element,
+            rulingPlanet: sign.rulingPlanet,
+            period,
+          }}
+        />
+      </div>
     </div>
   );
 }

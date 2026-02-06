@@ -13,6 +13,7 @@ import { tarotDeck, type SpreadType, type DrawnCard } from "@/data/tarot-deck";
 import { ShareButtons } from "@/components/ui/share-buttons";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { PageSkeleton } from "@/components/ui/skeleton";
+import { MintReadingButton } from "@/components/wallet";
 
 function ResultContent() {
   const t = useTranslations();
@@ -149,6 +150,22 @@ function ResultContent() {
       </AiAnalysisCard>
 
       <ShareButtons title="My Tarot Reading" description="Interactive Tarot reading on Destiny Loom" />
+
+      {/* Mint as NFT */}
+      <div className="flex justify-center">
+        <MintReadingButton
+          type="tarot"
+          title={`Tarot Reading: ${spread} spread`}
+          description={`${drawnCards.length} cards drawn: ${drawnCards.map(c => c.card.name).join(', ')}`}
+          data={{
+            spread,
+            cards: drawnCards.map(c => c.card.name).join(', '),
+            reversed: drawnCards.filter(c => c.isReversed).length,
+          }}
+          onSuccess={(sig) => showToast(`Minted! ${sig.slice(0, 8)}...`)}
+          onError={(err) => showToast(`Error: ${err}`)}
+        />
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Button variant="outline" onClick={handleSave}>{t("common.actions.save")}</Button>
