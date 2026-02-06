@@ -11,6 +11,7 @@ import { ServiceWorkerRegister } from "@/components/sw-register";
 import { WebApplicationJsonLd } from "@/components/seo/json-ld";
 import { OfflineBanner } from "@/components/offline-banner";
 import { CookieConsent } from "@/components/cookie-consent";
+import { SolanaWalletProvider } from "@/providers/SolanaWalletProvider";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://destiny-loom.cyberfaith.app";
 
@@ -69,14 +70,16 @@ export default async function LocaleLayout({ children, params }: Props) {
           Skip to content
         </a>
         <NextIntlClientProvider messages={messages}>
-          <AuthWrapper>
-            <ToastProvider>
-              <ServiceWorkerRegister />
-              <OfflineBanner />
-              <AppShell>{children}</AppShell>
-              <CookieConsent />
-            </ToastProvider>
-          </AuthWrapper>
+          <SolanaWalletProvider>
+            <AuthWrapper>
+              <ToastProvider>
+                <ServiceWorkerRegister />
+                <OfflineBanner />
+                <AppShell>{children}</AppShell>
+                <CookieConsent />
+              </ToastProvider>
+            </AuthWrapper>
+          </SolanaWalletProvider>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -9,6 +9,7 @@ import { BottomNav } from "@/components/layout/bottom-nav";
 import { PageTransition } from "@/components/layout/page-transition";
 import { SearchModal } from "@/components/search/search-modal";
 import { NotificationBell } from "@/components/notifications/notification-bell";
+import { WalletButton } from "@/components/wallet";
 
 const navItems = [
   { key: "home", href: "/", icon: "🏠" },
@@ -140,6 +141,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </svg>
             </button>
             <NotificationBell />
+            <WalletButton className="hidden sm:block" />
             <LocaleSwitcher />
             {authLoading ? (
               <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
