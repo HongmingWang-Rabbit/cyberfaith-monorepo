@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useHaptic } from "@/hooks/useHaptic";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { MintReadingButton } from "@/components/wallet";
 import type { ArcadeGameProps } from "../types";
 
 const FORTUNES_EN = [
@@ -447,13 +449,20 @@ export default function FortuneCookie({ config, balance, onBalanceChange, onPlay
             </div>
           </div>
 
-          <div className="flex gap-3 mt-4 justify-center">
+          <div className="flex flex-wrap gap-3 mt-4 justify-center">
             <button
               onClick={handleShare}
               className="px-4 py-2 rounded-xl text-sm font-medium bg-purple-600/30 border border-purple-500/40 text-purple-300 hover:bg-purple-600/50 transition-colors"
             >
               📤 {t.share}
             </button>
+            <MintReadingButton
+              type="tarot"
+              title="Fortune Cookie Wisdom"
+              description={fortune || "A mystical fortune"}
+              data={{ fortune, game: "fortune-cookie", timestamp: Date.now() }}
+              className="scale-90"
+            />
             <button
               onClick={handleReset}
               className="px-4 py-2 rounded-xl text-sm font-medium bg-cyan-600/30 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-600/50 transition-colors"

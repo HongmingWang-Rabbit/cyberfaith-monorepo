@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useHaptic } from "@/hooks/useHaptic";
+import { MintReadingButton } from "@/components/wallet";
 import type { ArcadeGameProps } from "../types";
 
 interface Segment {
@@ -259,6 +260,15 @@ export default function DestinyWheel({ config, balance, onBalanceChange, onPlay,
             {result.special === "try_again" && (
               <p className="text-gray-400">{locale === "zh" ? "命运说：再试一次!" : "Destiny says: try again!"}</p>
             )}
+            <div className="mt-4">
+              <MintReadingButton
+                type="tarot"
+                title={`Destiny Wheel: ${result.label}`}
+                description={`Spun the wheel and got: ${result.label}${result.karma > 0 ? ` (+${result.karma} karma)` : ''}`}
+                data={{ result: result.label, karma: result.karma, special: result.special, game: "destiny-wheel" }}
+                className="scale-90"
+              />
+            </div>
           </div>
         </div>
       )}
