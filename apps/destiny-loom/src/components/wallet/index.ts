@@ -4,3 +4,5 @@ export { MintReadingButton } from './MintReadingButton';
 export { default as MintReadingButtonDefault } from './MintReadingButton';
 export { MintingProgress } from './MintingProgress';
 export { default as MintingProgressDefault } from './MintingProgress';
+export { NFTBadge } from './NFTBadge';
+export { default as NFTBadgeDefault } from './NFTBadge';
