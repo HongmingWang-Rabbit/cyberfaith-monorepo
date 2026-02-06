@@ -6,3 +6,5 @@ export { MintingProgress } from './MintingProgress';
 export { default as MintingProgressDefault } from './MintingProgress';
 export { NFTBadge } from './NFTBadge';
 export { default as NFTBadgeDefault } from './NFTBadge';
+export { WalletStats } from './WalletStats';
+export { default as WalletStatsDefault } from './WalletStats';
