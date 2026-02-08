@@ -17,6 +17,8 @@ const gameRegistry: Record<string, ComponentType<ArcadeGameProps>> = {
   "fortune-cookie": dynamic(() => import("./games/fortune-cookie"), { ssr: false }),
   "destiny-wheel": dynamic(() => import("./games/destiny-wheel"), { ssr: false }),
   "meditation": dynamic(() => import("./games/meditation-timer"), { ssr: false }),
+  "rune-cast": dynamic(() => import("./games/rune-cast"), { ssr: false }),
+  "crystal-ball": dynamic(() => import("./games/crystal-ball"), { ssr: false }),
   // Note: muyu has its own dedicated page at /arcade/muyu — not using the generic [slug] wrapper
 };
 
