@@ -33,7 +33,11 @@ describe("ReadingsController", () => {
       delete: vi.fn().mockReturnThis(),
     };
 
-    controller = new ReadingsController(mockDb, {} as any, {} as any);
+    const mockCacheService = {
+      invalidatePattern: vi.fn().mockResolvedValue(undefined),
+    };
+
+    controller = new ReadingsController(mockDb, {} as any, mockCacheService as any);
   });
 
   const req = { user: { id: "user-1" } } as any;
