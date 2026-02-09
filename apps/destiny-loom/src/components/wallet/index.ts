@@ -10,3 +10,5 @@ export { WalletStats } from './WalletStats';
 export { default as WalletStatsDefault } from './WalletStats';
 export { NetworkBadge } from './NetworkBadge';
 export { default as NetworkBadgeDefault } from './NetworkBadge';
+export { WalletConnectPrompt } from './WalletConnectPrompt';
+export { default as WalletConnectPromptDefault } from './WalletConnectPrompt';
